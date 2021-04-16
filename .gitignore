@@ -9,3 +9,4 @@ raw_data/
 test_models/
 get_csi/
 __pycache__/
+models/
