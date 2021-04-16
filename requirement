@@ -1,0 +1,7 @@
+torchvision
+scipy
+sklearn
+six
+python-dateutil
+hdf5storage
+opencv-python
