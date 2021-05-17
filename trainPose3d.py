@@ -5,6 +5,7 @@ Author: https://github.com/ludlows
 2019-12
 """
 import numpy as np 
+import random
 import tensorflow as tf
 import glob
 import os
@@ -371,47 +372,77 @@ class CSIModelConfig:
     
 
 if __name__ == "__main__":
-    csiFilePaths=[]
-    poseFilePaths=[]
-    labels=['02','03','04','05']
-    # labels=['02']
-    for label in labels:
-        csiFilePaths.append('data/parsedCSI'+label+'.csv')
-        poseFilePaths.append('data/parsedPose3D'+label+'.csv')
+ 
 
-    
-
-    realData = True
-    runTrain = True
-    batch_size=None
-
-    runFeatureEngineer=True
+    # labels=['02','03','04','05','07','09','10','11']
+    labels=['23','25','27','22']
+    # labels=['20','21']
+    labelsAlt=['20']
+    # labels=['02','03','04']
+    # labelsAlt=['02']
+    # isActSDthreshold=150
+    isActSDthreshold=50
+    # isActSDthreshold=20
+    sliceData=True
     seqLen=15
     epoch=1000
 
+
+    # path = 'drive/MyDrive/Project/'
+    path = ''
+    minCSIthreshold= int((seqLen/30) * 80)
+    runTrain = True
+
+    realData = True
+    batch_size = None
+    runFeatureEngineer=True
+
     if realData:
-        # isActSDthreshold=150
-        # isActSDthreshold=80
-        isActSDthreshold=40
-        minCSIthreshold= int((seqLen/30) * 80)
+        
         runPCK = True
         runPlot = True
         checkIndex = 0
-        modelFileName='test_models/model_01_e'+str(epoch)+'_Actthes_'+str(isActSDthreshold)+'_seqLen_'+str(seqLen)+'_'+('FE' if runFeatureEngineer else 'NoFE')+'_'+'.hdf5'
+        modelFileName='test_models/model_01_e' \
+        +str(epoch)+'_Actthes_'+str(isActSDthreshold) \
+        +'_seqLen_'+str(seqLen) \
+        +'_'+('FE' if runFeatureEngineer else 'NoFE') \
+        +'_'+('SD' if sliceData else 'NoSD') \
+        +'_'+'.hdf5'
     else:
         runPCK = False
         runPlot = False
         modelFileName="test.hdf5"
 
     # preprocessing
+    csiFilePaths=[]
+    poseFilePaths=[]
+    csiFilePathsAlt=[]
+    poseFilePathsAlt=[]
+    for label in labels:
+        csiFilePaths.append('data/parsedCSI'+label+'.csv')
+        poseFilePaths.append('data/parsedPose3D'+label+'.csv')
+    for label in labelsAlt:
+        csiFilePathsAlt.append('data/parsedCSI'+label+'.csv')
+        poseFilePathsAlt.append('data/parsedPose3D'+label+'.csv')
     X = []
     Y = []
+    Xalt = []
+    Yalt = []
     if realData:#load file
-        for fileIndx in range(len(csiFilePaths)):
+        for label in (labels)+(labelsAlt):
+            if(label in labels):
+                isAlt=False
+            else:
+                isAlt=True
+            csiFileName=('data/parsedCSI'+label+'.csv')
+            poseFileName=('data/parsedPose3D'+label+'.csv')
             csiList=[]
             poseList=[]
-            csiList.extend(pd.read_csv(csiFilePaths[fileIndx],delimiter=',',header=None).values)
-            poseList.extend(pd.read_csv(poseFilePaths[fileIndx],delimiter=',',header=None).values)
+            print(isAlt)
+            print(csiFileName)
+            print(poseFileName)
+            csiList.extend(pd.read_csv(path+csiFileName,delimiter=',',header=None).values)
+            poseList.extend(pd.read_csv(path+poseFileName,delimiter=',',header=None).values)
 
             # guassian filter
             if False:
@@ -429,11 +460,16 @@ if __name__ == "__main__":
 
                 print(len(csiList))
             # guassian filter End
-        
-            for i in range(0,len(poseList)-seqLen+1,1):
+            if(sliceData):
+                dataLooper=len(poseList)-seqLen+1
+                dataStep=1
+            else:
+                dataLooper=int(len(poseList)/seqLen)
+                dataStep=seqLen
+            for i in range(0,dataLooper,dataStep):
 
                 # get pose in the time period
-                poseIndices,startTime,endTime=poseIndices_sec(i,poseList,sec=seqLen/30)
+                poseIndices,startTime,endTime=poseIndices_sec(i,poseList,seqLen=seqLen)
                 # print("poseIndices",poseIndices)
 
                 # check if there is pose less than seqLen
@@ -444,8 +480,9 @@ if __name__ == "__main__":
                 # check if there is some null in pose
                 isNullPose=False
                 for j in poseIndices:
+                    # print(label,poseList[j])
                     if(poseList[j].all()==0):
-                        print("sq",i,"null pose at index",j)
+                        print(label,"sq",i,"null pose at index",j)
                         isNullPose=True
                         break
                 if(isNullPose):
@@ -456,7 +493,7 @@ if __name__ == "__main__":
 
                 # check if there is csi more than minCSIthreshold
                 if(len(csiIndices)<minCSIthreshold):
-                    print("too low csi number",len(csiIndices))
+                    print(label,"too low csi number",len(csiIndices))
                     continue
 
 
@@ -470,8 +507,8 @@ if __name__ == "__main__":
                 # if(isNullCSI):
                 #     continue
                 
-                print('sq',i,'pass null filter')
-                print(len(csiIndices),"csis to ",len(poseIndices),"poses")
+                print(label,'sq',i,'pass null filter')
+                print(label,len(csiIndices),"csis to ",len(poseIndices),"poses")
 
                 # check if this seqence has an activity
                 isAct=True
@@ -487,13 +524,13 @@ if __name__ == "__main__":
                         subClist.append( normalAmp[k][j] )
                     sdAmp=stdev(subClist)
                     sdSum+=sdAmp
-                print("sum_SD sq",i,'is',sdSum)
+                print(label,"sum_SD sq",i,'is',sdSum)
                 if(isActSDthreshold > sdSum):
-                    print("no activity")
+                    print(label,"no activity")
                     isAct=False
                     continue
                 else:
-                    print("activity!!!")
+                    print(label,"activity!!!")
                     isAct=True
                 
                 # filtered only valid annotation
@@ -501,18 +538,46 @@ if __name__ == "__main__":
                     # curCSIs,_=samplingCSI(csiList,csiIndices,poseList,poseIndices,paddingTo=seqLen)
                     curCSIs = normalAmp
 
-                    X.append(curCSIs)
                     # reshape all pose to vector and to PAM and to vector again
                     curposes = [ poseToPAM(  np.array( [ poseList[j][1:].reshape(19,3) ] )  ) for j in poseIndices ]
                     # curposes = [  np.array(poseList[j])   for j in poseIndices ]
-                    Y.append(curposes)
+                    
+                    if len(curposes)!= seqLen:
+                        print(label,"invalid len at ",label,poseIndices)
+                        break
+                    isValid = True
+                    for j in range(len(curposes)):
+                        # print((curposes[j].shape))
+                        if (curposes[j].shape)!= (3,19,19):
+                            print(label,"invalid len at ",label,poseIndices,j)
+                            isValid=False
+                            break
+                    if(isValid==False):
+                        break
 
+                    print(label,"Before Add")
+                    print('isAlt',isAlt,'curCSIs',len(curCSIs),'curposes',len(curposes))
+                    if(isAlt==False):
+                        X.append(curCSIs)
+                        Y.append(curposes)
+                    else:
+                        Xalt.append(curCSIs)
+                        Yalt.append(curposes)
 
         X=np.array(X)
         Y=np.array(Y)
+        print('shape X',(X.shape))
+        print('shape Y',(Y.shape))
+        X =(X).reshape(X.shape[0], seqLen, 52)
         Y =(Y).reshape(Y.shape[0], seqLen, 3 * 19 * 19)
         print('shape X',(X.shape))
         print('shape Y',(Y.shape))
+        Xalt=np.array(Xalt)
+        Yalt=np.array(Yalt)
+        Xalt =(Xalt).reshape(Xalt.shape[0], seqLen, 52)
+        Yalt =(Yalt).reshape(Yalt.shape[0], seqLen, 3 * 19 * 19)
+        print('shape Xalt',(Xalt.shape))
+        print('shape Yalt',(Yalt.shape))
 
         # print("X")
         # print(X)
@@ -557,13 +622,35 @@ if __name__ == "__main__":
 
     if runFeatureEngineer:
         X=featureEngineer(X)
+        Xalt=featureEngineer(Xalt)
 
         # print("normalized X")
         # print(X)
         # print("normalized Y")
         # print(Y)
     if True:
-        x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.1, random_state=3)
+        random_state=3
+        if len(labelsAlt)==0:
+            x_train, x_test, y_train, y_test  = train_test_split(X, Y, test_size=0.1, random_state=random_state)
+        else:
+            np.random.seed(random_state) 
+            np.random.shuffle(X) 
+            np.random.seed(random_state) 
+            np.random.shuffle(Y) 
+            np.random.seed(random_state) 
+            np.random.shuffle(Xalt) 
+            np.random.seed(random_state) 
+            np.random.shuffle(Yalt) 
+            x_train = X
+            y_train = Y
+            x_test = Xalt
+            y_test = Yalt
+
+        # X=np.concatenate((X, Xalt))
+        # Y=np.concatenate((Y, Yalt))
+
+        # x_train,_,y_train,_=train_test_split(X, Y, test_size=0.01, random_state=3)
+        # x_test,_,y_test,_=train_test_split(Xalt, Yalt, test_size=0.01, random_state=3)        
 
         
         cfg = CSIModelConfig(win_len=1000, step=2000, thrshd=0.6, downsample=2)
@@ -604,13 +691,13 @@ if __name__ == "__main__":
         )
         print(model.summary())
 
-        model.save(modelFileName)
+        model.save(path+modelFileName)
 
     if True:
         # load the best model
-        model = cfg.load_model(modelFileName)
+        model = cfg.load_model(path+modelFileName)
 
-        # print(x_test.shape)
+        print(x_test.shape)
         # print("x_test[0]")
         # print(x_test[0])
         # print("x_test[1]")
@@ -629,22 +716,33 @@ if __name__ == "__main__":
     if runPCK: # calculate PCK
         print(y_pred.shape)
         PCKthres=[5,10,20,30,40,50]
+        PCKAll=[]
         # for predIdx in range(y_pred.shape[0]):
-        for predIdx in range(1):
-            PCKresult=[]
-            # print('PCK idx',str(predIdx))
-            for threshold in PCKthres:
-                PCKkpsum=0
-                # print('thres',str(threshold))
-                for keypointIdx in range(19):
-                    PCK=getPCK(y_pred[0],y_test[0],keypointIdx,frame=seqLen,threshold=threshold)
-                    PCKkpsum+=PCK
-                    # print(PCK)
-                PCKkpsum=PCKkpsum/19
-                PCKresult.append(PCKkpsum)
-            print('PCK avg idx',str(predIdx))
-            print(PCKresult)
+        for predIdx in range(y_pred.shape[0]):
+            if(y_test[predIdx].all!=0):
+                PCKresult=[]
+                # print('PCK idx',str(predIdx))
+                for threshold in PCKthres:
+                    PCKkpsum=0
+                    # print('thres',str(threshold))
+                    for keypointIdx in range(19):
+                        PCK=getPCK(y_pred[predIdx],y_test[predIdx],keypointIdx,frame=seqLen,threshold=threshold)
+                        PCKkpsum+=PCK
+                        # print(PCK)
+                    PCKkpsum=PCKkpsum/19
+                    PCKresult.append(PCKkpsum)
+                print('PCK avg idx',str(predIdx))
+                print(PCKresult)
+                PCKAll.append(PCKresult)
+        for thresholdIndex in range(len(PCKthres)):
+            print('avg '+str(PCKthres[thresholdIndex]))
+            sum=0
+            for each in PCKAll:
+                sum+=each[thresholdIndex]
+            print(sum/len(PCKAll))
         print(modelFileName)
+        print(labels)
+        print(labelsAlt)
 
     if runPlot: # plot pose3D
 

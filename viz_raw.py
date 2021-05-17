@@ -62,8 +62,15 @@ def parseCSI(csi):
         return False
 
 
-csiFilePaths = ['raw_data/CSI04.csv']
-vidFilePaths = ['raw_data/CSI04.mov']
+label='10'
+withPose = True
+
+csiFilePaths = ['raw_data/CSI'+label+'.csv']
+vidFilePaths = ['raw_data/CSI'+label+'.mov']
+if withPose:
+    poseFilePaths = ['data/parsedPose3D'+label+'.csv']
+    poseList = pd.read_csv(poseFilePaths[0],delimiter=',',header=None).values
+
 # csiFilePaths = ['test4.csv']
 # vidFilePaths = ['test4_crop.mov']
 
@@ -124,9 +131,22 @@ if True: # plot pose3D
             plt.close(fig)
 
         frame = vid.get_data(imageIdx)
-        ax0.imshow(frame)        
-        #imageIdx to csiIdx
+        ax0.imshow(frame)    
 
+        if withPose:
+            poseIdx = imageIdx
+            poses_3dFromImage=np.array([poseList[poseIdx][1:].reshape(19,3)])
+            # poses_3dFromImage=stand3dmatrix
+
+            edgesFromImage = (Plotter3d.SKELETON_EDGES + 19 * np.arange(poses_3dFromImage.shape[0]).reshape((-1, 1, 1))).reshape((-1, 2))
+            canvas_3d = np.zeros((450, 450, 3), dtype=np.uint8)
+            plotter = Plotter3d(canvas_3d.shape[:2])
+            plotter.plot(canvas_3d, poses_3dFromImage, edgesFromImage)
+            ax0.imshow(canvas_3d)
+
+
+
+        #imageIdx to csiIdx
         csiIndices=imageIdx2csiIndices(duration_in_sec,imageIdx,tsList,vidLength)
         if(len(csiIndices)>0):
             startCSIIdx=csiIndices[0]

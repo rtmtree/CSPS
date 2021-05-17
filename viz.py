@@ -9,33 +9,43 @@ from scipy.ndimage import gaussian_filter
 from math import sqrt, atan2 ,isnan
 import matplotlib.gridspec as gridspec
 import glob
-# import imageio
+import imageio
 import cv2
 from modules.inference_engine_pytorch import InferenceEnginePyTorch
 # from modules.parse_poses import parse_poses
 from functions.csi_util import rawCSItoAmp,imageIdx2csiIndices_timestamp,samplingCSI,filterNullSC,featureEngineer
 
+label='20'
+withVid = True
 
 
-csiFilePaths = ['data/parsedCSI04.csv']
-poseFilePaths = ['data/parsedPose3D04.csv']
+csiFilePaths = ['data/parsedCSI'+label+'.csv']
+poseFilePaths = ['data/parsedPose3D'+label+'.csv']
 
 csiList = pd.read_csv(csiFilePaths[0],delimiter=',',header=None).values
 poseList = pd.read_csv(poseFilePaths[0],delimiter=',',header=None).values
 startFrom=0
 
+if withVid:
+    vidFilePaths = ['raw_data/CSI'+label+'.mov']
+    vid = imageio.get_reader(vidFilePaths[0],  'ffmpeg')
+    meta_data=vid.get_meta_data()
+    duration_in_sec = meta_data['duration']
+    cap = cv2.VideoCapture(vidFilePaths[0])
+    vidLength = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
 if True: # plot pose3D
     fig = plt.figure()
     # gs = gridspec.GridSpec(3,2)
     gs = gridspec.GridSpec(3,2)
-    # ax0=fig.add_subplot(gs[0,0])
-    # ax1=fig.add_subplot(gs[0,1])
-    ax2=fig.add_subplot(gs[0,:])
+    ax0=fig.add_subplot(gs[0,0])
+    ax1=fig.add_subplot(gs[0,1])
+    ax2=fig.add_subplot(gs[1,:])
     ax3=fig.add_subplot(gs[2,:])
 
     x_values=[[] for i in range(64)]
     y_values=[[] for i in range(64)]
-    skipframe=15
+    skipframe=30
     ln1, = plt.plot([], [], 'ro')
     ln2, = plt.plot([], [], 'ro')
     ln = [ln1, ln2]
@@ -54,7 +64,12 @@ if True: # plot pose3D
             print('close')
             plt.close(fig)
 
-        if False:
+        if True:
+            if withVid:
+                print("get vid")
+                imageIdx=poseIdx
+                frame = vid.get_data(imageIdx)
+                ax1.imshow(frame)
             if True:
                 poses_3dFromImage=np.array([poseList[poseIdx][1:].reshape(19,3)])
             else:
@@ -121,11 +136,11 @@ if True: # plot pose3D
         # ax2.set_ylim([-10, +40])
         # ax3.set_ylim([-10, +40])
         
-        return [ax2,ax3]
+        return [ax0,ax1,ax2,ax3]
     
 
     # ani = animation.FuncAnimation(fig, updatefig, interval=1000, blit=True,frames=len(csiList),repeat=False,init_func=init)
     # custom_ylim = (-10, +40)
-    ani = animation.FuncAnimation(fig, updatefig, frames=len(csiList),
+    ani = animation.FuncAnimation(fig, updatefig, frames=len(csiList),interval=1000,
                     init_func=init, blit=True)
     plt.show()

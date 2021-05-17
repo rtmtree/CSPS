@@ -39,18 +39,20 @@ def csiIndices_sec(startTime,endTime,csiList):
         elif(csiList[i][0]>=endTime):
             break
     return csiIndices
-def poseIndices_sec(index,poseList,sec=1):
+def poseIndices_sec(index,poseList,seqLen=30):
+    sec = seqLen/30
     startTime = poseList[index][0]
-    endTime=startTime+(sec* (10**6) )
-    poseIndices=[]
+    # endTime=startTime+(sec* (10**6) )
+    endTime=poseList[index+seqLen-1][0]
+    poseIndices=[i for i in range(index,index+seqLen)]
     # print("startTime",startTime)
     # print("endTime",endTime)
-    for i in range(index,len(poseList)):
-        if(poseList[i][0]<endTime):
-            # print("addeed",poseList[i][0])
-            poseIndices.append(i)
-        else:
-            break
+    # for i in range(index,len(poseList)):
+    #     if(poseList[i][0]<endTime):
+    #         # print("addeed",poseList[i][0])
+    #         poseIndices.append(i)
+    #     else:
+    #         break
     return poseIndices,startTime,endTime
 
 def samplingCSI(csiList,csiIndices,poseList,poseIndices,paddingTo=30):
