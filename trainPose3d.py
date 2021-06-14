@@ -31,6 +31,31 @@ import matplotlib.gridspec as gridspec
 from scipy.ndimage import gaussian_filter
 from math import sqrt, atan2 ,isnan
 
+# labels=['02','03','04','05','07','09','10','11']
+# labels=['35']
+# labels=['35']
+labels=['02','01','03']
+labelsAlt=[]
+# labelsAlt=['02']
+# isActSDthreshold=150
+isActSDthreshold=120
+# isActSDthreshold=20
+sliceData=True
+seqLen=10
+epoch=500
+
+runTrain = True
+runPCK = True
+runPlot = True
+
+# path = 'drive/MyDrive/Project/'
+path = ''
+minCSIthreshold= int((seqLen/30) * 80)
+
+realData = True
+batch_size = None
+runFeatureEngineer=True
+
 def merge_csi_label(csifile, labelfile, win_len=1000, thrshd=0.6, step=200):
     """
     Merge CSV files into a Numpy Array  X,  csi amplitude feature
@@ -76,7 +101,9 @@ def merge_csi_label(csifile, labelfile, win_len=1000, thrshd=0.6, step=200):
         index += step
     return np.concatenate(feature, axis=0)
 
-
+def parseDecimal(number,deci):
+    return "{:.4f}".format(number)
+print("dfddf",parseDecimal(22.2222223,4))
 def extract_csi_by_label(raw_folder, label, labels, save=False, win_len=1000, thrshd=0.6, step=200):
     """
     Returns all the samples (X,y) of "label" in the entire dataset
@@ -372,35 +399,10 @@ class CSIModelConfig:
     
 
 if __name__ == "__main__":
- 
-
-    # labels=['02','03','04','05','07','09','10','11']
-    labels=['23','25','27','22']
-    # labels=['20','21']
-    labelsAlt=['20']
-    # labels=['02','03','04']
-    # labelsAlt=['02']
-    # isActSDthreshold=150
-    isActSDthreshold=50
-    # isActSDthreshold=20
-    sliceData=True
-    seqLen=15
-    epoch=1000
-
-
-    # path = 'drive/MyDrive/Project/'
-    path = ''
-    minCSIthreshold= int((seqLen/30) * 80)
-    runTrain = True
-
-    realData = True
-    batch_size = None
-    runFeatureEngineer=True
 
     if realData:
         
-        runPCK = True
-        runPlot = True
+
         checkIndex = 0
         modelFileName='test_models/model_01_e' \
         +str(epoch)+'_Actthes_'+str(isActSDthreshold) \
@@ -409,21 +411,9 @@ if __name__ == "__main__":
         +'_'+('SD' if sliceData else 'NoSD') \
         +'_'+'.hdf5'
     else:
-        runPCK = False
-        runPlot = False
+
         modelFileName="test.hdf5"
 
-    # preprocessing
-    csiFilePaths=[]
-    poseFilePaths=[]
-    csiFilePathsAlt=[]
-    poseFilePathsAlt=[]
-    for label in labels:
-        csiFilePaths.append('data/parsedCSI'+label+'.csv')
-        poseFilePaths.append('data/parsedPose3D'+label+'.csv')
-    for label in labelsAlt:
-        csiFilePathsAlt.append('data/parsedCSI'+label+'.csv')
-        poseFilePathsAlt.append('data/parsedPose3D'+label+'.csv')
     X = []
     Y = []
     Xalt = []
@@ -434,8 +424,8 @@ if __name__ == "__main__":
                 isAlt=False
             else:
                 isAlt=True
-            csiFileName=('data/parsedCSI'+label+'.csv')
-            poseFileName=('data/parsedPose3D'+label+'.csv')
+            csiFileName=('data/CSI'+label+'.csv')
+            poseFileName=('data/Pose3D'+label+'.csv')
             csiList=[]
             poseList=[]
             print(isAlt)
@@ -556,7 +546,7 @@ if __name__ == "__main__":
                         break
 
                     print(label,"Before Add")
-                    print('isAlt',isAlt,'curCSIs',len(curCSIs),'curposes',len(curposes))
+                    print(label,'isAlt',isAlt,'curCSIs',len(curCSIs),'curposes',len(curposes))
                     if(isAlt==False):
                         X.append(curCSIs)
                         Y.append(curposes)
@@ -717,29 +707,56 @@ if __name__ == "__main__":
         print(y_pred.shape)
         PCKthres=[5,10,20,30,40,50]
         PCKAll=[]
-        # for predIdx in range(y_pred.shape[0]):
-        for predIdx in range(y_pred.shape[0]):
-            if(y_test[predIdx].all!=0):
-                PCKresult=[]
-                # print('PCK idx',str(predIdx))
-                for threshold in PCKthres:
-                    PCKkpsum=0
-                    # print('thres',str(threshold))
-                    for keypointIdx in range(19):
-                        PCK=getPCK(y_pred[predIdx],y_test[predIdx],keypointIdx,frame=seqLen,threshold=threshold)
-                        PCKkpsum+=PCK
-                        # print(PCK)
-                    PCKkpsum=PCKkpsum/19
-                    PCKresult.append(PCKkpsum)
-                print('PCK avg idx',str(predIdx))
-                print(PCKresult)
-                PCKAll.append(PCKresult)
-        for thresholdIndex in range(len(PCKthres)):
-            print('avg '+str(PCKthres[thresholdIndex]))
+        if False:
+            # for predIdx in range(y_pred.shape[0]):
+            for threshold in PCKthres:
+                PCKkp=[]
+                for keypointIdx in range(19):
+                    PCKdata=[]
+                    for predIdx in range(y_pred.shape[0]):
+                        if(y_test[predIdx].all!=0):
+                            PCK=getPCK(y_pred[predIdx],y_test[predIdx],keypointIdx,frame=seqLen,threshold=threshold)
+                            PCKdata.append(PCK)
+                    PCKkp.append(PCKdata)
+                PCKAll.append(PCKkp)
+        if False:
+            for threshold in PCKthres:
+                sum=0
+                for keypointIdx in range(19):
+                    sumdata=0
+                    validLen=0
+                    for predIdx in range(y_pred.shape[0]):
+                        if(y_test[predIdx].all!=0):
+                            # sumdata+=PCKAll[thresholdIndex][keypointIdx][predIdx]
+                            sumdata+=getPCK(y_pred[predIdx],y_test[predIdx],keypointIdx,frame=seqLen,threshold=threshold)
+                            validLen+=1
+                    print(threshold,'avg PCK kp',keypointIdx,' idx',parseDecimal(sumdata/validLen,4))
+                    sum+=sumdata/validLen
+                print('avg '+str(threshold))
+                print(parseDecimal(sum/19,4))
+        
+        keypointPCK=[0,0,0,0,0,0]
+        for keypointIdx in range(19):
             sum=0
-            for each in PCKAll:
-                sum+=each[thresholdIndex]
-            print(sum/len(PCKAll))
+            thresholdPCK=[]
+            for threshold in PCKthres:
+                sumdata=0
+                validLen=0
+                for predIdx in range(y_pred.shape[0]):
+                    if(y_test[predIdx].all!=0):
+                        # sumdata+=PCKAll[thresholdIndex][keypointIdx][predIdx]
+                        sumdata+=getPCK(y_pred[predIdx],y_test[predIdx],keypointIdx,frame=seqLen,threshold=threshold)
+                        validLen+=1
+                thresholdPCK.append((sumdata/validLen))
+            print('kp ',(keypointIdx+1),' & ',parseDecimal(thresholdPCK[0],4),"&",parseDecimal(thresholdPCK[1],4),"&",parseDecimal(thresholdPCK[2],4),"&",parseDecimal(thresholdPCK[3],4),"&",parseDecimal(thresholdPCK[4],4),"&",parseDecimal(thresholdPCK[5],4)," \\ \hline")
+            keypointPCK[0]+=thresholdPCK[0]
+            keypointPCK[1]+=thresholdPCK[1]
+            keypointPCK[2]+=thresholdPCK[2]
+            keypointPCK[3]+=thresholdPCK[3]
+            keypointPCK[4]+=thresholdPCK[4]
+            keypointPCK[5]+=thresholdPCK[5]
+        
+        print('avg & & ',parseDecimal(keypointPCK[0]/19,4),"&",parseDecimal(keypointPCK[1]/19,4),"&",parseDecimal(keypointPCK[2]/19,4),"&",parseDecimal(keypointPCK[3]/19,4),"&",parseDecimal(keypointPCK[4]/19,4),"&",parseDecimal(keypointPCK[5]/19,4)," \\ \hline")
         print(modelFileName)
         print(labels)
         print(labelsAlt)
@@ -753,7 +770,13 @@ if __name__ == "__main__":
         ax2=fig.add_subplot(gs[1,:])
         x_values=[[] for i in range(64)]
         y_values=[[] for i in range(64)]
-
+        ln1, = plt.plot([], [], 'ro')
+        ln2, = plt.plot([], [], 'ro')
+        ln = [ln1, ln2]
+        def init():
+            plt.setp(ax2,xlabel="Frame",ylabel="Amplitude(dB)")
+            ax2.set_ylim([-10, +40])
+            return ln
         def updatefig(i):
 
             global y_pred
@@ -779,22 +802,22 @@ if __name__ == "__main__":
 
             
             # Plot 3D Pose
-            poses_3dFromImage=PAMtoPose(y_pred[checkIndex][poseIdx].reshape(3,19,19))
+            poses_3dFromCSI=PAMtoPose(y_pred[checkIndex][poseIdx].reshape(3,19,19))
 
-            edgesFromImage = (Plotter3d.SKELETON_EDGES + 19 * np.arange(poses_3dFromImage.shape[0]).reshape((-1, 1, 1))).reshape((-1, 2))
+            edgesFromCSI = (Plotter3d.SKELETON_EDGES + 19 * np.arange(poses_3dFromCSI.shape[0]).reshape((-1, 1, 1))).reshape((-1, 2))
             canvas_3d = np.zeros((450, 450, 3), dtype=np.uint8)
             plotter = Plotter3d(canvas_3d.shape[:2])
-            plotter.plot(canvas_3d, poses_3dFromImage, edgesFromImage)
+            plotter.plot(canvas_3d, poses_3dFromCSI, edgesFromCSI)
             ax0.imshow(canvas_3d)
 
-            poses_3dFromImageGT=PAMtoPose(y_test[checkIndex][poseIdx].reshape(3,19,19))
-            # poses_3dFromImageGT[0][9]=np.array([ 0,0,0]) # right shoulder
-            # poses_3dFromImageGT[0][6]=np.array([ 0,0,0]) # left hip
+            poses_3dFromImage=PAMtoPose(y_test[checkIndex][poseIdx].reshape(3,19,19))
+            # poses_3dFromImage[0][9]=np.array([ 0,0,0]) # right shoulder
+            # poses_3dFromImage[0][6]=np.array([ 0,0,0]) # left hip
 
-            edgesFromImageGT = (Plotter3d.SKELETON_EDGES + 19 * np.arange(poses_3dFromImageGT.shape[0]).reshape((-1, 1, 1))).reshape((-1, 2))
+            edgesFromImageGT = (Plotter3d.SKELETON_EDGES + 19 * np.arange(poses_3dFromImage.shape[0]).reshape((-1, 1, 1))).reshape((-1, 2))
             canvas_3dGT = np.zeros((450, 450, 3), dtype=np.uint8)
             plotterGT = Plotter3d(canvas_3dGT.shape[:2])
-            plotterGT.plot(canvas_3dGT, poses_3dFromImageGT, edgesFromImageGT)
+            plotterGT.plot(canvas_3dGT, poses_3dFromImage, edgesFromImageGT)
             ax1.imshow(canvas_3dGT)
 
             # Plot CSI
@@ -810,5 +833,8 @@ if __name__ == "__main__":
             return ax0,ax1,ax2 
 
 
-        ani = animation.FuncAnimation(fig, updatefig, interval=100, blit=True)
+        # ani = animation.FuncAnimation(fig, updatefig, interval=100, blit=True)
+        ani = animation.FuncAnimation(fig, updatefig,interval=100,
+                    init_func=init, blit=True)
+
         plt.show()

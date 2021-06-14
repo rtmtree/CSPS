@@ -69,11 +69,9 @@ def imageIdx2csiIdx(durationSec,imageIdx,tsList,fps):
     else:
         return False
 def imageIdx2csiIndicesPrecise(durationSec,imageIdx,tsList,vidLength,lastsec):
-    print("durationSec CSI ts",(durationSec))
     durationMicroSec=durationSec*(10**6)
-    print("last CSI ts",(lastsec))
-    print("durationMicroSec CSI ts",(durationMicroSec))
     offsetTime= lastsec - durationMicroSec
+    print("last CSI ts",(lastsec))
     print("offsetTime",offsetTime)
     timeInVid= ((imageIdx+1)/vidLength) * durationMicroSec
     prevTimeInVid= ((imageIdx)/vidLength) * durationMicroSec
@@ -128,11 +126,10 @@ with open(path+'extrinsics.json','r') as f:
     
 
 # labels=['02','03','04','05','07','08','09','10','11']
-# labels=['09']
-labels=['22']
+labels=['03']
 
 for label in labels:
-    filePath = path+'raw_data/CSI'+label+'.csv'
+    filePath = path+'raw_data/'+label+'.csv'
 
     fileLastsec=pd.read_csv(filePath)
     curTS = fileLastsec['local_timestamp']
@@ -174,7 +171,7 @@ for label in labels:
         pose3D_value=[]
         csi_value=[]
 
-        vidFile=path+'raw_data/CSI'+label+'.MOV'
+        vidFile=path+'raw_data/'+label+'.mov'
         is_video = True
         stride = 8
         base_height=256
@@ -253,6 +250,7 @@ for label in labels:
                     print(startCSIIdx,'-',endCSIIdx)
                     print(endCSIIdx-startCSIIdx+1)
                     for k in csiIndices:
+                        print("added",parseCSI(csiList[k]))
                         if(parseCSI(csiList[k])!=False):
                             csi_value.append([tsList[k]]+parseCSI(csiList[k]))
                         else:
@@ -288,7 +286,20 @@ for label in labels:
             plt.setp(ax2, ylim=custom_ylim,xlabel="Frame",ylabel="Amplitude(dB)")
             plt.show()
 
-        print('saving')
+        print('saving',label)
+
+        for testIndx in range(len(csi_value)):
+          print(testIndx,len(csi_value[testIndx]),csi_value[testIndx][0])
+          if(len(csi_value[testIndx])!=385):
+            break
+          isFloat = True
+          for intestIndx in range(385):
+            if(isinstance(csi_value[testIndx][intestIndx], float)==False):
+              print(csi_value[testIndx][intestIndx])
+              break
+          if isFloat==False:
+            break
+
         csi_value=np.array(csi_value)
         pose3D_value=np.array(pose3D_value)
         # pose3D_value=np.array(pose3D_value)

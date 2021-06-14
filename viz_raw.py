@@ -62,13 +62,13 @@ def parseCSI(csi):
         return False
 
 
-label='10'
+label='01'
 withPose = True
 
-csiFilePaths = ['raw_data/CSI'+label+'.csv']
-vidFilePaths = ['raw_data/CSI'+label+'.mov']
+csiFilePaths = ['raw_data/'+label+'.csv']
+vidFilePaths = ['raw_data/'+label+'.mov']
 if withPose:
-    poseFilePaths = ['data/parsedPose3D'+label+'.csv']
+    poseFilePaths = ['data/Pose3D'+label+'.csv']
     poseList = pd.read_csv(poseFilePaths[0],delimiter=',',header=None).values
 
 # csiFilePaths = ['test4.csv']
@@ -131,7 +131,7 @@ if True: # plot pose3D
             plt.close(fig)
 
         frame = vid.get_data(imageIdx)
-        ax0.imshow(frame)    
+        ax1.imshow(frame)    
 
         if withPose:
             poseIdx = imageIdx

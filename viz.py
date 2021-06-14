@@ -14,20 +14,41 @@ import cv2
 from modules.inference_engine_pytorch import InferenceEnginePyTorch
 # from modules.parse_poses import parse_poses
 from functions.csi_util import rawCSItoAmp,imageIdx2csiIndices_timestamp,samplingCSI,filterNullSC,featureEngineer
+stand3dmatrix = np.array(
+            [[[  17.793797   ,-147.97356   ,  147.04082   ],
+            [  10.467414   ,-161.14389   ,  160.92406   ],
+            [  15.775149   ,-143.2878    ,   99.19944   ],
+            [  26.34641    ,-150.5476    ,  146.2604    ],
+            [  31.166206   ,-155.43958   ,  119.391556  ],
+            [  27.480389   ,-158.90024   ,  102.42989   ],
+            [  21.38687    ,-150.89978   ,   94.70287   ],
+            [  21.46943    ,-153.1436    ,   57.474857  ],
+            [  19.946053   ,-151.5097    ,   21.78808   ],
+            [   8.3965435  ,-150.06699   ,  147.06216   ],
+            [   0.6513193  ,-152.40784   ,  121.6008    ],
+            [  -1.6908724  ,-159.19742   ,  104.371     ],
+            [   3.377078   ,-146.47162   ,  101.29445   ],
+            [   1.7780559  ,-149.1533    ,   65.287445  ],
+            [  -0.74428445 ,-142.35242   ,   32.657227  ],
+            [  13.069774   ,-160.25378   ,  160.9427    ],
+            [  19.783405   ,-152.43784   ,  157.54123   ],
+            [  10.242576   ,-164.34209   ,  161.9919    ],
+            [  10.958148   ,-156.61496   ,  162.87784   ]]]
+        )
 
-label='20'
+label='01'
 withVid = True
 
 
-csiFilePaths = ['data/parsedCSI'+label+'.csv']
-poseFilePaths = ['data/parsedPose3D'+label+'.csv']
+csiFilePaths = ['data/CSI'+label+'.csv']
+poseFilePaths = ['data/Pose3D'+label+'.csv']
 
 csiList = pd.read_csv(csiFilePaths[0],delimiter=',',header=None).values
 poseList = pd.read_csv(poseFilePaths[0],delimiter=',',header=None).values
 startFrom=0
 
 if withVid:
-    vidFilePaths = ['raw_data/CSI'+label+'.mov']
+    vidFilePaths = ['raw_data/'+label+'.mov']
     vid = imageio.get_reader(vidFilePaths[0],  'ffmpeg')
     meta_data=vid.get_meta_data()
     duration_in_sec = meta_data['duration']
