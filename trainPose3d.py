@@ -34,15 +34,16 @@ from math import sqrt, atan2 ,isnan
 # labels=['02','03','04','05','07','09','10','11']
 # labels=['35']
 # labels=['35']
-labels=['02','01','03']
-labelsAlt=[]
+# labels=['02','01','03']
+labels=['02','01']
+labelsAlt=['03']
 # labelsAlt=['02']
 # isActSDthreshold=150
 isActSDthreshold=120
 # isActSDthreshold=20
 sliceData=True
-seqLen=10
-epoch=500
+seqLen=15
+epoch=1000
 
 runTrain = True
 runPCK = True

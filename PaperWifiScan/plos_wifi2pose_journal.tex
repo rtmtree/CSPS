@@ -229,7 +229,7 @@
 	\end{flushleft}
 	% Please keep the abstract below 300 words
 	\section*{Abstract}
-	WiFi human sensing is being challenged by researchers continuously e.g. Activity Classification, Localization and etc. However, we believed WiFi can do more. In this paper, we paired WiFi data to human pose to create a mapping rule from WiFi to 3D human pose. we strengthened WiFi signal with 2 directional external antennae. After gathering WiFi variation and videos from closed environments and extracting 3D human pose from the videos, we applied machine learning to merge them. We used LSTM to the framework since we know WiFi data tells more with its sequence. So, we are to map a sequence of poses to a sequence of WiFi snapshots instead of one-to-one like others which makes this called ``Moving Pose Estimation''. we tested with newly collected data sizing more than 100,000 frames of sequences. To evaluate the result, we compared annotated poses with predicted poses and summarized their distance error which finally resulted as that it is possible to extract a moving human pose from WiFi.
+	WiFi human sensing is being challenged by researchers continuously e.g. Activity Classification, Localization and etc. However, we believed WiFi can do more. In this paper, we paired WiFi data to human pose to create a mapping rule from WiFi to 3D human pose. we strengthened WiFi signal with 2 directional external antennae. After gathering WiFi variation and videos from closed environments and extracting 3D human pose from the videos, we applied machine learning to merge them. We used Long-short term memory (LSTM) to the framework since we know WiFi data tells more with its sequence. So, we are to map a sequence of poses to a sequence of WiFi snapshots instead of one-to-one like others which makes this called ``Moving Pose Estimation''. we tested with newly collected data sizing more than 100,000 frames of sequences. To evaluate the result, we compared annotated poses with predicted poses and summarized their distance error which finally resulted as that it is possible to extract a moving human pose from WiFi.
 	
 
 	
@@ -237,7 +237,7 @@
 	
 	% Use "Eq" instead of "Equation" for equation citations.
 	\section*{Introduction}
-	Wi-Fi is one of the most common network mediums nowadays. Pervasively, it is used for establishing a wireless network to connect to the internet. But, there are still many more functions Wi-Fi is good at. Wi-Fi can also be applied in fields beside connecting to the internet according to its stability being upgraded continuously. Decent Wi-Fi connectivity can extract more data other than the data to be transmitted like concentration, speed, obstacle between the transmission. Those can be composed to be many useful applications like Localization, Activity classification and etc.
+	Wi-Fi is one of the most common network mediums nowadays. Pervasively, it is used for establishing a wireless network to connect to the internet. But, there are still many more functions Wi-Fi is good at. Wi-Fi can also be applied in fields beside connecting to the internet according to its stability being upgraded continuously. Decent Wi-Fi connectivity can extract more data other than the data to be transmitted like concentration, speed, obstacle between the transmission. Those can be composed to be many useful applications like Localization, Activity Classification and etc.
 	
 	
 	Camera is a very good tool for monitoring things and is being used as a very effective data collector for mapping to the ground truth to create many popular machine-learning-based usable models like Pose estimation, Text segmentation, Object detection and many more. However, camera may be unavoidably judged as a serious privacy infringement since the data obtained like photos or videos are too clear and possess too much information that might be used in a bad way.
@@ -248,7 +248,7 @@
 	
 	Actually, there are other existing ways for obtaining the CSI. One is from a ubiquitously used microprocessor, ESP32. which is still not much explored in Wi-Fi exploiting field. It is simple to implement and can be easily integrated with other tools in many platforms due to its massively produced external tools. 
 	
-	Human pose estimation is one of the most popular topics in machine-learning-based field. It can be used for visualization directly and also applied for further applications like Game-controlling, Activity classification, Violence detection and many more. Most of the models extract human pose from videos which are taken from camera which conduct privacy issues like statement above. We are expecting to extract human pose from Wi-Fi CSI to solve the issue. So, this paper proposes a machine-learning-based model to create a mapping rule from Wi-Fi CSI to 3D moving human pose estimation by using ESP32.
+	Human pose estimation is one of the most popular topics in machine-learning-based field. It can be used for visualization directly and also applied for further applications like Game-controlling, Activity Classification, Violence Detection and many more. Most of the models extract human pose from videos which are taken from camera which conduct privacy issues like statement above. We are expecting to extract human pose from Wi-Fi CSI to solve the issue. So, this paper proposes a machine-learning-based model to create a mapping rule from Wi-Fi CSI to 3D moving human pose estimation by using ESP32.
 	
 	
 	\section*{Background}
@@ -270,14 +270,14 @@
 	
 	
 	\subsection*{CSI data}\label{CSI}
-	As mentioned in \nameref{wifi} that data propagating to the receiver while touching surrounding environment, the CSI is a variation of the data. The CSI can  be found at both sender and receiver since receiver may transmit data back. In this paper, we consider to mainly use CSI at the transmitter. Let the sender use the modulation method of 16-quadrature amplitude modulation (16-QAM) which one carrier can carry 4 bits. When the sender needs to send a `1111', the modulation returns $x=1+1i$. Then, transmit to the receiver. At the receiver, let the obtained data is $y=0.8+0.9i$. So, the CSI can be computed by the variation $h=y/x=0.2+3.4i$.
+	As mentioned in \nameref{wifi} that data propagating to the receiver while touching surrounding environment, the CSI is a variation of the data. The CSI can  be found at both sender and receiver since receiver may transmit data back. Let the sender use the modulation method of 16-quadrature amplitude modulation (16-QAM) which one carrier can carry 4 bits. When the sender needs to send a `1111', the modulation returns $x=1+1i$. Then, transmit to the receiver. At the receiver, let the obtained data is $y=0.8+0.9i$. So, the CSI can be computed by the variation $h=y/x=0.2+3.4i$.
 	
 	Human body is literally water which reflect radio wave like Wi-Fi. \cite{wangF}, \cite{liuJ} and \cite{chowdhuryTZ} have proven that human body can affect the CSI.
 	
 	\subsubsection*{ESP32}\label{ESP32}
 	ESP32 is a very popular single-board computer (SBC). With its affordable price and many available additional tools, ESP32 is commonly used in Internet of Things field. Moreover, it can be applied in research field. Quantitative CSI can be obtained from Wi-Fi in ESP32 according to \cite{atifM}. The number of available subcarriers in ESP32 is 64.
 	
-	According to the detail about Wi-Fi mentioned in \nameref{wifi}, the Wi-Fi in ESP32 has some limitation. It supports only 2.4GHz frequency and can be set only one channel over a connection. The bandwidth of each channel is 22MHz. The CSI can be both obtain from Access point (AP) and Station (STA) as shown in Fig~\ref{fig:ESP32CSI01}.
+	According to the detail about Wi-Fi mentioned in \nameref{wifi}, the Wi-Fi in ESP32 has some limitation. It supports only 2.4GHz frequency and can be set only one channel over a connection. The bandwidth of each channel is 22MHz. The CSI can be both obtain from Access point (AP) and Station (STA) as shown in Fig~\ref{fig:ESP32CSI01}.  In this paper, we consider to mainly use CSI at the AP.
 	The frequency of each channel is as 802.11 standard.
 	
 	
@@ -309,7 +309,7 @@
 	Other famous proposed works like \cite{wangF} \cite{liuJ} and \cite{hernandezSM} focus on line-of-sight (LOS) in between AP and STA while our work uses 2 directional Wi-Fi antennae and focus on reflection from human body as shown in Fig~\ref{fig:ESP32CSI02} on the left.
 	
 	
-	The reason we named ``Moving Pose Estimation" instead of ``Pose Estimation" is that CSI is not only affected by human body but mainly by overall environment. This means that 2 corresponding human poses can result obviously different CSIs if the environment around are not exactly the same as shown in Fig~\ref{fig:ESP32CSI02}.
+	The reason we named ``Moving Pose Estimation" instead of ``Pose Estimation" is that CSI is not only affected by human body but mainly by overall environment. This means that 2 identical human poses can result obviously different CSIs if the environment around are not exactly the same as shown in Fig~\ref{fig:ESP32CSI02}.
 	
 	
 	So, the definite detection of human standing still in every environment is nearly impossible since the CSI of that situation may be found exactly matched to a CSI of the environment that a big bottle of water placed in front of ESP32.
@@ -340,7 +340,7 @@
 	\subsubsection*{CSI Resampling}
 	
 	
-	As mentioned in \nameref{ESP32}, there are 64 subcarriers in CSI data from ESP32 but there are only 52 those are usable while the rest are null. So, we can construst a tensor of $1 \times 52$ to represent each CSI. We are to map CSI from the ESP32 to 3D human pose annotation from a camera. The sampling rate of the camera are set to 30Hz. So, we have 30 human pose annotations for one second. For the ESP32, the sampling rate is originally unpredictable and not constant but it is running around 120Hz. So we do a process called ``Resampling" to obtain CSI at rate 30Hz in order to synchronize timestamps to each human pose annotation.
+	As mentioned in \nameref{ESP32}, there are 64 subcarriers in CSI data from ESP32 but there are only 52 those are usable while the rest are null. So, we can construst a tensor of $1 \times 52$ to represent each CSI. We are to map CSI from the ESP32 to 3D human pose annotation from a camera. The sampling rate of the camera are set to 30Hz. So, we have 30 human pose annotations for one second. For the ESP32, the sampling rate is originally unpredictable and not constant but it is running around 120Hz. So, we do a process called ``Resampling" to obtain CSI at rate 30Hz in order to synchronize timestamps to each human pose annotation.
 	
 	An example of CSI Resampling is shown in Fig~\ref{fig:CSIResampling01}. The top graph shows that the the original CSI is logged unstably. The bottom one is to pick a timestamp at rate 30Hz and calculated each with 2 data at the closet timestamps from the original with a simple mathamatical weight equation as in Eq.~\ref{eq:CSIResampling01} in order to predict CSI at timestamp corresponding to each human pose annotation.
 	
@@ -431,9 +431,7 @@
 	Let $\sigma$ be an adjustable window size. $\sigma$ size of $D$ are fed to the model solely. So,  $\sigma \le n$. And, Let $m$ be the number of feeding iteration, $m = \lfloor \frac{n}{\sigma} \rfloor$.
 	
 	
-	\subsubsection*{Forming Network Layer}
-	
-	The network swallow $m$ training data as an input, where each is a sequencial set of $(C_t,P_t)$ at a corresponding timestamp with size $\sigma$.
+	The training model swallow $m$ training data as an input, where each is a sequencial set of $(C_t,P_t)$ at a corresponding timestamp with size $\sigma$.
 	Let $\Gamma$ be a representation of each sequencial set.
 	
 	\begin{equation}
@@ -450,7 +448,7 @@
 	We may extract feature from the CSI before feed it to the model. Or ignore it and feed original CSI to the model directly.
 	\fi
 	
-	\paragraph*{CSI Feature Engineering}
+	\subsubsection*{CSI Feature Engineering}
 	As mentioned in \nameref{concept}, CSI ($C$) value implies environment where signal propagating. So, we need to ignore it and focus only on its change in order to universalize the circumstance. It means CSI variousity makes the model not to be applicable in every environment. To solve it, we simply sequentially substract $C_u$  in each $\Gamma$ backward to preserve only how CSI changes over each sequence by the following equation,
 	
 	
@@ -462,12 +460,12 @@
 	\label{eq:CSIFeatureEn}
 	\end{equation}
 	
-	
+	\subsubsection*{Forming Network Layer}
 	
 	\paragraph*{CSI Sequence to Pose Sequence (CSPS)}
 	
 	The summation of layers is shown in Table~\ref{table:CSPS}.
-	It is designed to shape a CSI Sequence ( $\sigma \times 52$ tensor) to a predicted Pose Sequence ( $\sigma \times 3\times 19\times 19$ tensor).
+	It is designed to shape a CSI Sequence ( $\sigma \times 52$ tensor) to a predicted sequence of pose ( $\sigma \times 3\times 19\times 19$ tensor).
 	
 	\begin{table}[!ht]
 		\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
@@ -562,7 +560,7 @@
 	An evaluation is achieved   by the algorithm written in Python 3.8. The code is available on 	Github$\footnote[1]{https://github.com/rtmtree/CSPS}$.
 	An environment under the evaluation is MacBook Pro 2016, 2.6 GHz i7 processor, 16 GB of RAM.
 	
-		The visual examples are shown in \ref{fig:PREDANNO01} and \ref{fig:PREDANNO01} where the top-left is the predicted pose, the top-right is the annotated pose and bottom is the resampled WiFi CSI that the prediction took as an input. Note that the predicted pose and the annotated are actually moving in range of $\sigma$.
+		The visual examples are shown in \ref{fig:PREDANNO01} and \ref{fig:PREDANNO02} where the top-left is the predicted pose, the top-right is the annotated pose and bottom is the resampled WiFi CSI that the prediction took as an input. Note that the predicted  and the annotated pose are actually moving in range of $\sigma$.
 	
 	
 	\begin{figure}[htbp]
@@ -745,7 +743,7 @@ There are many soluions for extracting WiFi CSI from the ESP as mentioned in \na
 
 \subsection*{Multiple Person Pose Estimation}
 
-The model does the mapping rule from WiFi CSI with a specific dimension to human pose matrix. So, it is able to only detect single person pose in a range. The annotaions is originally result all human poses from the videos but we decided to crop it to be only one person in order to increase the precision. If we do training with multiple person pose data instead, we believe the result will be well but the more huge data collection is also needed.
+The model does the mapping rule from WiFi CSI with a specific dimension to human pose matrix. So, it is able to only detect single person pose in a range. The annotations originally result all human poses from the videos but we decided to crop it to be only one person in order to increase the precision. If we do training with multiple person pose data instead, we believe the result will be well but the more huge data collection is also needed.
 
 \subsection*{Human speed of moving to $\sigma$}
 
@@ -758,10 +756,10 @@ As the Table~\ref{table:PCKsigma15}, Table~\ref{table:PCKsigma20}, Table~\ref{ta
 	
 	After having a research, we discoverd that a variation in WiFi called WiFi CSI can tell whether the area is having an activity or moving objects. Moreoever, \cite{chowdhuryTZ}, \cite{zouH} and many other works had been done very well on detecting even what kind of activities is happening in the area. We do not believe that this is the limitation of WiFi CSI. In order to solve the above problem and prove if WiFi CSI is precise enough, we tried to overcome this by extracting a deeper information like Pose Estimation from it. 
 	
-	We controlled environments and enhanced WiFi Antennae stability as much as possible then mapped it to the Pose annotated by an existing Image to Pose Model. The result was very poor since The WiFi CSI is very vague. It penetrates through most of the things. We learned from \cite{bib20} that WiFi CSI value does not matter than its change. The works used Long-short term memory (LSTM), a neural network where focusing on sequence of the data, and obtained a very good result. 
+	We controlled environments and enhanced WiFi Antennae stability as much as possible then mapped it to the Pose annotated by an existing Image to Pose Model. The result was very poor since the WiFi CSI is very vague. It penetrates through most of the things. We learned from \cite{bib20} that WiFi CSI value does not matter than its change. The works used Long-short term memory (LSTM), a neural network where focusing on sequence of the data, and obtained a very good result. 
 	
 	
-	We applied the idea of LSTM on our work which made it not Pose Estimation but Moving-Pose Estimation instead and obtained a lot better result. Then, we adjusted the model to be suite to our type of data and did fine-tuning for the frame size to be fit the most for normal human speed of moving. So, This paper proposed a model of mapping rule that can takes a sequence of Wi-Fi circumstance as an input and return an according sequence of human pose as an output. The work can help people to monitor activity of elderlies and people who are in need of caring. Moreover as a camera is not needed, we can reduce an issue on privacy infringement and also cure the data size normal camera conducted as WiFi CSI is carrying much lower data size.
+	We applied the idea of LSTM on our work which made it not Pose Estimation but Moving Pose Estimation instead and obtained a lot better result. Then, we adjusted the model to be suite to our type of data and did fine-tuning for the frame size to be fit the most for normal human speed of moving. So, This paper proposed a model of mapping rule that can takes a sequence of WiFi circumstance as an input and return an according sequence of human pose as an output. The work can help people to monitor activity of elderlies and people who are in need of caring. Moreover as a camera is not needed, we can reduce an issue on privacy infringement and also cure the data size normal camera conducted as WiFi CSI is carrying much lower data size.
 	The result of various fine-tuned environments and parammeters is acceptable and shown in \nameref{result}.
 	
 

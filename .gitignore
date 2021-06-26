@@ -8,3 +8,4 @@ get_csi/
 __pycache__/
 models/
 human-pose-estimation-3d.pth
+result.log

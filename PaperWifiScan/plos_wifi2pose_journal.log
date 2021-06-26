@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.1.9)  14 JUN 2021 13:35
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.1.9)  14 JUN 2021 14:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -689,65 +689,66 @@ Package pdftex.def Info: STEP06.png  used on input line 409.
 <VIS02.png, id=138, 640.3925pt x 479.7925pt>
 File: VIS02.png Graphic file (type png)
 <use VIS02.png>
-Package pdftex.def Info: VIS02.png  used on input line 512.
+Package pdftex.def Info: VIS02.png  used on input line 510.
 (pdftex.def)             Requested size: 128.07622pt x 95.95679pt.
 <VIS03.png, id=139, 640.3925pt x 481.8pt>
 File: VIS03.png Graphic file (type png)
 <use VIS03.png>
-Package pdftex.def Info: VIS03.png  used on input line 517.
+Package pdftex.def Info: VIS03.png  used on input line 515.
 (pdftex.def)             Requested size: 128.07622pt x 96.35829pt.
- [8] [9 <./VIS02.png> <./VIS03.png>] (/usr/local/texlive/2019/texmf-dist/tex/la
-tex/ucs/data/uni-0.def
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/ucs/data/uni-0.def
 File: uni-0.def 2013/05/13 UCS: Unicode data U+0000..U+00FF
-)
-<TESTSTEP06.png, id=165, 633.36626pt x 1366.10374pt>
+) [8] [9 <./VIS02.png> <./VIS03.png>]
+<TESTSTEP06.png, id=166, 633.36626pt x 1366.10374pt>
 File: TESTSTEP06.png Graphic file (type png)
 <use TESTSTEP06.png>
-Package pdftex.def Info: TESTSTEP06.png  used on input line 554.
+Package pdftex.def Info: TESTSTEP06.png  used on input line 552.
 (pdftex.def)             Requested size: 126.671pt x 273.21591pt.
-
-[10 <./TESTSTEP06.png>]
-<PREDANNO01.png, id=179, 639.38875pt x 473.77pt>
+<PREDANNO01.png, id=170, 639.38875pt x 473.77pt>
 File: PREDANNO01.png Graphic file (type png)
 <use PREDANNO01.png>
-Package pdftex.def Info: PREDANNO01.png  used on input line 569.
+Package pdftex.def Info: PREDANNO01.png  used on input line 567.
 (pdftex.def)             Requested size: 127.87547pt x 94.75232pt.
-<PREDANNO02.png, id=180, 637.38126pt x 478.78876pt>
+<PREDANNO02.png, id=171, 637.38126pt x 478.78876pt>
 File: PREDANNO02.png Graphic file (type png)
 <use PREDANNO02.png>
-Package pdftex.def Info: PREDANNO02.png  used on input line 574.
+Package pdftex.def Info: PREDANNO02.png  used on input line 572.
 (pdftex.def)             Requested size: 127.47398pt x 95.75604pt.
-<ANTENSETUP01.jpg, id=186, 1483.5425pt x 1112.155pt>
+ [10 <./TESTSTEP06.png>] [11 <./PREDANNO01.png> <./PREDANNO02.png>]
+<ANTENSETUP01.jpg, id=195, 1483.5425pt x 1112.155pt>
 File: ANTENSETUP01.jpg Graphic file (type jpg)
 <use ANTENSETUP01.jpg>
-Package pdftex.def Info: ANTENSETUP01.jpg  used on input line 728.
+Package pdftex.def Info: ANTENSETUP01.jpg  used on input line 726.
 (pdftex.def)             Requested size: 296.70325pt x 222.42706pt.
- [11 <./PREDANNO01.png>] [12 <./PREDANNO02.png> <./ANTENSETUP01.jpg>] [13] [14]
- [15]
-(/usr/local/texlive/2019/texmf-dist/tex/latex/ucs/data/uni-32.def
-File: uni-32.def 2013/05/13 UCS: Unicode data U+2000..U+20FF
-) [16]
+ [12 <./ANTENSETUP01.jpg>]
+Overfull \vbox (4.53pt too high) has occurred while \output is active []
 
+ [13]
+[14] (/usr/local/texlive/2019/texmf-dist/tex/latex/ucs/data/uni-32.def
+File: uni-32.def 2013/05/13 UCS: Unicode data U+2000..U+20FF
+)
+[15] [16] 
 AED: lastpage setting LastPage
 [17]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 956.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 956.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 954.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 954.
  (./plos_wifi2pose_journal.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 956.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 956.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 954.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 954.
 Package rerunfilecheck Info: File `plos_wifi2pose_journal.out' has not changed.
 
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 956.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 954.
  ) 
 Here is how much of TeX's memory you used:
- 12001 strings out of 492616
- 179419 string characters out of 6129482
- 352647 words of memory out of 5000000
+ 12003 strings out of 492616
+ 179435 string characters out of 6129482
+ 349650 words of memory out of 5000000
  15575 multiletter control sequences out of 15000+600000
- 14187 words of font info for 72 fonts, out of 8000000 for 9000
+ 14238 words of font info for 73 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 42i,13n,43p,1030b,479s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,13n,43p,1055b,479s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 }</usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb>
 </usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><
@@ -766,7 +767,7 @@ ive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive
 /texmf-dist/fonts/type1/public/marvosym/marvosym.pfb></usr/local/texlive/2019/t
 exmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2019/tex
 mf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on plos_wifi2pose_journal.pdf (17 pages, 2332880 bytes).
+Output written on plos_wifi2pose_journal.pdf (17 pages, 2333781 bytes).
 PDF statistics:
  349 PDF objects out of 1000 (max. 8388607)
  287 compressed objects within 3 object streams
