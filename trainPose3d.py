@@ -35,17 +35,17 @@ from math import sqrt, atan2 ,isnan
 # labels=['35']
 # labels=['35']
 # labels=['02','01','03']
-labels=['02','01']
-labelsAlt=['03']
+labels=['05']
+labelsAlt=['04']
 # labelsAlt=['02']
 # isActSDthreshold=150
-isActSDthreshold=120
+isActSDthreshold=100
 # isActSDthreshold=20
 sliceData=True
-seqLen=15
-epoch=1000
+seqLen=10
+epoch=500
 
-runTrain = True
+runTrain = False
 runPCK = True
 runPlot = True
 

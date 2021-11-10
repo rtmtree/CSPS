@@ -116,14 +116,15 @@ def samplingCSI(csiList,csiIndices,poseList,poseIndices,paddingTo=30):
 
 def imageIdx2csiIndices_timestamp(poseIdx,poseList,csiList,skipframe=1):
     timeInPose=poseList[poseIdx][0]
+    print("timeInPose",timeInPose)
     if (poseIdx>0):
         prevTimeInPose=poseList[poseIdx-skipframe][0]
     else:
         prevTimeInPose=0
-
+    print("prevTimeInPose",prevTimeInPose)
     csiIndices=[]
     for i in range(len(csiList)):
         if(prevTimeInPose < csiList[i][0] <= timeInPose):
             csiIndices.append(i)
-    
+    print()
     return csiIndices

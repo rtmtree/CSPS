@@ -36,7 +36,7 @@ stand3dmatrix = np.array(
             [  10.958148   ,-156.61496   ,  162.87784   ]]]
         )
 
-label='01'
+label='05'
 withVid = True
 
 
@@ -81,6 +81,7 @@ if True: # plot pose3D
     def updatefig(i):
         print("updatefig",i)
         poseIdx=(i+startFrom)*skipframe
+        print("poseIdx",poseIdx)
         if (poseIdx >= len(poseList)-1):
             print('close')
             plt.close(fig)

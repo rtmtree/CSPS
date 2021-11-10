@@ -126,15 +126,12 @@ with open(path+'extrinsics.json','r') as f:
     
 
 # labels=['02','03','04','05','07','08','09','10','11']
-labels=['03']
+labels=['05']
 
 for label in labels:
     filePath = path+'raw_data/'+label+'.csv'
 
-    fileLastsec=pd.read_csv(filePath)
-    curTS = fileLastsec['local_timestamp']
-    lastsec=list(x for x in curTS)[-1]
-    print('last local_timestamp is',lastsec)
+    
     my_filter_address="7C:9E:BD:D2:D8:9C"
     PacketLength=100000
 
@@ -154,8 +151,10 @@ for label in labels:
     csiList = list(x for x in curCSI)
     curRSSI = curFile['rssi']
     rssiList=list(x for x in curRSSI)
-    curTS = curFile['local_timestamp']
-    tsList=list(x for x in curTS)
+    curTS = curFile['real_timestamp']
+    tsList=(list(x*(10**6) for x in curTS))
+    lastsec=tsList[-1]
+    print('last local_timestamp is',lastsec)
 
     if False: # plot pose3D
         fig = plt.figure()
@@ -250,11 +249,28 @@ for label in labels:
                     print(startCSIIdx,'-',endCSIIdx)
                     print(endCSIIdx-startCSIIdx+1)
                     for k in csiIndices:
-                        print("added",parseCSI(csiList[k]))
-                        if(parseCSI(csiList[k])!=False):
+                        curParseCSI=parseCSI(csiList[k])
+                        print("adding ",curParseCSI)
+                        if(curParseCSI!=False):
+                            print("len check")
+                            print(k,len(curParseCSI),tsList[k])
+                            if(len(curParseCSI)!=384):
+                                print("len not 384")
+                                continue
+                            print("isFloat check")
+                            isInt = True
+                            for l in range(384):
+                                if(isinstance(curParseCSI[l], int)==False):
+                                    print(curParseCSI[l]," is not int")
+                                    isInt = False
+                                    break
+                            if isInt==False:
+                                continue
                             csi_value.append([tsList[k]]+parseCSI(csiList[k]))
+                            print("added ",k)
                         else:
                             csi_value.append([tsList[k]]+[0 for l in range(384)])
+                            print("added ",k,'as 0s')
             else:
                 for j in range(0,64):
                     if (6<=j<32 or 33<=j<59):
@@ -288,24 +304,12 @@ for label in labels:
 
         print('saving',label)
 
-        for testIndx in range(len(csi_value)):
-          print(testIndx,len(csi_value[testIndx]),csi_value[testIndx][0])
-          if(len(csi_value[testIndx])!=385):
-            break
-          isFloat = True
-          for intestIndx in range(385):
-            if(isinstance(csi_value[testIndx][intestIndx], float)==False):
-              print(csi_value[testIndx][intestIndx])
-              break
-          if isFloat==False:
-            break
-
         csi_value=np.array(csi_value)
         pose3D_value=np.array(pose3D_value)
         # pose3D_value=np.array(pose3D_value)
         print(csi_value.shape)
         print(pose3D_value.shape)
-        np.savetxt(path+'data/parsedCSI'+label+'.csv', csi_value ,delimiter=',',fmt='%1.6f')
-        print('saved',path+'data/parsedCSI'+label+'.csv')
-        np.savetxt(path+'data/parsedPose3D'+label+'.csv', pose3D_value,delimiter=',',fmt='%1.6f')
-        print('saved',path+'data/parsedPose3D'+label+'.csv')
+        np.savetxt(path+'data/CSI'+label+'.csv', csi_value ,delimiter=',',fmt='%1.6f')
+        print('saved',path+'data/CSI'+label+'.csv')
+        np.savetxt(path+'data/Pose3D'+label+'.csv', pose3D_value,delimiter=',',fmt='%1.6f')
+        print('saved',path+'data/Pose3D'+label+'.csv')
