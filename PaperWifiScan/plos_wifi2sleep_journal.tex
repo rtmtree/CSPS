@@ -239,12 +239,7 @@
 	\section*{Introduction}
 	Wi-Fi is one of the most common network mediums nowadays. Pervasively, it is used for establishing a wireless network to connect to the internet. But, there are still many more functions Wi-Fi is good at. Wi-Fi can also be applied in fields beside connecting to the internet according to its stability being upgraded continuously. Decent Wi-Fi connectivity can extract more data other than the data to be transmitted like concentration, speed, obstacle between the transmission. Those can be composed to be many useful applications like Localization, Activity Classification and etc.
 	
-	
-	Camera is a very good tool for monitoring things and is being used as a very effective data collector for mapping to the ground truth to create many popular machine-learning-based usable models like Pose estimation, Text segmentation, Object detection and many more. However, camera may be unavoidably judged as a serious privacy infringement since the data obtained like photos or videos are too clear and possess too much information that might be used in a bad way.
-	
-	
-	There are many works tried to extract those extractable features like videos do with Wi-Fi. But, they are mostly working with very specific tools and Network Interface Card (NIC) connected to a laptop running Linux that is currently one of the ways allowing to obtain fine-grain Channel State Information (CSI), the descriptive data of the  Wi-Fi propagating in that environment. Those limitations significantly decrease simplicity of implementation. It is hard for public demonstration and intregration with many updated tools in operating systems like Windows or OSX.
-	
+	In order to achieve the applications like mentioned, There are many works tried to extract deep features from Wi-Fi. But, they are mostly working with very specific tools and Network Interface Card (NIC) connected to a laptop running Linux that is currently one of the ways allowing to obtain fine-grain Channel State Information (CSI), the descriptive data of the  Wi-Fi propagating in that environment. Those limitations significantly decrease simplicity of implementation. It is hard for public demonstration and integration with many updated tools.
 	
 	Actually, there are other existing ways for obtaining the CSI. One is from a ubiquitously used microprocessor, ESP32. which is still not much explored in Wi-Fi exploiting field. It is simple to implement and can be easily integrated with other tools in many platforms due to its massively produced external tools. 
 	
@@ -252,21 +247,18 @@
 	Human pose estimation is one of the most popular topics in machine-learning-based field. It can be used for visualization directly and also applied for further applications like Game-controlling, Activity Classification, Violence Detection and many more. Most of the models extract human pose from videos which are taken from camera which conduct privacy issues like statement above. We are expecting to extract human pose from Wi-Fi CSI to solve the issue. So, this paper proposes a machine-learning-based model to create a mapping rule from Wi-Fi CSI to 3D moving human pose estimation by using ESP32.
 	\fi
 	
-	Human sleep stage Monitoring is being observed for a whlie and recently applied on commercial products. As sleeping is significant to all persons and can lead to many serious deceases, people are more concerned on utilizing their sleepness with using devices those are able to inform them their sleep information e.g. smartwatches, smart mattress, smart rings and etc.
-	But, those devices are considerably affect sleepness since it needs a contact to users. 
+	Human sleep stage monitoring is being observed for a whlie and recently applied on commercial products. As sleeping is significant to all persons and can lead to many serious deceases, people are more concerned on utilizing their sleepness with using devices those are able to inform them their sleep information e.g. smartwatches, smart mattress, smart rings and etc.
+	But, those devices are considerably affect sleepness since it needs to contact with users' bodies. 
 
-	So, this paper proposes a contactless sleep monitoring with Wi-Fi CSI from ESP32 where users can applied with easy-to-find microprocessor and monitor their sleep stage without contacting to their body.
-	This allows sleep monitoring to be practical for other researchers and those who want to utilize their sleep.
+	So, this paper proposes a contactless sleep monitoring with Wi-Fi CSI from ESP32 where users can applied with easy-to-find microprocessor and monitor their sleep stage without contacting to their bodies.
+	This allows sleep monitoring to be practical for other researchers and those who want to utilize their sleepness.
 	
 
 
 	\section*{Background}
 	
-	\subsection*{Pose Estimation}
-	
-	There are many machine-learning-based human body pose estimation tools proposed and available online. Those can be found in both 2D and 3D. In our paper, we choose a Light-weight 3D pose estimation to create annotations due to its simplicity and the hypothesis that 3D should suit the most in our work. The project can be found at Github-Lw3d$\footnote[1]{https://github.com/Daniil-Osokin/lightweight-human-pose-estimation-3d-demo.pytorch}$  and is based on \cite{bib4} and \cite{bib5}. Its job is to simply create 3D human pose annotation from videos. Then, feed to our works training process as annotations.
-
-	.
+	\subsection*{Human sleep stage monitoring}
+	Human sleep stage monitoring is widely used as stated above. There are many types of staging. But most common and what we chose are stages of 4 which are Wake, Light Sleep, Deep Sleep, REM (Rapid Eye Movement). Many tools can inform this information in time sequence and various at accuracy. We use .... as our ground truth as it is the most accurate among others (ref). The ..... can log stages with resolution of 30 seconds so, we consider a sequence of 30-second stage with a sequence of 30-second CSI data from Wi-Fi.
 	
 	
 	\subsection*{Wi-Fi}\label{wifi}
@@ -318,20 +310,15 @@
 	Other famous proposed works like \cite{wangF} \cite{liuJ} and \cite{hernandezSM} focus on line-of-sight (LOS) in between AP and STA while our work uses 2 directional Wi-Fi antennae and focus on reflection from human body as shown in Fig~\ref{fig:ESP32CSI02} on the left.
 	
 	
-	The reason we named ``Moving Pose Estimation" instead of ``Pose Estimation" is that CSI is not only affected by human body but mainly by overall environment. This means that 2 identical human poses can result obviously different CSIs if the environment around are not exactly the same as shown in Fig~\ref{fig:ESP32CSI02}.
+	The CSI is not only affected by human body but mainly by overall environment. This means that 2 identical human poses can result obviously different CSIs if the environment around are not exactly the same as shown in Fig~\ref{fig:ESP32CSI02}.
 	
 	
 	So, the definite detection of human standing still in every environment is nearly impossible since the CSI of that situation may be found exactly matched to a CSI of the environment that a big bottle of water placed in front of ESP32.
 	In short, if it does not move, we do not know if it is a human.
 	
-	Meanwhile, the moving pose is totally different because we focus on its change instead. The example of mapping CSI's change to Activity Classification can be found in \cite{chowdhuryTZ} and \cite{zouH}. Our work does likewise but focusing on Pose Estimation instead of Activity Classification.
+	Meanwhile, the moving pose is totally different because we focus on its change instead. The example of mapping CSI's change to Activity Classification can be found in \cite{chowdhuryTZ} and \cite{zouH}. Our work does likewise but focusing on Sleep stage monitoring instead of Activity Classification.
 	
-	In different environment, the CSIs are different. But, the corresponding moving pose may affect to the same changing pattern of CSI. This hypothesis is investigated in the upcoming parts.
-	
-	
-	
-	
-	
+	In different environment, the CSIs are different. But, the corresponding changing of sleep stage may affect to the same changing pattern of CSI. This hypothesis is investigated in the upcoming parts.
 	
 	All steps of training method is shown in Fig~\ref{fig:TRAINSTEP}. 
 	
@@ -349,9 +336,10 @@
 	\subsubsection*{CSI Resampling}
 	
 	
-	As mentioned in \nameref{ESP32}, there are 64 subcarriers in CSI data from ESP32 but there are only 52 those are usable while the rest are null. So, we can construst a tensor of $1 \times 52$ to represent each CSI. We are to map CSI from the ESP32 to 3D human pose annotation from a camera. The sampling rate of the camera are set to 30Hz. So, we have 30 human pose annotations for one second. For the ESP32, the sampling rate is originally unpredictable and not constant but it is running around 120Hz. So, we do a process called ``Resampling" to obtain CSI at rate 30Hz in order to synchronize timestamps to each human pose annotation.
+	As mentioned in \nameref{ESP32}, there are 64 subcarriers in CSI data from ESP32 but there are only 52 those are usable while the rest are null. So, we can construst a tensor of $1 \times 52$ to represent each CSI. We are to map CSI from the ESP32 to human sleep stage from ........ The sampling rate of the ..... can log sleep stage once 30 seconds 
+	 since its limitation. So, we have one sleep stage annotations for 30 seconds. For the ESP32, the sampling rate is originally unpredictable and not constant but it is running around 120Hz. So, we do a process called ``Resampling" to obtain CSI at rate 30Hz in order to maintain the dimension of each sequence.
 	
-	An example of CSI Resampling is shown in Fig~\ref{fig:CSIResampling01}. The top graph shows that the the original CSI is logged unstably. The bottom one is to pick a timestamp at rate 30Hz and calculated each with 2 data at the closet timestamps from the original with a simple mathamatical weight equation as in Eq.~\ref{eq:CSIResampling01} in order to predict CSI at timestamp corresponding to each human pose annotation.
+	An example of CSI Resampling is shown in Fig~\ref{fig:CSIResampling01}. The top graph shows that the the original CSI is logged unstably. The bottom one is to pick a timestamp at rate 30Hz and calculated each with 2 data at the closet timestamps from the original with a simple mathematical weight equation as in Eq.~\ref{eq:CSIResampling01} in order to predict CSI at timestamp corresponding to each human pose annotation.
 	
 	\begin{equation}
 	\begin{aligned}
@@ -368,7 +356,7 @@
 		\label{fig:CSIResampling01}
 	\end{figure}
 	
-	Thus, we are able to map each CSI sample to one 3D human pose annotation at the corresponding timestamp.
+	Thus, we are able to map each CSI sequence of 30 seconds to one sleep stage annotation at the corresponding timestamp.
 	
 	
 	\subsubsection*{Pose Estimation and PAM formation}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.1.9)  14 NOV 2021 21:43
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.1.9)  23 NOV 2021 15:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -652,74 +652,74 @@ Package microtype Info: Loading generic protrusion settings for font family
  [1
 
 {/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
-<ESP32CSI01.png, id=50, 578.16pt x 674.52pt>
+<ESP32CSI01.png, id=42, 578.16pt x 674.52pt>
 File: ESP32CSI01.png Graphic file (type png)
 <use ESP32CSI01.png>
-Package pdftex.def Info: ESP32CSI01.png  used on input line 290.
+Package pdftex.def Info: ESP32CSI01.png  used on input line 288.
 (pdftex.def)             Requested size: 289.07928pt x 337.25917pt.
-<ESP32CSI03.png, id=52, 892.33376pt x 1027.84pt>
+<ESP32CSI03.png, id=44, 892.33376pt x 1027.84pt>
 File: ESP32CSI03.png Graphic file (type png)
 <use ESP32CSI03.png>
-Package pdftex.def Info: ESP32CSI03.png  used on input line 307.
+Package pdftex.def Info: ESP32CSI03.png  used on input line 305.
 (pdftex.def)             Requested size: 446.16579pt x 513.91875pt.
  [3 <./ESP32CSI01.png>]
-<TRAINSTEP06.png, id=74, 763.85374pt x 1044.90375pt>
+<TRAINSTEP06.png, id=66, 763.85374pt x 1044.90375pt>
 File: TRAINSTEP06.png Graphic file (type png)
 <use TRAINSTEP06.png>
-Package pdftex.def Info: TRAINSTEP06.png  used on input line 334.
+Package pdftex.def Info: TRAINSTEP06.png  used on input line 327.
 (pdftex.def)             Requested size: 152.76804pt x 208.97705pt.
  [4 <./ESP32CSI03.png>]
-<CSIResampling03.png, id=91, 1392.20125pt x 1039.885pt>
+<CSIResampling03.png, id=83, 1392.20125pt x 1039.885pt>
 File: CSIResampling03.png Graphic file (type png)
 <use CSIResampling03.png>
-Package pdftex.def Info: CSIResampling03.png  used on input line 360.
+Package pdftex.def Info: CSIResampling03.png  used on input line 354.
 (pdftex.def)             Requested size: 696.09892pt x 519.94122pt.
  [5 <./TRAINSTEP06.png> <./CSIResampling03.png>]
-<POSEkeypoint02.png, id=101, 201.75375pt x 340.27126pt>
+<POSEkeypoint02.png, id=93, 201.75375pt x 340.27126pt>
 File: POSEkeypoint02.png Graphic file (type png)
 <use POSEkeypoint02.png>
-Package pdftex.def Info: POSEkeypoint02.png  used on input line 372.
+Package pdftex.def Info: POSEkeypoint02.png  used on input line 366.
 (pdftex.def)             Requested size: 100.87662pt x 170.13521pt.
-<STEP06.png, id=105, 1892.06876pt x 457.71pt>
+<STEP06.png, id=97, 1892.06876pt x 457.71pt>
 File: STEP06.png Graphic file (type png)
 <use STEP06.png>
-Package pdftex.def Info: STEP06.png  used on input line 412.
+Package pdftex.def Info: STEP06.png  used on input line 406.
 (pdftex.def)             Requested size: 946.03207pt x 228.85445pt.
  [6 <./POSEkeypoint02.png> <./STEP06.png>] [7]
-<VIS02.png, id=143, 640.3925pt x 479.7925pt>
+<VIS02.png, id=137, 640.3925pt x 479.7925pt>
 File: VIS02.png Graphic file (type png)
 <use VIS02.png>
-Package pdftex.def Info: VIS02.png  used on input line 513.
+Package pdftex.def Info: VIS02.png  used on input line 507.
 (pdftex.def)             Requested size: 128.07622pt x 95.95679pt.
-<VIS03.png, id=144, 640.3925pt x 481.8pt>
+<VIS03.png, id=138, 640.3925pt x 481.8pt>
 File: VIS03.png Graphic file (type png)
 <use VIS03.png>
-Package pdftex.def Info: VIS03.png  used on input line 518.
+Package pdftex.def Info: VIS03.png  used on input line 512.
 (pdftex.def)             Requested size: 128.07622pt x 96.35829pt.
  [8 <./VIS02.png> <./VIS03.png>] (/usr/local/texlive/2019/texmf-dist/tex/latex/
 ucs/data/uni-0.def
 File: uni-0.def 2013/05/13 UCS: Unicode data U+0000..U+00FF
 )
-<TESTSTEP06.png, id=160, 633.36626pt x 1366.10374pt>
+<TESTSTEP06.png, id=153, 633.36626pt x 1366.10374pt>
 File: TESTSTEP06.png Graphic file (type png)
 <use TESTSTEP06.png>
-Package pdftex.def Info: TESTSTEP06.png  used on input line 555.
+Package pdftex.def Info: TESTSTEP06.png  used on input line 549.
 (pdftex.def)             Requested size: 126.671pt x 273.21591pt.
  [9 <./TESTSTEP06.png>]
-<PREDANNO01.png, id=174, 639.38875pt x 473.77pt>
+<PREDANNO01.png, id=168, 639.38875pt x 473.77pt>
 File: PREDANNO01.png Graphic file (type png)
 <use PREDANNO01.png>
-Package pdftex.def Info: PREDANNO01.png  used on input line 570.
+Package pdftex.def Info: PREDANNO01.png  used on input line 564.
 (pdftex.def)             Requested size: 127.87547pt x 94.75232pt.
-<PREDANNO02.png, id=175, 637.38126pt x 478.78876pt>
+<PREDANNO02.png, id=169, 637.38126pt x 478.78876pt>
 File: PREDANNO02.png Graphic file (type png)
 <use PREDANNO02.png>
-Package pdftex.def Info: PREDANNO02.png  used on input line 575.
+Package pdftex.def Info: PREDANNO02.png  used on input line 569.
 (pdftex.def)             Requested size: 127.47398pt x 95.75604pt.
-<ANTENSETUP01.jpg, id=181, 1483.5425pt x 1112.155pt>
+<ANTENSETUP01.jpg, id=175, 1483.5425pt x 1112.155pt>
 File: ANTENSETUP01.jpg Graphic file (type jpg)
 <use ANTENSETUP01.jpg>
-Package pdftex.def Info: ANTENSETUP01.jpg  used on input line 729.
+Package pdftex.def Info: ANTENSETUP01.jpg  used on input line 723.
 (pdftex.def)             Requested size: 296.70325pt x 222.42706pt.
  [10 <./PREDANNO01.png>] [11 <./PREDANNO02.png> <./ANTENSETUP01.jpg>] [12] [13]
  [14]
@@ -729,22 +729,22 @@ File: uni-32.def 2013/05/13 UCS: Unicode data U+2000..U+20FF
 
 AED: lastpage setting LastPage
 [16]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 957.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 957.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 951.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 951.
  (./plos_wifi2sleep_journal.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 957.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 957.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 951.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 951.
 Package rerunfilecheck Info: File `plos_wifi2sleep_journal.out' has not changed
 .
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 957.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 951.
  ) 
 Here is how much of TeX's memory you used:
- 12000 strings out of 492616
- 179425 string characters out of 6129482
+ 12001 strings out of 492616
+ 179428 string characters out of 6129482
  352651 words of memory out of 5000000
  15575 multiletter control sequences out of 15000+600000
- 14187 words of font info for 72 fonts, out of 8000000 for 9000
+ 14238 words of font info for 73 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  42i,13n,43p,1045b,479s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
@@ -765,10 +765,10 @@ ive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive
 /texmf-dist/fonts/type1/public/marvosym/marvosym.pfb></usr/local/texlive/2019/t
 exmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2019/tex
 mf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on plos_wifi2sleep_journal.pdf (16 pages, 2331434 bytes).
+Output written on plos_wifi2sleep_journal.pdf (16 pages, 2331301 bytes).
 PDF statistics:
- 344 PDF objects out of 1000 (max. 8388607)
- 283 compressed objects within 3 object streams
- 104 named destinations out of 1000 (max. 500000)
+ 340 PDF objects out of 1000 (max. 8388607)
+ 279 compressed objects within 3 object streams
+ 103 named destinations out of 1000 (max. 500000)
  11325 words of extra memory for PDF output out of 12000 (max. 10000000)
 
