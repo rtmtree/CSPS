@@ -12,6 +12,7 @@ import os
 import csv
 import json
 import pylab
+from tensorflow.keras.datasets import imdb
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Activation, Dropout, Dense
 from tensorflow.keras.layers import Flatten, LSTM,Conv1D,Conv2D
@@ -279,32 +280,27 @@ class CSIModelConfig:
         pred = tf.keras.layers.Dense(200 * 3 * 19 * 19, activation='softmax')(x_tensor)
         model = tf.keras.Model(inputs=x_in, outputs=pred)
         return model
-    
-    def build_model_sleep(self, n_unit_lstm=200, n_unit_atten=400,seqLen=30):
-
-        input_len=52   
-        model = tf.keras.Sequential()
-
-        #csi feature extractor
-
-        # model.add(Conv2D(320, 2, activation='relu',input_shape=(seqLen,input_len)))
-        # model.add(Conv2D(150, 2, activation='relu',input_shape=(seqLen,input_len)))
-        # model.add(Conv2D(300, 2, activation='relu',input_shape=(seqLen,input_len)))
-        # model.add(Conv2D(300, 2, activation='relu',input_shape=(seqLen,input_len)))
-
-
-        # encoder layer
-        model.add(Bidirectional(LSTM(100, activation='relu', input_shape=(seqLen,input_len ))))
-
-        # repeat vector
-        # model.add(RepeatVector(3*3*19*19))
-        model.add(RepeatVector(seqLen))
-        # model.add(RepeatVector(19*19))
-
-        # decoder layer
-        model.add(Bidirectional(LSTM(100, activation='relu', return_sequences=True)))
-
-        model.add(TimeDistributed(Dense(1)))
+    def build_model2(self, n_unit_lstm=200, n_unit_atten=400,label_n=2):
+        """
+        Returns the Tensorflow Model which uses AttenLayer
+        """
+        if self._downsample > 1:
+            length = len(np.ones((self._win_len,))[::self._downsample])
+            x_in = tf.keras.Input(shape=(length, 52))
+        else:
+            x_in = tf.keras.Input(shape=(self._win_len, 52))
+        x_tensor = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=n_unit_lstm, return_sequences=True))(x_in)
+        x_tensor = AttenLayer(n_unit_atten)(x_tensor)
+        pred = tf.keras.layers.Dense(label_n, activation='softmax')(x_tensor)
+        model = tf.keras.Model(inputs=x_in, outputs=pred)
+        return model
+    def build_model_sleep(self, n_timesteps, n_features, n_outputs):
+        model = Sequential()
+        model.add(LSTM(100, input_shape=(n_timesteps,n_features)))
+        model.add(Dropout(0.5))
+        model.add(Dense(100, activation='relu'))
+        model.add(Dense(n_outputs, activation='softmax'))
+        model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         return model
     def build_model_rath(self, n_unit_lstm=200, n_unit_atten=400,seqLen=30):
@@ -335,59 +331,6 @@ class CSIModelConfig:
 
         return model
 
-
-    def build_model_rath0(self, n_unit_lstm=200, n_unit_atten=400,seqLen=30):
-        from tensorflow.keras import backend as K 
-        K.clear_session()
-        max_text_len=80
-        latent_dim = 200
-        embedding_dim=110
-
-        # Encoder
-        encoder_inputs = Input(shape=(max_text_len,))
-
-        #embedding layer
-        enc_emb =  Embedding(x_voc, embedding_dim,trainable=True)(encoder_inputs)
-
-        #encoder lstm 1
-        encoder_lstm1 = LSTM(latent_dim,return_sequences=True,return_state=True,dropout=0.4,recurrent_dropout=0.4)
-        encoder_output1, state_h1, state_c1 = encoder_lstm1(enc_emb)
-
-        #encoder lstm 2
-        encoder_lstm2 = LSTM(latent_dim,return_sequences=True,return_state=True,dropout=0.4,recurrent_dropout=0.4)
-        encoder_output2, state_h2, state_c2 = encoder_lstm2(encoder_output1)
-
-        #encoder lstm 3
-        encoder_lstm3=LSTM(latent_dim, return_state=True, return_sequences=True,dropout=0.4,recurrent_dropout=0.4)
-        encoder_outputs, state_h, state_c= encoder_lstm3(encoder_output2)
-
-        # Set up the decoder, using `encoder_states` as initial state.
-        decoder_inputs = Input(shape=(None,))
-
-        #embedding layer
-        dec_emb_layer = Embedding(y_voc, embedding_dim,trainable=True)
-        dec_emb = dec_emb_layer(decoder_inputs)
-
-        decoder_lstm = LSTM(latent_dim, return_sequences=True, return_state=True,dropout=0.4,recurrent_dropout=0.2)
-        decoder_outputs,decoder_fwd_state, decoder_back_state = decoder_lstm(dec_emb,initial_state=[state_h, state_c])
-
-        # Attention layer
-        attn_layer = AttentionLayer(name='attention_layer')
-        attn_out, attn_states = attn_layer([encoder_outputs, decoder_outputs])
-
-        # Concat attention input and decoder LSTM output
-        decoder_concat_input = Concatenate(axis=-1, name='concat_layer')([decoder_outputs, attn_out])
-
-        #dense layer
-        decoder_dense =  TimeDistributed(Dense(y_voc, activation='softmax'))
-        decoder_outputs = decoder_dense(decoder_concat_input)
-
-        # Define the model 
-        model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
-
-        model.summary()
-        return model
-
     @staticmethod
     def load_model(hdf5path):
         """
@@ -405,30 +348,22 @@ if __name__ == "__main__":
     # path = ''
     realData = True
 
-    # labels=['12','13']
-    # labelsAlt=['13']
-    labels=['sleep30-11-2021end1020']
-    labelsAlt=['sleep29-11-2021end1020']
+    labels=['sleep30-11-2021end1020','sleep29-11-2021end1020']
+    labelsAlt=[]
     runTrain = True
     batch_size = None
 
-    runFeatureEngineer=True
+    runFeatureEngineer=False
     seqLen=1
-    epoch=500
+    samplingedCSILen = 200
+    epoch=300
 
     if realData:
-        # isActSDthreshold=150
-        # isActSDthreshold=80
-        isActSDthreshold=80
-        sliceData=True
-        minCSIthreshold= int((seqLen/30) * 80)
-        runPCK = True
-        runPlot = True
-        checkIndex = 0
-        modelFileName='test_models/csi2sleepM_e'+str(epoch)+'_Actthes_'+str(isActSDthreshold)+'_seqLen_'+str(seqLen)+'_'+('FE' if runFeatureEngineer else 'NoFE')+'_'+'.hdf5'
+        label_n = 4
+        minCSIthreshold= samplingedCSILen
+        modelFileName='test_models/csi2sleepM_e'+str(epoch)+'.hdf5'
     else:
-        runPCK = False
-        runPlot = False
+        label_n = 2
         modelFileName="test.hdf5"
 
     # preprocessing
@@ -477,12 +412,9 @@ if __name__ == "__main__":
 
                 print(len(csiList))
             # guassian filter End
-            if(sliceData):
-                dataLooper=len(sleepList)-seqLen+1
-                dataStep=1
-            else:
-                dataLooper=int(len(sleepList)/seqLen)
-                dataStep=seqLen
+            dataLooper=len(sleepList)
+            dataStep=1
+
             for i in range(0,dataLooper,dataStep):
 
                 # get pose in the time period
@@ -514,7 +446,7 @@ if __name__ == "__main__":
 
                 # check if there is csi more than minCSIthreshold
                 if(len(csiIndices)<minCSIthreshold):
-                    print("too low csi number",len(csiIndices))
+                    print("too low csi number",len(csiIndices),minCSIthreshold)
                     continue
 
 
@@ -538,12 +470,12 @@ if __name__ == "__main__":
                   # check with raw amplitude
                   # normalAmp=[filterNullSC( rawCSItoAmp(   csiList[j][1:]  )  )    for j in csiIndices]
                   # check with samplinged amplitude
-                  normalAmp,_=samplingCSISleep(csiList,csiIndices,sleepList,sleepIndices,200)
+                  normalAmp,_=samplingCSISleep(csiList,csiIndices,sleepList,sleepIndices,samplingedCSILen)
                   # sdSum=0
-                  for j in range(0,52):
-                      subClist=[]
-                      for k in range(len(normalAmp)):
-                          subClist.append( normalAmp[k][j] )
+                  # for j in range(0,52):
+                  #     subClist=[]
+                  #     for k in range(len(normalAmp)):
+                  #         subClist.append( normalAmp[k][j] )
                       # sdAmp=stdev(subClist)
                       # sdSum+=sdAmp
                   # print("sum_SD sq",i,'is',sdSum)
@@ -562,7 +494,18 @@ if __name__ == "__main__":
 
                     # reshape all pose to vector and to PAM and to vector again
                     # curposes = [ poseToPAM(  np.array( [ poseList[j][1:].reshape(19,3) ] )  ) for j in poseIndices ]
-                    curSleeps = [  np.array(sleepList[j][1])   for j in sleepIndices ]
+                    # curSleeps = [  np.array(sleepList[j][1])   for j in sleepIndices ]
+                    stage = ''
+                    if(sleepList[j][1] == 1):
+                        stage = [1,0,0,0]
+                    elif(sleepList[j][1] == 2):
+                        stage = [0,1,0,0]
+                    elif(sleepList[j][1] == 3):
+                        stage = [0,0,1,0]
+                    elif(sleepList[j][1] == 4):
+                        stage = [0,0,0,1]
+                    # curSleeps = stage
+                    curSleeps = stage
                     
                     if(isAlt==False):
                         X.append(curCSIs)
@@ -573,14 +516,16 @@ if __name__ == "__main__":
 
         X=np.array(X)
         Y=np.array(Y)
-        X =(X).reshape(X.shape[0], seqLen, 52)
-        Y =(Y).reshape(Y.shape[0], seqLen, 1)
-        print('shape X',(X.shape))
-        print('shape Y',(Y.shape))
+        print('bf shape X',(X.shape))
+        print('bf shape Y',(Y.shape))
+        # X =(X).reshape(X.shape[0], samplingedCSILen, 52)
+        # Y =(Y).reshape(Y.shape[0], 1)
+        # print('shape X',(X.shape))
+        # print('shape Y',(Y.shape))
         Xalt=np.array(Xalt)
         Yalt=np.array(Yalt)
-        Xalt =(Xalt).reshape(Xalt.shape[0], seqLen, 52)
-        Yalt =(Yalt).reshape(Yalt.shape[0], seqLen, 1)
+        # Xalt =(Xalt).reshape(Xalt.shape[0], samplingedCSILen, 52)
+        # Yalt =(Yalt).reshape(Yalt.shape[0], 1)
         print('shape Xalt',(Xalt.shape))
         print('shape Yalt',(Yalt.shape))
 
@@ -590,44 +535,33 @@ if __name__ == "__main__":
         # print(Y)
 
     else:#load fake data
-        X=[]
-        Y=[]
-        for i in range(1,1001):
-            xSeq=[]
-            ySeq=[]
-            randd=np.random.randint(100)
-            for j in range(1,seqLen+1):
-                randd2=np.random.randint(100)
-                if(j==1):
-                    xSeq.append(np.ones((52))*(i*(j))+randd)
-                    # ySeq.append(np.ones((1083))*(i*(j))+(randd-5)+(randd2*2))
-                    # ySeq.append(np.ones((1083))*(i*(j))+(randd2*2))
-                    ySeq.append(np.ones((1083))*(i*(j))+77)
-                else:
-                    xSeq.append(xSeq[-1]+randd2)
-                    ySeq.append(ySeq[-1]+(randd2*2))
-            xSeq=np.array(xSeq)
-            ySeq=np.array(ySeq)
-            X.append(xSeq) 
-            Y.append(ySeq) 
+        lenFake = 100
+        (X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=400)
+        print('shape X_train',(X_train.shape))
+        print(len(X_train[0][0:53]))
+        X = [[[X_train[i*j][k] if len(X_train[i*j])>52 else 0 for k in range(52)] for j in range(samplingedCSILen)] for i in range(lenFake)]
+        Y = [ [1,0] if y_train[i]==0 else [0,1] for i in range(lenFake)]
+        Xalt = [[[X_test[i*j][k] if len(X_test[i*j])>52 else 0 for k in range(52)] for j in range(samplingedCSILen)] for i in range(lenFake)]
+        Yalt = [ [1,0] if y_test[i]==0 else [0,1] for i in range(lenFake)]
+
         print('len X',len(X))
         print('len Y',len(Y))
-
-        for i in range(len(X)):
-            print(i,len(X[i]),"csi to ",len(Y[i]),"pose")
         X=np.array(X)
         Y=np.array(Y)
+        Xalt=np.array(Xalt)
+        Yalt=np.array(Yalt)
         print('shape X',(X.shape))
         print('shape Y',(Y.shape))
 
-        print("X")
-        print(X)
-        print("Y")
-        print(Y)
+        # print("X")
+        # print(X)
+        # print("Y")
+        # print(Y)
+        
 
-    if runFeatureEngineer:
-        X=featureEngineer(X)
-        Xalt=featureEngineer(Xalt)
+    # if runFeatureEngineer:
+    #     X=featureEngineer(X)
+    #     Xalt=featureEngineer(Xalt)
 
         # print("normalized X")
         # print(X)
@@ -636,78 +570,71 @@ if __name__ == "__main__":
     if True:
         # X=np.concatenate((X, Xalt))
         # Y=np.concatenate((Y, Yalt))
+        if len(Xalt)==0:
+          x_train, x_test, y_train, y_test  = train_test_split(X, Y, test_size=0.1, random_state=3)
+        else:
+          x_train = X
+          y_train = Y
+          x_test = Xalt
+          y_test = Yalt
+          # way 2
+          # np.random.seed(42) 
+          # np.random.shuffle(X) 
+          # np.random.seed(42) 
+          # np.random.shuffle(Y) 
 
         # x_train, x_test, y_train, y_test  = train_test_split(X, Y, test_size=0.1, random_state=3)
         # x_train,_,y_train,_=train_test_split(X, Y, test_size=0.01, random_state=3)
         # x_test,_,y_test,_=train_test_split(Xalt, Yalt, test_size=0.01, random_state=3)        
-
-        # way 2
-        np.random.seed(42) 
-        np.random.shuffle(X) 
-        np.random.seed(42) 
-        np.random.shuffle(Y) 
-        x_train = X
-        y_train = Y
-        x_test = Xalt
-        y_test = Yalt
-
         
-        cfg = CSIModelConfig(win_len=1000, step=2000, thrshd=0.6, downsample=2)
-
         print('shape x_train',(x_train.shape))
         print('shape x_test',(x_test.shape))
+        print('shape y_train',(y_train.shape))
+        print('shape y_test',(y_test.shape))
+        
+        # cfg = CSIModelConfig(win_len=1000, step=2000, thrshd=0.6, downsample=2)
+        cfg = CSIModelConfig(win_len=400, step=200, thrshd=0.6, downsample=2)
+
     if runTrain:
 
-
+        # n_timesteps, n_features, n_outputs = x_train.shape[1], x_train.shape[2], y_train.shape[1]
         # parameters for Deep Learning Model
-        # model = cfg.build_model(n_unit_lstm=200, n_unit_atten=400)
-        model = cfg.build_model_sleep(n_unit_lstm=200, n_unit_atten=400,seqLen=seqLen)
-
-        # model.compile(optimizer='rmsprop', loss='sparse_categorical_crossentropy')
-        # es = EarlyStopping(monitor='val_loss', mode='min', verbose=1,patience=2)
-        # history=model.fit([x_tr,y_tr[:,:-1]], y_tr.reshape(y_tr.shape[0],y_tr.shape[1], 1)[:,1:] ,epochs=50,callbacks=[es],batch_size=128, validation_data=([x_val,y_val[:,:-1]], y_val.reshape(y_val.shape[0],y_val.shape[1], 1)[:,1:]))
-
-        # train
-        # model.compile(
-        #     optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),
-        #     loss='categorical_crossentropy', 
-        #     metrics=['accuracy'])
-        
-        # model.fit(
-        #     x_train,
-        #     y_train,
-        #     batch_size=128, epochs=60,
-        #     validation_data=(x_valid, y_valid),
-        #     callbacks=[
-        #         tf.keras.callbacks.ModelCheckpoint('best_atten.hdf5',
-        #                                             monitor='val_accuracy',
-        #                                             save_best_only=True,
-        #                                             save_weights_only=False)
-        #         ])
-        model.compile(optimizer='adam', loss='mse')
-        # model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4), loss='mse')
-        model.fit(x_train, y_train, epochs=epoch, validation_split=0.2, verbose=1, batch_size=batch_size
-        )
+        model = cfg.build_model2(n_unit_lstm=200, n_unit_atten=400,label_n=label_n)
+        model.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),
+        loss='categorical_crossentropy', 
+        metrics=['accuracy'])
         print(model.summary())
+        model.fit(
+        x_train,
+        y_train,
+        batch_size=128, epochs=epoch,
+        validation_data=(x_test, y_test),
+        callbacks=[
+            tf.keras.callbacks.ModelCheckpoint(path+modelFileName,
+                                                monitor='val_accuracy',
+                                                save_best_only=True,
+                                                save_weights_only=False)
+            ])
 
-        model.save(path+modelFileName)
+        # model.save(path+modelFileName)
 
     if True:
         # load the best model
         model = cfg.load_model(path+modelFileName)
 
-        # print(x_test.shape)
-        # print("x_test[0]")
-        # print(x_test[0])
-        # print("x_test[1]")
-        # print(x_test[1])
-        # y_pred = model.predict(x_test, verbose=0)
         y_pred = model.predict(x_test)
         print("y_test")
-        print(y_test)
-        # print("y_test[1]")
-        # print(y_test[1])
+        print(y_test[100:110])
+
         print("y_pred")
-        print(y_pred)
-        # print("y_pred[1]")
-        # print(y_pred[1])
+        print(y_pred[100:110])
+        print("evaluate")
+        for i in range(0,len(y_test)):
+          print(i,"test",y_test[i].index(max(y_test[i])))
+          print(i,"pred",y_pred[i].index(max(y_pred[i])))
+          if(y_test[i].index(max(y_test[i]))==y_pred[i].index(max(y_pred[i]))):
+            print("match")
+          else:
+            print("unmatch")
+
