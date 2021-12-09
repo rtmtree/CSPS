@@ -117,18 +117,18 @@ if __name__ == "__main__":
     # path = ''
     realData = True
 
-    labels=['sleep29-11-2021end1020','sleep30-11-2021end1020']
+    labels=['sleep29-11-2021end1020','sleep30-11-2021end1020','sleep8-12-2021end1000']
     labelsAlt=[]
     batch_size = 64
     runTrain=True
     sleepWinSize=1
-    samplingedCSIWinSize = 200
+    samplingedCSIWinSize = 1000
     epoch=300
 
     if realData:
         label_n = 4
         minCSIthreshold= samplingedCSIWinSize
-        modelFileName='test_models/csi2sleepM_e'+str(epoch)+'.hdf5'
+        modelFileName='test_models/csi2sleepM_e'+str(epoch)+'spCSI_'+str(samplingedCSIWinSize)+'.hdf5'
     else:
         label_n = 2
         modelFileName="test.hdf5"
@@ -237,7 +237,7 @@ if __name__ == "__main__":
         print('shape Y',(Y.shape))
         
     if len(Xalt)==0:
-      x_train, x_test, y_train, y_test  = train_test_split(X, Y, test_size=0.2, random_state=3)
+      x_train, x_test, y_train, y_test  = train_test_split(X, Y, test_size=0.15, random_state=3)
     else:
       x_train = X
       y_train = Y
@@ -258,7 +258,7 @@ if __name__ == "__main__":
     if runTrain:
 
         # parameters for Deep Learning Model
-        cfg = CSIModelConfig(win_len=400, step=200, thrshd=0.6, downsample=2)
+        cfg = CSIModelConfig(win_len=samplingedCSIWinSize*2, step=200, thrshd=0.6, downsample=2)
         model = cfg.build_model2(n_unit_lstm=200, n_unit_atten=400,label_n=label_n)
         model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),

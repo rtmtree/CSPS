@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.12.9)  9 DEC 2021 12:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.12.9)  9 DEC 2021 14:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -667,7 +667,7 @@ Package rerunfilecheck Info: File `plos_wifi2sleep_journal.out' has not changed
 Here is how much of TeX's memory you used:
  14900 strings out of 478994
  222779 string characters out of 5858184
- 610652 words of memory out of 5000000
+ 610645 words of memory out of 5000000
  31958 multiletter control sequences out of 15000+600000
  415126 words of font info for 107 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191

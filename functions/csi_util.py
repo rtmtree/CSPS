@@ -39,12 +39,10 @@ def csiIndices_sec(startTime,endTime,csiList):
         elif(csiList[i][0]>=endTime):
             break
     return csiIndices
-def poseIndices_sec(index,poseList,seqLen=30):
-    sec = seqLen/30
-    startTime = poseList[index][0]
-    # endTime=startTime+(sec* (10**6) )
-    endTime=poseList[index+seqLen-1][0]
-    poseIndices=[i for i in range(index,index+seqLen)]
+def poseIndices_sec(index,poseList,sec=1):
+    endTime=poseList[index][0]
+    startTime = endTime-sec
+    poseIndices=[index]
     # print("startTime",startTime)
     # print("endTime",endTime)
     # for i in range(index,len(poseList)):
@@ -54,64 +52,6 @@ def poseIndices_sec(index,poseList,seqLen=30):
     #     else:
     #         break
     return poseIndices,startTime,endTime
-
-def samplingCSI(csiList,csiIndices,poseList,poseIndices,paddingTo=30):
-    simplingedCSIs=[]
-    expectedTSs=[]
-    for j in range(paddingTo):
-        
-        expectedTS=poseList[poseIndices[j]][0]
-        # print("index",j,"expect",expectedTS)
-
-        expectedTSs.append(expectedTS)
-
-        csiIndicesExtended=[]
-        if(csiIndices[0]!=0 or j!=0):
-            csiIndicesExtended += [csiIndices[0]-1]
-        else:
-            simplingedCSIs.append( np.array(filterNullSC( rawCSItoAmp(   csiList[csiIndices[0]][1:]  )  ) )   )
-            startIndex = 0
-            continue
-
-        csiIndicesExtended += csiIndices
-
-        if(csiIndices[-1]!=len(csiList)-1):
-            csiIndicesExtended += [csiIndices[-1]+1]
-        # else:
-        #     None
-        
-        if j==0:
-            startIndex = csiIndicesExtended[0]
-        for k in range(startIndex,csiIndicesExtended[-1]+1):
-            if(k>=len(csiList) or csiList[k][0]>expectedTS):
-                break
-            else:
-                startIndex=k
-        # if startIndex TS matched expected TS
-
-        if(csiList[startIndex][0]==expectedTS):
-            simplingedCSIs.append( np.array( filterNullSC( rawCSItoAmp(   csiList[startIndex][1:]  )  ) )   )
-            continue
-        
-        if(startIndex== len(csiList)-1  ):
-            simplingedCSIs.append( np.array( filterNullSC( rawCSItoAmp(   csiList[startIndex][1:]  )  ) )   )
-            continue
-
-        endIndex = startIndex+1
-        
-        startCSI=filterNullSC( rawCSItoAmp(   csiList[startIndex][1:]  )  )
-        endCSI=filterNullSC( rawCSItoAmp(   csiList[endIndex][1:]  )  )
-        middleCSI=[]
-        offsetX=csiList[endIndex][0]-csiList[startIndex][0]
-        offsetXo=expectedTS -csiList[startIndex][0]
-        for k in range(52):
-            offsetY=endCSI[k]-startCSI[k]
-            offsetYo= (offsetXo*offsetY) / offsetX
-
-            middleCSI.append((startCSI[k]+offsetYo))
-
-        simplingedCSIs.append( np.array(middleCSI)   )
-    return simplingedCSIs,expectedTSs
 
 def samplingCSI(csiList,csiIndices,poseList,poseIndices,paddingTo=30):
     simplingedCSIs=[]
@@ -234,29 +174,14 @@ def samplingCSISleep(csiList,csiIndices,poseList,poseIndices,newCSILen):
 
 def imageIdx2csiIndices_timestamp(poseIdx,poseList,csiList,skipframe=1):
     timeInPose=poseList[poseIdx][0]
-    print("timeInPose",timeInPose)
     if (poseIdx>0):
         prevTimeInPose=poseList[poseIdx-skipframe][0]
     else:
         prevTimeInPose=0
-    print("prevTimeInPose",prevTimeInPose)
+
     csiIndices=[]
     for i in range(len(csiList)):
         if(prevTimeInPose < csiList[i][0] <= timeInPose):
             csiIndices.append(i)
-    print()
-    return csiIndices
-
-def sleepIdx2csiIndices_timestamp(poseIdx,poseList,csiList,skipframe=1):
-    timeInPose=poseList[poseIdx][0]
-    # print("timeInPose",timeInPose)
-    if (poseIdx<len(poseList)-1):
-        nextTimeInPose=poseList[poseIdx+1][0]
-    else:
-        nextTimeInPose=float('inf')
-    # print("nextTimeInPose",nextTimeInPose)
-    csiIndices=[]
-    for i in range(len(csiList)):
-        if(nextTimeInPose > csiList[i][0] >= timeInPose):
-            csiIndices.append(i)
+    
     return csiIndices

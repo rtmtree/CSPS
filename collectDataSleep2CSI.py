@@ -226,11 +226,11 @@ for fileIdx in range(len(labels)):
             if(True):
                 # Setting the values for all axes.
                 # csiIndices,parsedTimeInVid=imageIdx2csiIndicesPrecise(duration_in_sec,imageIdx,tsList,vidLength,lastsec)
-                csiTs = (sleepTs - diffEpoch)
-                csiTsEnd = csiTs+timeperoid
+                csiTsEnd = csiTs
+                csiTs = (sleepTs - diffEpoch)-timeperoid
                 # parse to microsecond
-                csiTs = (10**decimalShiftTs) * csiTs
                 csiTsEnd = (10**decimalShiftTs) * csiTsEnd
+                csiTs = (10**decimalShiftTs) * csiTs
       
                 print("csiTs",csiTs)
                 print("csiTsEnd",csiTsEnd)
