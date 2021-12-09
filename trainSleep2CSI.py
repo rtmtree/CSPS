@@ -348,19 +348,17 @@ if __name__ == "__main__":
     # path = ''
     realData = True
 
-    labels=['sleep30-11-2021end1020','sleep29-11-2021end1020']
+    labels=['sleep29-11-2021end1020','sleep30-11-2021end1020']
     labelsAlt=[]
-    runTrain = True
-    batch_size = None
-
-    runFeatureEngineer=False
-    seqLen=1
-    samplingedCSILen = 200
+    batch_size = 64
+    runTrain=True
+    sleepWinSize=1
+    samplingedCSIWinSize = 200
     epoch=300
 
     if realData:
         label_n = 4
-        minCSIthreshold= samplingedCSILen
+        minCSIthreshold= samplingedCSIWinSize
         modelFileName='test_models/csi2sleepM_e'+str(epoch)+'.hdf5'
     else:
         label_n = 2
@@ -396,25 +394,8 @@ if __name__ == "__main__":
             csiList.extend(pd.read_csv(path+csiFileName,delimiter=',',header=None).values)
             sleepList.extend(pd.read_csv(path+sleepFileName,delimiter=',',header=None).values)
 
-            # guassian filter
-            if False:
-                tempCsiList=[]
-                for i in range(0,64):
-                    # if (6<=i<32 or 33<=i<59):
-                    subClist=[]
-                    for j in range(0,len(csiList)):
-                        subClist.append(csiList[j][i])
-                    tempCsiList.append(gaussian_filter(subClist,sigma=2))
-                
-                for i in range(0,len(csiList)):
-                    for j in range(0,64):
-                        csiList[i][j]=tempCsiList[j][i]
-
-                print(len(csiList))
-            # guassian filter End
             dataLooper=len(sleepList)
-            dataStep=1
-
+            dataStep=sleepWinSize
             for i in range(0,dataLooper,dataStep):
 
                 # get pose in the time period
@@ -424,124 +405,57 @@ if __name__ == "__main__":
                 print("startTime",startTime)
                 print("endTime",endTime)
 
-                # check if there is pose less than seqLen
-                if(len(sleepIndices)<seqLen):
-                    # print("too low pose number")
-                    continue
-
-                # check if there is some null in pose
-                isNullPose=False
-                for j in sleepIndices:
-                    if(sleepList[j].all()==0):
-                        print("sq",i,"null pose at index",j)
-                        isNullPose=True
-                        break
-                if(isNullPose):
-                    continue
-
                 csiIndices=csiIndices_sec(startTime,endTime,csiList)
                 print("len csiIndices",len(csiIndices))
                 if (len(csiIndices)>0):
                   print("csiIndices",csiIndices[0],"-",csiIndices[-1])
 
-                # check if there is csi more than minCSIthreshold
-                if(len(csiIndices)<minCSIthreshold):
-                    print("too low csi number",len(csiIndices),minCSIthreshold)
-                    continue
+                  # check if there is csi more than minCSIthreshold
+                  if(len(csiIndices)<minCSIthreshold):
+                      print("too low csi number",len(csiIndices),minCSIthreshold)
+                      continue
+                  
+                  print(len(csiIndices),"csis to ",len(sleepIndices),"SS")
 
-
-                # check if there is some null in csi
-                # isNullCSI=False
-                # for j in csiIndices:
-                #     if(csiList[j].all()==0):
-                #         print("sq",i,"null csi at index",j)
-                #         isNullCSI=True
-                #         break
-                # if(isNullCSI):
-                #     continue
-                
-                print('sq',i,'pass null filter')
-                print(len(csiIndices),"csis to ",len(sleepIndices),"SS")
-
-
-                # check if this seqence has an activity
-                isAct=True
-                if True:
-                  # check with raw amplitude
-                  # normalAmp=[filterNullSC( rawCSItoAmp(   csiList[j][1:]  )  )    for j in csiIndices]
-                  # check with samplinged amplitude
-                  normalAmp,_=samplingCSISleep(csiList,csiIndices,sleepList,sleepIndices,samplingedCSILen)
-                  # sdSum=0
-                  # for j in range(0,52):
-                  #     subClist=[]
-                  #     for k in range(len(normalAmp)):
-                  #         subClist.append( normalAmp[k][j] )
-                      # sdAmp=stdev(subClist)
-                      # sdSum+=sdAmp
-                  # print("sum_SD sq",i,'is',sdSum)
-                  # if(isActSDthreshold > sdSum):
-                  #     print("no activity")
-                  #     isAct=False
-                  #     continue
-                  # else:
-                  #     print("activity!!!")
-                  #     isAct=True
-                
-                # filtered only valid annotation
-                if(True):
-                    # curCSIs,_=samplingCSISleep(csiList,csiIndices,poseList,poseIndices,paddingTo=seqLen)
-                    curCSIs = normalAmp
-
-                    # reshape all pose to vector and to PAM and to vector again
-                    # curposes = [ poseToPAM(  np.array( [ poseList[j][1:].reshape(19,3) ] )  ) for j in poseIndices ]
-                    # curSleeps = [  np.array(sleepList[j][1])   for j in sleepIndices ]
-                    stage = ''
-                    if(sleepList[j][1] == 1):
-                        stage = [1,0,0,0]
-                    elif(sleepList[j][1] == 2):
-                        stage = [0,1,0,0]
-                    elif(sleepList[j][1] == 3):
-                        stage = [0,0,1,0]
-                    elif(sleepList[j][1] == 4):
-                        stage = [0,0,0,1]
-                    # curSleeps = stage
-                    curSleeps = stage
-                    
-                    if(isAlt==False):
-                        X.append(curCSIs)
-                        Y.append(curSleeps)
-                    else:
-                        Xalt.append(curCSIs)
-                        Yalt.append(curSleeps)
+                  curCSIs,_=samplingCSISleep(csiList,csiIndices,sleepList,sleepIndices,samplingedCSIWinSize)
+                  stage = [0,0,0,0]
+                  if(sleepList[j][1] == 1):
+                      stage = [1,0,0,0]
+                  elif(sleepList[j][1] == 2):
+                      stage = [0,1,0,0]
+                  elif(sleepList[j][1] == 3):
+                      stage = [0,0,1,0]
+                  elif(sleepList[j][1] == 4):
+                      stage = [0,0,0,1]
+                  curSleeps = stage
+                  
+                  if(isAlt==False):
+                      X.append(curCSIs)
+                      Y.append(curSleeps)
+                  else:
+                      Xalt.append(curCSIs)
+                      Yalt.append(curSleeps)
 
         X=np.array(X)
         Y=np.array(Y)
         print('bf shape X',(X.shape))
         print('bf shape Y',(Y.shape))
-        # X =(X).reshape(X.shape[0], samplingedCSILen, 52)
-        # Y =(Y).reshape(Y.shape[0], 1)
-        # print('shape X',(X.shape))
-        # print('shape Y',(Y.shape))
+
         Xalt=np.array(Xalt)
         Yalt=np.array(Yalt)
-        # Xalt =(Xalt).reshape(Xalt.shape[0], samplingedCSILen, 52)
-        # Yalt =(Yalt).reshape(Yalt.shape[0], 1)
+
         print('shape Xalt',(Xalt.shape))
         print('shape Yalt',(Yalt.shape))
 
-        # print("X")
-        # print(X)
-        # print("Y")
-        # print(Y)
 
     else:#load fake data
         lenFake = 100
         (X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=400)
         print('shape X_train',(X_train.shape))
         print(len(X_train[0][0:53]))
-        X = [[[X_train[i*j][k] if len(X_train[i*j])>52 else 0 for k in range(52)] for j in range(samplingedCSILen)] for i in range(lenFake)]
+        X = [[[X_train[i*j][k] if len(X_train[i*j])>52 else 0 for k in range(52)] for j in range(samplingedCSIWinSize)] for i in range(lenFake)]
         Y = [ [1,0] if y_train[i]==0 else [0,1] for i in range(lenFake)]
-        Xalt = [[[X_test[i*j][k] if len(X_test[i*j])>52 else 0 for k in range(52)] for j in range(samplingedCSILen)] for i in range(lenFake)]
+        Xalt = [[[X_test[i*j][k] if len(X_test[i*j])>52 else 0 for k in range(52)] for j in range(samplingedCSIWinSize)] for i in range(lenFake)]
         Yalt = [ [1,0] if y_test[i]==0 else [0,1] for i in range(lenFake)]
 
         print('len X',len(X))
@@ -552,48 +466,26 @@ if __name__ == "__main__":
         Yalt=np.array(Yalt)
         print('shape X',(X.shape))
         print('shape Y',(Y.shape))
-
-        # print("X")
-        # print(X)
-        # print("Y")
-        # print(Y)
         
+    if len(Xalt)==0:
+      x_train, x_test, y_train, y_test  = train_test_split(X, Y, test_size=0.2, random_state=3)
+    else:
+      x_train = X
+      y_train = Y
+      x_test = Xalt
+      y_test = Yalt
+      # way 2
+      # np.random.seed(42) 
+      # np.random.shuffle(X) 
+      # np.random.seed(42) 
+      # np.random.shuffle(Y) 
 
-    # if runFeatureEngineer:
-    #     X=featureEngineer(X)
-    #     Xalt=featureEngineer(Xalt)
-
-        # print("normalized X")
-        # print(X)
-        # print("normalized Y")
-        # print(Y)
-    if True:
-        # X=np.concatenate((X, Xalt))
-        # Y=np.concatenate((Y, Yalt))
-        if len(Xalt)==0:
-          x_train, x_test, y_train, y_test  = train_test_split(X, Y, test_size=0.1, random_state=3)
-        else:
-          x_train = X
-          y_train = Y
-          x_test = Xalt
-          y_test = Yalt
-          # way 2
-          # np.random.seed(42) 
-          # np.random.shuffle(X) 
-          # np.random.seed(42) 
-          # np.random.shuffle(Y) 
-
-        # x_train, x_test, y_train, y_test  = train_test_split(X, Y, test_size=0.1, random_state=3)
-        # x_train,_,y_train,_=train_test_split(X, Y, test_size=0.01, random_state=3)
-        # x_test,_,y_test,_=train_test_split(Xalt, Yalt, test_size=0.01, random_state=3)        
-        
-        print('shape x_train',(x_train.shape))
-        print('shape x_test',(x_test.shape))
-        print('shape y_train',(y_train.shape))
-        print('shape y_test',(y_test.shape))
-        
-        # cfg = CSIModelConfig(win_len=1000, step=2000, thrshd=0.6, downsample=2)
-        cfg = CSIModelConfig(win_len=400, step=200, thrshd=0.6, downsample=2)
+    print('shape x_train',(x_train.shape))
+    print('shape x_test',(x_test.shape))
+    print('shape y_train',(y_train.shape))
+    print('shape y_test',(y_test.shape))
+    
+    cfg = CSIModelConfig(win_len=400, step=200, thrshd=0.6, downsample=2)
 
     if runTrain:
 
@@ -608,7 +500,7 @@ if __name__ == "__main__":
         model.fit(
         x_train,
         y_train,
-        batch_size=128, epochs=epoch,
+        batch_size=batch_size, epochs=epoch,
         validation_data=(x_test, y_test),
         callbacks=[
             tf.keras.callbacks.ModelCheckpoint(path+modelFileName,
@@ -622,19 +514,20 @@ if __name__ == "__main__":
     if True:
         # load the best model
         model = cfg.load_model(path+modelFileName)
-
         y_pred = model.predict(x_test)
-        print("y_test")
-        print(y_test[100:110])
 
-        print("y_pred")
-        print(y_pred[100:110])
         print("evaluate")
+        matchCounter = 0
         for i in range(0,len(y_test)):
-          print(i,"test",y_test[i].index(max(y_test[i])))
-          print(i,"pred",y_pred[i].index(max(y_pred[i])))
-          if(y_test[i].index(max(y_test[i]))==y_pred[i].index(max(y_pred[i]))):
+          maximum_test = np.max(y_test[i])
+          maximum_pred = np.max(y_pred[i])
+          index_of_maximum_test = np.where(y_test[i] == maximum_test)
+          index_of_maximum_pred = np.where(y_pred[i] == maximum_pred)
+          print(i,"test",index_of_maximum_test[0])
+          print(i,"pred",index_of_maximum_pred[0])
+          if(index_of_maximum_test[0]==index_of_maximum_pred[0]):
             print("match")
+            matchCounter = matchCounter+1
           else:
             print("unmatch")
-
+        print("score",matchCounter,"/",len(y_test))
