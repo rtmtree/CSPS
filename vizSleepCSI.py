@@ -45,7 +45,7 @@ poseFilePaths = ['data/SS'+label+'.csv']
 
 csiList = pd.read_csv(csiFilePaths[0], delimiter=',', header=None).values
 sleepList = pd.read_csv(poseFilePaths[0], delimiter=',', header=None).values
-startFrom = 16
+startFrom = 239
 print("read files done")
 SSWindowSize = 10
 
@@ -99,7 +99,7 @@ if True:  # plot pose3D
             stage = "light"
         elif(sleepList[sleepIdx][1] == 4):
             stage = "deep"
-        print("!!!!!==========stage", sleepList[sleepIdx][1], stage)
+        print(sleepList[sleepIdx][0],"!!!!!==========stage", sleepList[sleepIdx][1], stage)
         SSX.append(sleepIdx)
         SSY.append(sleepList[sleepIdx][1])
         if(len(SSX) > SSWindowSize):
@@ -113,7 +113,7 @@ if True:  # plot pose3D
         ax0.plot(SSX, SSY, label='Sleep stage')
 
         csiIndices = sleepIdx2csiIndices_timestamp(
-            sleepIdx, sleepList, csiList, timeLen=skipframe)
+            sleepIdx, sleepList, csiList, timeLen=30)
         if(len(csiIndices) > 0):
             startCSIIdx = csiIndices[0]
             endCSIIdx = csiIndices[len(csiIndices)-1]

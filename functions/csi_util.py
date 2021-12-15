@@ -112,14 +112,18 @@ def samplingCSI(csiList,csiIndices,poseList,poseIndices,paddingTo=30):
         simplingedCSIs.append( np.array(middleCSI)   )
     return simplingedCSIs,expectedTSs
 
-def samplingCSISleep(csiList,csiIndices,poseList,poseIndices,newCSILen):
+def samplingCSISleep(csiList,csiIndices,poseList,sleepIndex,newCSILen,timeLen=30):
     simplingedCSIs=[]
     expectedTSs=[]
+    startTS = poseList[sleepIndex][0]- timeLen
     for j in range(newCSILen):
         # print(poseIndices)
         # print(j)
         # print(poseList[poseIndices[0]][0])
-        expectedTS=  poseList[poseIndices[0]][0] +  ( j * (poseList[poseIndices[len(poseIndices)-1]][0] - poseList[poseIndices[0]][0])/newCSILen  )
+        if(j<newCSILen-1):
+            expectedTS=  startTS +  ( j * (poseList[sleepIndex][0] - startTS)/newCSILen  )
+        else:
+            expectedTS=poseList[sleepIndex][0]
         # print("index",j,"expect",expectedTS)
 
         expectedTSs.append(expectedTS)
@@ -179,6 +183,17 @@ def imageIdx2csiIndices_timestamp(poseIdx,poseList,csiList,skipframe=1):
     else:
         prevTimeInPose=0
 
+    csiIndices=[]
+    for i in range(len(csiList)):
+        if(prevTimeInPose < csiList[i][0] <= timeInPose):
+            csiIndices.append(i)
+    
+    return csiIndices
+
+
+def sleepIdx2csiIndices_timestamp(poseIdx,poseList,csiList,timeLen=30):
+    timeInPose=poseList[poseIdx][0]
+    prevTimeInPose=poseList[poseIdx][0]-timeLen
     csiIndices=[]
     for i in range(len(csiList)):
         if(prevTimeInPose < csiList[i][0] <= timeInPose):
