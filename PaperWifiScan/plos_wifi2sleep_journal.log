@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.12.9)  15 DEC 2021 13:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.12.9)  16 DEC 2021 02:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -118,15 +118,80 @@ LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
 ))
+(/usr/local/texlive/2021/texmf-dist/tex/latex/diagbox/diagbox.sty
+Package: diagbox 2020/02/09 v2.3 Making table heads with diagonal lines
+
+(/usr/local/texlive/2021/texmf-dist/tex/latex/pict2e/pict2e.sty
+Package: pict2e 2020/09/30 v0.4b Improved picture commands (HjG,RN,JT)
+
+(/usr/local/texlive/2021/texmf-dist/tex/latex/pict2e/pict2e.cfg
+File: pict2e.cfg 2016/02/05 v0.1u pict2e configuration for teTeX/TeXLive
+)
+Package pict2e Info: Driver file: pdftex.def on input line 112.
+
+(/usr/local/texlive/2021/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
+)
+Package pict2e Info: Driver file for pict2e: p2e-pdftex.def on input line 114.
+
+(/usr/local/texlive/2021/texmf-dist/tex/latex/pict2e/p2e-pdftex.def
+File: p2e-pdftex.def 2016/02/05 v0.1u Driver-dependant file (RN,HjG,JT)
+)
+(/usr/local/texlive/2021/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+\pIIe@GRAPH=\toks22
+\@arclen=\dimen156
+\@arcrad=\dimen157
+\pIIe@tempdima=\dimen158
+\pIIe@tempdimb=\dimen159
+\pIIe@tempdimc=\dimen160
+\pIIe@tempdimd=\dimen161
+\pIIe@tempdime=\dimen162
+\pIIe@tempdimf=\dimen163
+)
+(/usr/local/texlive/2021/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count268
+\calc@Bcount=\count269
+\calc@Adimen=\dimen164
+\calc@Bdimen=\dimen165
+\calc@Askip=\skip52
+\calc@Bskip=\skip53
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count270
+\calc@Cskip=\skip54
+)
+(/usr/local/texlive/2021/texmf-dist/tex/latex/tools/array.sty
+Package: array 2020/10/01 v2.5c Tabular extension package (FMi)
+\col@sep=\dimen166
+\ar@mcellbox=\box49
+\extrarowheight=\dimen167
+\NC@list=\toks23
+\extratabsurround=\skip55
+\backup@length=\skip56
+\ar@cellbox=\box50
+)
+\diagbox@boxa=\box51
+\diagbox@boxb=\box52
+\diagbox@boxm=\box53
+\diagbox@wd=\dimen168
+\diagbox@ht=\dimen169
+\diagbox@insepl=\dimen170
+\diagbox@insepr=\dimen171
+\diagbox@outsepl=\dimen172
+\diagbox@outsepr=\dimen173
+)
 (/usr/local/texlive/2021/texmf-dist/tex/latex/changepage/changepage.sty
 Package: changepage 2009/10/20 v1.0c check page and change page layout
-\c@cp@cntr=\count268
-\cp@tempcnt=\count269
+\c@cp@cntr=\count271
+\cp@tempcnt=\count272
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2020/08/01 v1.3d Input encoding file
-\inpenc@prehook=\toks22
-\inpenc@posthook=\toks23
+\inpenc@prehook=\toks24
+\inpenc@posthook=\toks25
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/ucs/utf8x.def
 File: utf8x.def 2004/10/17 UCS: Input encoding UTF-8
@@ -137,10 +202,10 @@ Package: ucs 2013/05/11 v2.2 UCS: Unicode input support
 (/usr/local/texlive/2021/texmf-dist/tex/latex/ucs/data/uni-global.def
 File: uni-global.def 2013/05/13 UCS: Unicode global data
 )
-\uc@secondtry=\count270
-\uc@combtoks=\toks24
-\uc@combtoksb=\toks25
-\uc@temptokena=\toks26
+\uc@secondtry=\count273
+\uc@combtoks=\toks26
+\uc@combtoksb=\toks27
+\uc@temptokena=\toks28
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/base/textcomp.sty
 Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
@@ -174,7 +239,7 @@ Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
 (/usr/local/texlive/2021/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty
 Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
 )))
-\c@section@level=\count271
+\c@section@level=\count274
 LaTeX Info: Redefining \ref on input line 356.
 LaTeX Info: Redefining \pageref on input line 356.
 )
@@ -203,9 +268,9 @@ Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
 (/usr/local/texlive/2021/texmf-dist/tex/latex/auxhook/auxhook.sty
 Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
 )
-\@linkdim=\dimen156
-\Hy@linkcounter=\count272
-\Hy@pagecounter=\count273
+\@linkdim=\dimen174
+\Hy@linkcounter=\count275
+\Hy@pagecounter=\count276
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2021-02-27 v7.00k Hyperref: PDFDocEncoding definition (HO)
@@ -219,7 +284,7 @@ Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 (/usr/local/texlive/2021/texmf-dist/tex/generic/etexcmds/etexcmds.sty
 Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 )
-\Hy@SavedSpaceFactor=\count274
+\Hy@SavedSpaceFactor=\count277
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/hyperref/puenc.def
 File: puenc.def 2021-02-27 v7.00k Hyperref: PDF Unicode definition (HO)
@@ -231,14 +296,14 @@ Package hyperref Info: Plain pages OFF on input line 4207.
 Package hyperref Info: Backreferencing OFF on input line 4212.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4445.
-\c@Hy@tempcnt=\count275
+\c@Hy@tempcnt=\count278
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip17
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4804.
-\XeTeXLinkMargin=\dimen157
+\XeTeXLinkMargin=\dimen175
 
 (/usr/local/texlive/2021/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -247,9 +312,9 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count276
-\Field@Width=\dimen158
-\Fld@charsize=\dimen159
+\Fld@menulength=\count279
+\Field@Width=\dimen176
+\Fld@charsize=\dimen177
 Package hyperref Info: Hyper figures OFF on input line 6075.
 Package hyperref Info: Link nesting OFF on input line 6080.
 Package hyperref Info: Hyper index ON on input line 6083.
@@ -265,9 +330,9 @@ Package: atbegshi-ltx 2020/08/17 v1.0a Emulation of the original atbegshi packa
 ge
 with kernel methods
 )
-\Hy@abspage=\count277
-\c@Item=\count278
-\c@Hfootnote=\count279
+\Hy@abspage=\count280
+\c@Item=\count281
+\c@Hfootnote=\count282
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
@@ -279,8 +344,8 @@ Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atvery packag
 e
 with kernel methods
 )
-\Fld@listcount=\count280
-\c@bookmark@seq@number=\count281
+\Fld@listcount=\count283
+\c@bookmark@seq@number=\count284
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
 Package: rerunfilecheck 2019/12/05 v1.9 Rerun checks for auxiliary files (HO)
@@ -291,40 +356,40 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 86.
 )
-\Hy@SectionHShift=\skip52
+\Hy@SectionHShift=\skip57
 ) (/usr/local/texlive/2021/texmf-dist/tex/latex/lineno/lineno.sty
 Package: lineno 2005/11/02 line numbers on paragraphs v4.41
-\linenopenalty=\count282
-\output=\toks27
-\linenoprevgraf=\count283
-\linenumbersep=\dimen160
-\linenumberwidth=\dimen161
-\c@linenumber=\count284
-\c@pagewiselinenumber=\count285
-\c@LN@truepage=\count286
-\c@internallinenumber=\count287
-\c@internallinenumbers=\count288
-\quotelinenumbersep=\dimen162
-\bframerule=\dimen163
-\bframesep=\dimen164
-\bframebox=\box49
+\linenopenalty=\count285
+\output=\toks29
+\linenoprevgraf=\count286
+\linenumbersep=\dimen178
+\linenumberwidth=\dimen179
+\c@linenumber=\count287
+\c@pagewiselinenumber=\count288
+\c@LN@truepage=\count289
+\c@internallinenumber=\count290
+\c@internallinenumbers=\count291
+\quotelinenumbersep=\dimen180
+\bframerule=\dimen181
+\bframesep=\dimen182
+\bframebox=\box54
 LaTeX Info: Redefining \\ on input line 3056.
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/microtype/microtype.sty
 Package: microtype 2021/03/14 v2.8c Micro-typographical refinements (RS)
-\MT@toks=\toks28
-\MT@count=\count289
+\MT@toks=\toks30
+\MT@count=\count292
 LaTeX Info: Redefining \textls on input line 790.
-\MT@outer@kern=\dimen165
+\MT@outer@kern=\dimen183
 LaTeX Info: Redefining \textmicrotypecontext on input line 1374.
-\MT@listname@count=\count290
+\MT@listname@count=\count293
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/microtype/microtype-pdftex.def
 File: microtype-pdftex.def 2021/03/14 v2.8c Definitions specific to pdftex (RS)
 
 LaTeX Info: Redefining \lsstyle on input line 915.
 LaTeX Info: Redefining \lslig on input line 915.
-\MT@outer@space=\skip53
+\MT@outer@space=\skip58
 )
 Package microtype Info: Loading configuration file microtype.cfg.
 
@@ -339,26 +404,12 @@ File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package xcolor Info: Driver file: pdftex.def on input line 225.
 
-(/usr/local/texlive/2021/texmf-dist/tex/latex/graphics-def/pdftex.def
-File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
-)
 (/usr/local/texlive/2021/texmf-dist/tex/latex/colortbl/colortbl.sty
 Package: colortbl 2020/01/04 v1.0e Color table columns (DPC)
-
-(/usr/local/texlive/2021/texmf-dist/tex/latex/tools/array.sty
-Package: array 2020/10/01 v2.5c Tabular extension package (FMi)
-\col@sep=\dimen166
-\ar@mcellbox=\box50
-\extrarowheight=\dimen167
-\NC@list=\toks29
-\extratabsurround=\skip54
-\backup@length=\skip55
-\ar@cellbox=\box51
+\everycr=\toks31
+\minrowclearance=\skip59
 )
-\everycr=\toks30
-\minrowclearance=\skip56
-)
-\rownum=\count291
+\rownum=\count294
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
 Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
 Package xcolor Info: Model `RGB' extended on input line 1364.
@@ -369,27 +420,27 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
 )
-\savedwidth=\skip57
+\savedwidth=\skip60
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/caption/caption.sty
 Package: caption 2020/10/26 v3.5g Customizing captions (AR)
 
 (/usr/local/texlive/2021/texmf-dist/tex/latex/caption/caption3.sty
 Package: caption3 2020/10/21 v2.2e caption3 kernel (AR)
-\captionmargin=\dimen168
-\captionmargin@=\dimen169
-\captionwidth=\dimen170
-\caption@tempdima=\dimen171
-\caption@indent=\dimen172
-\caption@parindent=\dimen173
-\caption@hangindent=\dimen174
+\captionmargin=\dimen184
+\captionmargin@=\dimen185
+\captionwidth=\dimen186
+\caption@tempdima=\dimen187
+\caption@indent=\dimen188
+\caption@parindent=\dimen189
+\caption@hangindent=\dimen190
 Package caption Info: Standard document class detected.
 )
-\c@caption@flags=\count292
-\c@continuedfloat=\count293
+\c@caption@flags=\count295
+\c@continuedfloat=\count296
 Package caption Info: changepage package is loaded.
-\caption@adjustwidth@hsize=\dimen175
-\caption@adjustwidth@linewidth=\dimen176
+\caption@adjustwidth@hsize=\dimen191
+\caption@adjustwidth@linewidth=\dimen192
 Package caption Info: hyperref package is loaded.
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/lastpage/lastpage.sty
@@ -398,15 +449,15 @@ Package: lastpage 2015/03/29 v1.2m Refers to last page's name (HMM; JPG)
 (/usr/local/texlive/2021/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
 Package: fancyhdr 2021/01/28 v4.0.1 Extensive control of page headers and foote
 rs
-\f@nch@headwidth=\skip58
-\f@nch@O@elh=\skip59
-\f@nch@O@erh=\skip60
-\f@nch@O@olh=\skip61
-\f@nch@O@orh=\skip62
-\f@nch@O@elf=\skip63
-\f@nch@O@erf=\skip64
-\f@nch@O@olf=\skip65
-\f@nch@O@orf=\skip66
+\f@nch@headwidth=\skip61
+\f@nch@O@elh=\skip62
+\f@nch@O@erh=\skip63
+\f@nch@O@olh=\skip64
+\f@nch@O@orh=\skip65
+\f@nch@O@elf=\skip66
+\f@nch@O@erf=\skip67
+\f@nch@O@olf=\skip68
+\f@nch@O@orf=\skip69
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2020/09/09 v1.2b Enhanced LaTeX Graphics (DPC,SPQR)
@@ -414,16 +465,13 @@ Package: graphicx 2020/09/09 v1.2b Enhanced LaTeX Graphics (DPC,SPQR)
 (/usr/local/texlive/2021/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2020/08/30 v1.4c Standard LaTeX Graphics (DPC,SPQR)
 
-(/usr/local/texlive/2021/texmf-dist/tex/latex/graphics/trig.sty
-Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
-)
 (/usr/local/texlive/2021/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 105.
 )
-\Gin@req@height=\dimen177
-\Gin@req@width=\dimen178
+\Gin@req@height=\dimen193
+\Gin@req@width=\dimen194
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/epstopdf-pkg/epstopdf.sty
 Package: epstopdf 2020-01-24 v2.11 Conversion with epstopdf on the fly (HO)
@@ -446,8 +494,8 @@ e
 )))
 (/usr/local/texlive/2021/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2021-03-18 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count294
-\l__pdf_internal_box=\box52
+\l__color_backend_stack_int=\count297
+\l__pdf_internal_box=\box55
 )
 (./plos_wifi2sleep_journal.aux)
 \openout1 = `plos_wifi2sleep_journal.aux'.
@@ -505,7 +553,20 @@ LaTeX Font Info:    ... okay on input line 180.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-(/usr/local/texlive/2021/texmf-dist/tex/latex/ucs/ucsencs.def
+(/usr/local/texlive/2021/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count298
+\scratchdimen=\dimen195
+\scratchbox=\box56
+\nofMPsegments=\count299
+\nofMParguments=\count300
+\everyMPshowfont=\toks32
+\MPscratchCnt=\count301
+\MPscratchDim=\dimen196
+\MPnumerator=\count302
+\makeMPintoPDFobject=\count303
+\everyMPtoPDFconversion=\toks33
+) (/usr/local/texlive/2021/texmf-dist/tex/latex/ucs/ucsencs.def
 File: ucsencs.def 2011/01/21 Fixes to fontencodings LGR, T3
 )
 Package hyperref Info: Link coloring OFF on input line 180.
@@ -533,20 +594,6 @@ Package microtype Info: No adjustment of character kerning.
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
-(/usr/local/texlive/2021/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
-[Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count295
-\scratchdimen=\dimen179
-\scratchbox=\box53
-\nofMPsegments=\count296
-\nofMParguments=\count297
-\everyMPshowfont=\toks31
-\MPscratchCnt=\count298
-\MPscratchDim=\dimen180
-\MPnumerator=\count299
-\makeMPintoPDFobject=\count300
-\everyMPtoPDFconversion=\toks32
-)
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
 Package lastpage Info: Please have a look at the pageslts package at
@@ -554,7 +601,8 @@ Package lastpage Info: Please have a look at the pageslts package at
 (lastpage)             ! on input line 180.
 LaTeX Font Info:    Trying to load font information for U+msa on input line 191
 .
- (/usr/local/texlive/2021/texmf-dist/tex/latex/amsfonts/umsa.fd
+
+(/usr/local/texlive/2021/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 (/usr/local/texlive/2021/texmf-dist/tex/latex/microtype/mt-msa.cfg
@@ -583,29 +631,29 @@ Package microtype Info: Loading generic protrusion settings for font family
  [1
 
 {/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
-<ESP32CSI01.png, id=42, 578.16pt x 674.52pt>
+<ESP32CSI01.png, id=39, 578.16pt x 674.52pt>
 File: ESP32CSI01.png Graphic file (type png)
 <use ESP32CSI01.png>
-Package pdftex.def Info: ESP32CSI01.png  used on input line 290.
+Package pdftex.def Info: ESP32CSI01.png  used on input line 293.
 (pdftex.def)             Requested size: 289.07928pt x 337.25917pt.
-<ESP32CSI03.png, id=44, 892.33376pt x 1027.84pt>
+<ESP32CSI03.png, id=41, 892.33376pt x 1027.84pt>
 File: ESP32CSI03.png Graphic file (type png)
 <use ESP32CSI03.png>
-Package pdftex.def Info: ESP32CSI03.png  used on input line 307.
+Package pdftex.def Info: ESP32CSI03.png  used on input line 310.
 (pdftex.def)             Requested size: 446.16579pt x 513.91875pt.
  [3 <./ESP32CSI01.png>]
-<TRAINSTEP07.png, id=67, 763.85374pt x 919.435pt>
-File: TRAINSTEP07.png Graphic file (type png)
-<use TRAINSTEP07.png>
-Package pdftex.def Info: TRAINSTEP07.png  used on input line 329.
+<TRAINSTEP08.png, id=68, 763.85374pt x 919.435pt>
+File: TRAINSTEP08.png Graphic file (type png)
+<use TRAINSTEP08.png>
+Package pdftex.def Info: TRAINSTEP08.png  used on input line 329.
 (pdftex.def)             Requested size: 152.76804pt x 183.88374pt.
-<TESTSTEP08.png, id=68, 502.87875pt x 1145.27875pt>
+<TESTSTEP08.png, id=69, 502.87875pt x 1145.27875pt>
 File: TESTSTEP08.png Graphic file (type png)
 <use TESTSTEP08.png>
 Package pdftex.def Info: TESTSTEP08.png  used on input line 334.
 (pdftex.def)             Requested size: 100.57396pt x 229.05168pt.
  [4 <./ESP32CSI03.png>]
-<CSIResampling03.png, id=86, 1392.20125pt x 1039.885pt>
+<CSIResampling03.png, id=87, 1392.20125pt x 1039.885pt>
 File: CSIResampling03.png Graphic file (type png)
 <use CSIResampling03.png>
 Package pdftex.def Info: CSIResampling03.png  used on input line 358.
@@ -614,53 +662,58 @@ Package pdftex.def Info: CSIResampling03.png  used on input line 358.
 
 Package hyperref Warning: Suppressing empty link on input line 387.
 
-[5 <./TRAINSTEP07.png>] [6 <./TESTSTEP08.png> <./CSIResampling03.png>] [7]
-<VIS05.png, id=131, 642.4pt x 481.8pt>
+[5 <./TRAINSTEP08.png>] [6 <./TESTSTEP08.png> <./CSIResampling03.png>] [7]
+<VIS05.png, id=132, 642.4pt x 481.8pt>
 File: VIS05.png Graphic file (type png)
 <use VIS05.png>
 Package pdftex.def Info: VIS05.png  used on input line 486.
 (pdftex.def)             Requested size: 128.47772pt x 96.35829pt.
-<VIS06.png, id=132, 642.4pt x 481.8pt>
+<VIS06.png, id=133, 642.4pt x 481.8pt>
 File: VIS06.png Graphic file (type png)
 <use VIS06.png>
 Package pdftex.def Info: VIS06.png  used on input line 491.
 (pdftex.def)             Requested size: 128.47772pt x 96.35829pt.
-<VIS07.png, id=133, 643.40375pt x 482.80376pt>
+<VIS07.png, id=134, 643.40375pt x 482.80376pt>
 File: VIS07.png Graphic file (type png)
 <use VIS07.png>
 Package pdftex.def Info: VIS07.png  used on input line 496.
 (pdftex.def)             Requested size: 128.67847pt x 96.55904pt.
-<VIS08.png, id=134, 642.4pt x 481.8pt>
+<VIS08.png, id=135, 642.4pt x 481.8pt>
 File: VIS08.png Graphic file (type png)
 <use VIS08.png>
 Package pdftex.def Info: VIS08.png  used on input line 501.
 (pdftex.def)             Requested size: 128.47772pt x 96.35829pt.
 
 [8 <./VIS05.png>] [9 <./VIS06.png> <./VIS07.png> <./VIS08.png>]
-<ANTENSETUP01.jpg, id=172, 1483.5425pt x 1112.155pt>
-File: ANTENSETUP01.jpg Graphic file (type jpg)
-<use ANTENSETUP01.jpg>
-Package pdftex.def Info: ANTENSETUP01.jpg  used on input line 592.
-(pdftex.def)             Requested size: 296.70325pt x 222.42706pt.
- [10] [11 <./ANTENSETUP01.jpg>]
+<SETUP01.jpg, id=177, 963.6pt x 1712.3975pt>
+File: SETUP01.jpg Graphic file (type jpg)
+<use SETUP01.jpg>
+Package pdftex.def Info: SETUP01.jpg  used on input line 592.
+(pdftex.def)             Requested size: 192.71658pt x 342.47343pt.
+<SETUP03.jpg, id=178, 1112.155pt x 1483.5425pt>
+File: SETUP03.jpg Graphic file (type jpg)
+<use SETUP03.jpg>
+Package pdftex.def Info: SETUP03.jpg  used on input line 598.
+(pdftex.def)             Requested size: 222.42706pt x 296.70325pt.
+ [10] [11 <./SETUP01.jpg> <./SETUP03.jpg>] [12]
 (/usr/local/texlive/2021/texmf-dist/tex/latex/ucs/data/uni-32.def
 File: uni-32.def 2013/05/13 UCS: Unicode data U+2000..U+20FF
-) [12]
+) [13]
 
 AED: lastpage setting LastPage
-[13] (./plos_wifi2sleep_journal.aux)
+[14] (./plos_wifi2sleep_journal.aux)
 Package rerunfilecheck Info: File `plos_wifi2sleep_journal.out' has not changed
 .
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 14381 strings out of 478994
- 217208 string characters out of 5858184
- 577370 words of memory out of 5000000
- 31456 multiletter control sequences out of 15000+600000
+ 14731 strings out of 478994
+ 222402 string characters out of 5858184
+ 590476 words of memory out of 5000000
+ 31787 multiletter control sequences out of 15000+600000
  413786 words of font info for 100 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 80i,12n,88p,1045b,475s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 80i,18n,88p,1088b,480s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 }</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb>
 </usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><
@@ -678,10 +731,10 @@ e/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/
 1/texmf-dist/fonts/type1/public/marvosym/marvosym.pfb></usr/local/texlive/2021/
 texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2021/te
 xmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on plos_wifi2sleep_journal.pdf (13 pages, 1080316 bytes).
+Output written on plos_wifi2sleep_journal.pdf (14 pages, 1180302 bytes).
 PDF statistics:
- 306 PDF objects out of 1000 (max. 8388607)
- 253 compressed objects within 3 object streams
- 96 named destinations out of 1000 (max. 500000)
- 26675 words of extra memory for PDF output out of 29859 (max. 10000000)
+ 315 PDF objects out of 1000 (max. 8388607)
+ 260 compressed objects within 3 object streams
+ 98 named destinations out of 1000 (max. 500000)
+ 26680 words of extra memory for PDF output out of 29859 (max. 10000000)
 

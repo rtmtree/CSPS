@@ -94,26 +94,28 @@ if __name__ == "__main__":
     path = 'drive/MyDrive/Project/'
     # path = ''
     realData = True
+    timeLen=30
+    runTrain=True
+    runEval=True
 
+    #========== adjustable
     labels=[
-      # 'sleep29-11-2021end1020',
+      'sleep29-11-2021end1020',
       'sleep30-11-2021end1020',
       'sleep08-12-2021end1000','sleep11-12-2021end0930',
       'sleep12-12-2021end1000','sleep13-12-2021end1010'
       ]
     labelsAlt=[]
-    timeLen=30
-    runTrain=False
-    runEval=True
-
 
     batch_size = 128
     sleepWinSize=1 #sigma
-    samplingedCSIWinSize = 50 #delta
-    epoch=800
+    samplingedCSIWinSize = 900 #delta
+    epoch=500
     n_unit_lstm=200
     n_unit_atten=400
     downsample=2
+
+    #========== adjustable end
 
     if realData:
         label_n = 4
@@ -300,8 +302,6 @@ if __name__ == "__main__":
           index_of_maximum_pred = np.where(y_pred[i] == maximum_pred)
           curTest=index_of_maximum_test[0][0]
           curPred=index_of_maximum_pred[0][0]
-          print(i,"test",curTest)
-          print(i,"pred",curPred)
 
           if(curTest==curPred):
             matchCounter = matchCounter+1
@@ -333,16 +333,8 @@ if __name__ == "__main__":
         lightPredCounter = np.around(lightPredCounter,decimals=2) 
         deepPredCounter = np.around(deepPredCounter,decimals=2)
 
-        print("wake rem light deep")
-        print("wake ",wakePredCounter)
-        print("rem ",remPredCounter)
+        print("        wake rem light deep")
+        print("wake  ",wakePredCounter)
+        print("rem   ",remPredCounter)
         print("light ",lightPredCounter)
-        print("deep ",deepPredCounter)
-
-
-
-
-
-
-
-
+        print("deep  ",deepPredCounter)

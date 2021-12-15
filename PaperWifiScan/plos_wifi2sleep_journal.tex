@@ -81,7 +81,7 @@
 \DeclareMathOperator{\atantwo}{atan2}
 \DeclareMathOperator{\arctantwo}{arctan2}
 \DeclareMathOperator*{\argmax}{argmax} % thin space, limits underneath in displays
-
+\usepackage{diagbox}
 
 % Use adjustwidth environment to exceed column width (see example table in text)
 \usepackage{changepage}
@@ -234,9 +234,12 @@
 	\end{flushleft}
 	% Please keep the abstract below 300 words
 	\section*{Abstract}
-	WiFi human sensing is being challenged by researchers continuously e.g. Activity Classification, Localization and etc. However, we believed WiFi can do more. In this paper, we paired WiFi transmitting pattern to human sleep stage to create a mapping rule of those. we strengthened WiFi signal with 2 directional external antennae. After gathering WiFi variation from a router and sleep stage from a smartwatch, we applied machine learning to merge them. We used Long-short term memory (LSTM) to the framework since we know WiFi data tells more with its sequence. So, we are to map a sequence of sleeping stage to a sequence of WiFi snapshots instead of one-to-one like others which makes this called ``Sleep monitoring''. we tested with newly collected data sizing more than 100,000 frames of sequences. To evaluate the result, we compared annotated sleep stage with predicted sleep stage and summarized their distance error which finally resulted as that it is possible to classify 4 human sleep stages from WiFi.
 	
-
+	\iffalse
+	\fi
+	WiFi human sensing is being challenged by researchers continuously e.g. Activity Classification, Localization and etc. However, we believed WiFi can do more. In this paper, we paired WiFi transmitting pattern to human sleep stage to create a mapping rule of those. we used ESP32 which is a reachable single board computer and strengthened its WiFi signal with 2 directional external antennae. After gathering WiFi variation with Sleep Stage from a sleep tracker, we applied machine learning to merge them. We used Long-short term memory (LSTM) to the framework since we know pattern of moving matters to Sleep Stage. So, we are to map a sleeping stage to a sequence of WiFi snapshots instead of one-to-one like others which makes this called ``Sleep monitoring''. we tested with newly collected data sizing more than 6,000 frames of sequences. To evaluate the result, we compared annotated Sleep Stage with predicted Sleep Stage and summarized their accuracy which finally resulted as that it is possible to classify 4 human sleep stages from WiFi in ESP32.
+	
+	
 	
 	\linenumbers
 	
@@ -250,17 +253,17 @@
 	
 	
 	Human sleep stage monitoring is being observed for a whlie and recently applied on commercial products. As sleeping is significant to all persons and can lead to many serious deceases, people are more concerned on utilizing their sleepness with using devices those are able to inform them their sleep information e.g. smartwatches, smart mattress, smart rings and etc.
-	But, those devices are considerably affect sleepness since it needs to contact with users' bodies. 
-
+	But, those devices are considerably affect sleepness since it needs a contact to users' bodies. 
+	
 	So, this paper proposes a contactless sleep monitoring with Wi-Fi CSI from ESP32 where users can applied with easy-to-find microprocessor and monitor their sleep stage without contacting to their bodies.
 	This allows sleep monitoring to be practical for other researchers and those who want to utilize their sleepness.
 	
-
-
+	
+	
 	\section*{Background}
 	
 	\subsection*{Human sleep stage monitoring}
-	Human sleep stage monitoring is widely used as stated above. There are many types of staging. But most common and what we chose are stages of 4 which are Wake, REM (Rapid Eye Movement),  Light Sleep and Deep Sleep. Many commercial devices can log such information in time sequence. We use {(Fitbit)} as our ground truth as it is a device with the most accuracy at Sleep Stage Estimation among others (ref). The {(Fitbit)}  can log stages with resolution of 30 seconds so, we consider a sequence of 30-second stage with a sequence of 30-second CSI data from Wi-Fi.
+	Human sleep stage monitoring is widely used as stated above. There are many types of staging. But most common and what we chose are stages of 4 which are Wake, REM (Rapid Eye Movement),  Light Sleep (Light) and Deep Sleep (Deep). Many commercial devices can log such information in time sequence. We use {Fitbit}, a popular sleep tracker watch, as our ground truth as it is a device with the most accuracy at Sleep Stage Estimation among others (ref). The {Fitbit}  can log stages with resolution of 30 seconds so, we consider a single Sleep Stage with a sequence of 30-second CSI data from Wi-Fi.
 	
 	
 	\subsection*{Wi-Fi}\label{wifi}
@@ -268,7 +271,7 @@
 	Wi-Fi is a well-known connectivity with no wire needed (wireless). It has been used as a medium for connecting to the internet for over 10 years. However, the Wi-Fi is the name covering IEEE 802.11 n/g/ac protocols. It delivers data through 2.4/5GHz frequency with multiple channels. The bandwidth in each channel is 22MHz. the data are to be transmitted  parallelly with multiplexing technique named orthogonal frequency division multiplexing (OFDM). Each carrier may propagate to a receiver with encountering many obstacles. The effect of that situation is the Doppler Effect.
 	So, Channel State Information (CSI) is represented as physical layer indicator that can be used to investigate how each channel propagate to the receiver or back to the transmitter.
 	
-	If a sender sends data to a receiver through Wi-Fi, the data will be almostly not transmitted without any loss.
+	If a sender sends data to a receiver through Wi-Fi, the data will be almostly not transmitted without any interference.
 	
 	
 	
@@ -278,9 +281,9 @@
 	Human body is literally water which reflect radio wave like Wi-Fi. \cite{wangF}, \cite{liuJ} and \cite{chowdhuryTZ} have proven that human body can affect the CSI.
 	
 	\subsubsection*{ESP32}\label{ESP32}
-	ESP32 is a very popular single-board computer (SBC). With its affordable price and many available additional tools, ESP32 is commonly used in Internet of Things field. Moreover, it can be applied in research field. Quantitative CSI can be obtained from Wi-Fi in ESP32 according to \cite{atifM}. The number of available subcarriers in ESP32 is 64.
+	ESP32 is a very popular single-board computer (SBC). With its affordable price and many available additional tools, ESP32 is commonly used in Internet of Things field.  Quantitative CSI can be obtained from Wi-Fi in ESP32 according to \cite{atifM}. The number of available subcarriers in ESP32 is 64.
 	
-	According to the detail about Wi-Fi mentioned in \nameref{wifi}, the Wi-Fi in ESP32 has some limitation. It supports only 2.4GHz frequency and can be set only one channel over a connection. The bandwidth of each channel is 22MHz. The CSI can be both obtain from Access point (AP) and Station (STA) as shown in Fig~\ref{fig:ESP32CSI01}.  In this paper, we consider to mainly use CSI at the AP.
+	According to the detail about Wi-Fi mentioned in \nameref{wifi}, the Wi-Fi in ESP32 has some limitation. It supports only 2.4GHz frequency and can be set only one channel over a connection. The bandwidth of each channel is 22MHz. The CSI can be both obtain from Access point (AP) and Station (STA) as shown in Fig.~\ref{fig:ESP32CSI01}.  In this paper, we consider to mainly use CSI at the AP.
 	The frequency of each channel is as 802.11 standard.
 	
 	
@@ -309,28 +312,25 @@
 		\label{fig:ESP32CSI02}
 	\end{figure}
 	
-	Other famous proposed works like \cite{wangF} \cite{liuJ} and \cite{hernandezSM} focus on line-of-sight (LOS) in between AP and STA while our work uses 2 directional Wi-Fi antennae and focus on reflection from human body as shown in Fig~\ref{fig:ESP32CSI02} on the left.
+	Other famous proposed works like \cite{wangF} \cite{liuJ} and \cite{hernandezSM} use omnidirectional antennas while our work uses 2 directional Wi-Fi antennae facing toward human in order to enhance thier precision as shown in Fig.~\ref{fig:SETUP01}.
 	
 	
-	The CSI is not only affected by human body but mainly by overall environment. This means that 2 identical human poses can result obviously different CSIs if the environment around are not exactly the same as shown in Fig~\ref{fig:ESP32CSI02}.
-	
+	The CSI is not only affected by human body but mainly by overall environment. This means that 2 identical human poses can result obviously different CSIs if the environment around are not exactly the same as shown in Fig.~\ref{fig:ESP32CSI02}.
 	
 	So, the definite detection of human standing still in every environment is nearly impossible since the CSI of that situation may be found exactly matched to a CSI of the environment that a big bottle of water placed in front of ESP32.
-	In short, CSI is good for moving objects.
+	In short, CSI is suitable for moving target since we can focus on its change. The example of mapping CSI's change to Activity Classification can be found in \cite{chowdhuryTZ} and \cite{zouH}. Our work does likewise but focusing on Sleep Stage Monitoring instead of Activity Classification.
 	
-	Meanwhile, the moving pose is totally different because we focus on its change instead. The example of mapping CSI's change to Activity Classification can be found in \cite{chowdhuryTZ} and \cite{zouH}. Our work does likewise but focusing on Sleep stage monitoring instead of Activity Classification.
+	In different environment, the CSIs are different. But, the corresponding changing of Sleep Stage may affect to the same changing pattern of CSI. This hypothesis is investigated in the upcoming parts.
 	
-	In different environment, the CSIs are different. But, the corresponding changing of sleep stage may affect to the same changing pattern of CSI. This hypothesis is investigated in the upcoming parts.
-	
-	All steps of training and testing method are shown in Fig~\ref{fig:TRAINSTEP} and Fig~\ref{fig:TESTSTEP} respectively. 
+	All steps of training and testing method are shown in Fig.~\ref{fig:TRAINSTEP} and Fig.~\ref{fig:TESTSTEP} respectively. 
 	
 	
 	\begin{figure}[htbp]
-		\centerline{\includegraphics[width=70mm,scale=0.2]{TRAINSTEP07.png}}
+		\centerline{\includegraphics[width=70mm,scale=0.2]{TRAINSTEP08.png}}
 		\caption{All steps of training method.}
 		\label{fig:TRAINSTEP}
 	\end{figure}
-		\begin{figure}[htbp]
+	\begin{figure}[htbp]
 		\centerline{\includegraphics[width=60mm,scale=0.2]{TESTSTEP08.png}}
 		\caption{All steps of testing method.}
 		\label{fig:TESTSTEP}
@@ -341,16 +341,16 @@
 	\subsubsection*{CSI Resampling}
 	
 	As mentioned in \nameref{ESP32}, there are 64 subcarriers in CSI data from ESP32 but there are only 52 those are usable while the rest are null. So, we can construst a tensor of $1 \times 52$ to represent each CSI. We are to map CSI from the ESP32 to human sleep stage from {(Fitbit)}. The sampling rate of the sleep stage are locked at 30 seconds 
-	 since the device's limitation. So, we have one sleep stage annotations for 30 seconds. For the ESP32, the sampling rate is originally unpredictable and not constant but it is running around 70Hz. So, we do a process called ``Resampling" to the CSI data in order to maintain the dimension of each sequence. The CSI data can be resampled into any size so, we determine it as one of the parameter.
+	since the device's limitation. So, we have one sleep stage annotations for 30 seconds. For the ESP32, the sampling rate is originally unpredictable and not constant but it is running around 70Hz. So, we do a process called ``Resampling" to the CSI data in order to maintain the dimension of each sequence. The CSI data can be resampled into any size so, we determine it as one of the parameter.
 	
-	An example of CSI Resampling is shown in Fig~\ref{fig:CSIResampling01}. The top graph shows that the the original CSI is logged unstably. The bottom one is to recreate a CSI data at rate 30Hz by calculating each with 2 data at the closet timestamps from the original with a simple mathematical weight equation as in Eq.~\ref{eq:CSIResampling01} in order to recreate a CSI data with fixed identical size for all sequences.
+	An example of CSI Resampling is shown in Fig.~\ref{fig:CSIResampling01}. The top graph shows that the the original CSI is logged unstably. The bottom one is to recreate a CSI data at rate 30Hz by calculating each with 2 data at the closet timestamps from the original with a simple mathematical weight equation as in Eq.~\ref{eq:CSIResampling01} in order to recreate a CSI data with fixed identical size for all sequences.
 	
 	\begin{equation}
-	\begin{aligned}
-	& CSI_{now} = CSI_{before} \\ 
-	& + \left(  \frac{ts_{now}-ts_{before}}{ts_{after}-ts_{before}}  \times (CSI_{after}-CSI_{before})   \right),
-	\label{eq:CSIResampling01}
-	\end{aligned}
+		\begin{aligned}
+			& CSI_{now} = CSI_{before} \\ 
+			& + \left(  \frac{ts_{now}-ts_{before}}{ts_{after}-ts_{before}}  \times (CSI_{after}-CSI_{before})   \right),
+			\label{eq:CSIResampling01}
+		\end{aligned}
 	\end{equation}
 	where $ts_{now}$, $ts_{before}$, $ts_{after}$ are desired timestamp, timestamp at the closest CSI before the desired timestamp and timestamp at the closest CSI after the desired timestamp respectively. And, $CSI_{now}$, $CSI_{before}$, $CSI_{after}$ are CSI at the desired timestamp, CSI before the desired timestamp and CSI after the desired timestamp respectively.
 	
@@ -360,67 +360,67 @@
 		\label{fig:CSIResampling01}
 	\end{figure}
 	
-	Thus, we are able to map each CSI sequence of 30 seconds to one sleep stage annotation.		
+	Thus, we are able to map each CSI sequence of 30 seconds to each Sleep Stage annotation.		
 	
 	
-
+	
 	\subsubsection*{Data Preparation}
 	Let $D$ be a set of synchronized CSI sequences and Sleep Stage package. Each pair has corresponding timestamp.
 	
 	
 	
 	\begin{equation}
-	D =  {(C_t, S_t), t \in [1, n]},
-	\label{eq:Dataset}
-	\end{equation} where  $n$ is a number of pairs, $t$ is a timestamp, $C_t$ is a sequence of CSI data which is collected between 30 seconds before $t$ to $t$ and $S_t$ is a Sleep Stage annotation as the ground truth which are collected at $t$.
-
-	All $C$s has the same dimension since they are all resampled  beforehand. Let $\delta$ be the length of $C$s.
-		\iffalse
+		D =  {(C_t, S_t), t \in [1, n]},
+		\label{eq:Dataset}
+	\end{equation} where  $n$ is a number of pairs, $t$ is a timestamp, $C_t$ is a sequence of CSI data which is collected between $t-30$ to $t$ and $S_t$ is a Sleep Stage annotation as the ground truth which are collected at $t$.
+	
+	All $C$s has the same dimension since they are all resampled  beforehand. Let $\delta$ be the length of each $C$.
+	\iffalse
 	\fi
 	
 	\subsubsection*{Forming Matrices}
 	To make the CSI and Sleep Stage data valid to the training model, they are to be formed in to a sequence of matrices.
 	
 	\paragraph{CSI data}
-	For CSI data (left part in \ref{fig:TRAINSTEP}), the streaming data is cut into a serie of $\delta \times 52$ matrices.
+	For CSI data (left part in Fig.~\ref{fig:TRAINSTEP}), the streaming data is cut into a serie of $n \times \delta \times 52$ matrices.
 	
 	However, original CSI data is complex number so, we can either convert it into phase or amplitude. As mentioned in \ref{CSI}, the CSI is originally in form $h=y/x=v+wi$ so, they are parsed. For amplitude,  $\sqrt{ v^2+w^2 }$ and $\arctantwo(v, 2 )$ for phase.
 	In the paper, we use amplitude.
 	
-		\begin{equation}
+	\begin{equation}
 		amp =  {  \sqrt{ v_{sc}^2+w_{sc}^2 } , sc \in [1, 52]}
 		\label{eq:CSIampParser}
 	\end{equation}
-and
-\begin{equation}
-	C =  [amp_1,...,amp_{\delta}].
-	\label{eq:CSIseq}
-\end{equation}
-
- The serie length is $n$ so, a single matrix of  $n \times \delta \times 52$ is for the CSI data side.
+	and
+	\begin{equation}
+		C =  [amp_1,...,amp_{\delta}].
+		\label{eq:CSIseq}
+	\end{equation}
+	
+	The serie length is $n$ so, a single matrix of  $n \times \delta \times 52$ is for the CSI data side.
 	
 	\paragraph{Sleep Stage data}
-	For Sleep Stage data (right part in \ref{fig:TRAINSTEP}), the streaming data is cut into a serie of  $n$ length resulting a single matrix of  $n \times 1$. Furthermore, each is mapped into a $1 \times 4$ matrix as follows.
-
+	For Sleep Stage data (right part in Fig.~\ref{fig:TRAINSTEP}), the streaming data is cut into a serie of  $n$ length resulting a single matrix of  $n \times 1$. Furthermore, each is mapped into a $1 \times 4$ weight matrix as follows.
+	
 	\begin{equation}
 		S = \begin{cases}
-		[1,0,0,0] &\text{,if sleep stage is Wake}\\
-		[0,1,0,0] &\text{,if sleep stage is REM}\\
-		[0,0,1,0] &\text{,if sleep stage is Light}\\
-		[0,0,0,1] &\text{,if sleep stage is Deep}\\
-	\end{cases}
-	\label{eq:SSparser}
-\end{equation}	
-		
+			[1,0,0,0] &\text{,if sleep stage is Wake}\\
+			[0,1,0,0] &\text{,if sleep stage is REM}\\
+			[0,0,1,0] &\text{,if sleep stage is Light}\\
+			[0,0,0,1] &\text{,if sleep stage is Deep}\\
+		\end{cases}
+		\label{eq:SSparser}
+	\end{equation}	
+	
 	Eventually, a single matrix of  $n \times 1 \times 4$ is resulted and used for the Sleep Stage data side.
 	
 	\subsubsection*{Grouping / Shuffling}
 	
 	
-	The training model swallow training data $D$ as an input, where each is a sequencial set of $(C_t,S_t)$ at a corresponding timestamp with size $n$.	
+	The training model swallows training data $D$ as an input, where each is a sequencial set of $(C_t,S_t)$ at a corresponding timestamp with size $n$.	
 	As each $C$ is a sequencial set with size $\delta$, we assume that Long-short term memory (LSTM) \cite{hochreiterS} is suitable for this type of data.
 	
-	Moreover, the order of $D$ are shuffled in order to reduce the sequencial relation that might come with the data.
+	Moreover, the order of $D$ are shuffled in order to reduce the sequencial relation that can be embedded within the data.
 	
 	\subsubsection*{Forming Network Layer}
 	
@@ -455,181 +455,183 @@ and
 	
 	
 	\subsection*{Testing}
-		Most of the processes are similar to those which are in the training method.
-		
-		
-		\subsubsection*{Reforming Matrices}
+	Most of the processes are similar to those which are in the training method.
+	
+	
+	\subsubsection*{Reforming Matrices}
 	
 	\paragraph{Sleep Stage data}
-	For Sleep Stage data (right part in \ref{fig:TESTSTEP}), the data is resulted as a serie of  $n$ length resulting a single matrix of  $n \times 1 \times 4$. As the Sleep Stage data is parsed in Eq.~\ref{eq:SSparser}, they are reverted back with the same manners as follows.
+	For Sleep Stage data (in Fig.~\ref{fig:TESTSTEP}), the data is resulted as a serie of  $n$ length resulting a single matrix of  $n \times 4$. Each row are reshaped into $1 \times 4$ matrix and reverted back with the same manners as the Sleep Stage data parsing in Eq.~\ref{eq:SSparser}  as follows.
 	
 	
-		\begin{equation}
+	\begin{equation}
 		\text{The Sleep Stage is} \begin{cases}
-			\text{Wake} & ,\argmax_i x'_i=1  \\
-			\text{REM} & ,\argmax_i x'_i=2  \\
-			\text{Light} & ,\argmax_i x'_i=3  \\
-			\text{Deep} & ,\argmax_i x'_i=4  \\
+			\text{Wake} & ,\argmax_i S'_i=1  \\
+			\text{REM} & ,\argmax_i S'_i=2  \\
+			\text{Light} & ,\argmax_i S'_i=3  \\
+			\text{Deep} & ,\argmax_i S'_i=4  \\
 		\end{cases}
 		\label{eq:SSparserRV}
 	\end{equation}	
-		
+	
 	% Results and Discussion can be combined.
 	\section*{Results}
 	
 	\subsection*{Data Collection}
-
-	We recruited 10 volunteers to sleep in between the devices (2 WiFi anntennae) while wearing a Fitbit smartwatch in 3 different environments. The example of the data collection are shown in Fig.~\ref{fig:dataCollect01}, Fig.~\ref{fig:dataCollect02}, Fig.~\ref{fig:dataCollect03} and Fig.~\ref{fig:dataCollect04} where the top is the annotated Sleep State and the bottom is a resampled WiFi CSI with $\delta = 50$.
+	
+	We recruited 10 volunteers to sleep in between the devices (2 WiFi anntennae) while wearing a Fitbit sleep tracker. The example of the data collection are shown in Fig.~\ref{fig:dataCollect01}, Fig.~\ref{fig:dataCollect02}, Fig.~\ref{fig:dataCollect03} and Fig.~\ref{fig:dataCollect04} where the top is annotated Sleep State from the Fitbit and the bottom is a resampled WiFi CSI with $\delta = 50$.
 	
 	
-\begin{figure}[htbp]
-	\centerline{\includegraphics[width=70mm,scale=0.2]{VIS05.png}}
-	\caption{An example of data collection with Wake Stage.}
-	\label{fig:dataCollect01}
-\end{figure}
-\begin{figure}[htbp]
-	\centerline{\includegraphics[width=70mm,scale=0.2]{VIS06.png}}
-	\caption{An example of data collection with REM Stage.}
-	\label{fig:dataCollect02}
-\end{figure}
-\begin{figure}[htbp]
-	\centerline{\includegraphics[width=70mm,scale=0.2]{VIS07.png}}
-	\caption{An example of data collection with Light Stage.}
-	\label{fig:dataCollect03}
-\end{figure}
-\begin{figure}[htbp]
-	\centerline{\includegraphics[width=70mm,scale=0.2]{VIS08.png}}
-	\caption{An example of data collection with Deep Stage.}
-	\label{fig:dataCollect04}
-\end{figure}
-
-	The whole data collected is an hour of videos and WiFi CSI which worths 180,000 frames for 30 fps rate. The ratio of dataset for training and testing is 80/20.
+	\begin{figure}[htbp]
+		\centerline{\includegraphics[width=70mm,scale=0.2]{VIS05.png}}
+		\caption{An example of data collection with Wake Stage.}
+		\label{fig:dataCollect01}
+	\end{figure}
+	\begin{figure}[htbp]
+		\centerline{\includegraphics[width=70mm,scale=0.2]{VIS06.png}}
+		\caption{An example of data collection with REM Stage.}
+		\label{fig:dataCollect02}
+	\end{figure}
+	\begin{figure}[htbp]
+		\centerline{\includegraphics[width=70mm,scale=0.2]{VIS07.png}}
+		\caption{An example of data collection with Light Stage.}
+		\label{fig:dataCollect03}
+	\end{figure}
+	\begin{figure}[htbp]
+		\centerline{\includegraphics[width=70mm,scale=0.2]{VIS08.png}}
+		\caption{An example of data collection with Deep Stage.}
+		\label{fig:dataCollect04}
+	\end{figure}
+	
+	The whole data collection is  50 hours of sleep which worth 6,000 frames for 30 seconds/Sleep State rate. The ratio of dataset for training and testing is 85/15.
 	
 	\subsection*{Experimental Result}
 	\label{result}	
 	
-	An evaluation is achieved   by the algorithm written in Python 3.8. The code is available on 	Github$\footnote[1]{https://github.com/rtmtree/CSPS}$.
+	An evaluation is achieved   by the algorithm written in Python 3.8. The code is available on Github$\footnote[1]{https://github.com/rtmtree/CSPS}$.
 	
 	As parameters stated in the previous sections, we demostrated the prediction by the followings.
 	
-	Table~\ref{table:resultSigma15}, Table~\ref{table:resultSigma15}, Table~\ref{table:resultSigma15} and  Table~\ref{table:resultSigma15} show the estimation performance of 19 body keypoints in PCK when $\delta=15$, $\delta=20$, $\delta=30$ and $\delta=40$ respectively.
-\begin{table}[!ht]
-	\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
-		\centering
-		\caption{
-			{\bf Table of evaluation result when $\delta=15$.}}
-	\begin{tabular}{l|llllll}
-	 &Wake & REM &Light &Deep \\[1pt]
-	\hline
-	Wake &A &B &C &D \\[1pt]
-	REM &B &C &D &E \\[1pt]
-	Light &C &D &E &F \\[1pt]
-	Deep &D &E &F &G \\[1pt]
-\end{tabular}
-	\label{table:resultSigma15}
-\end{adjustwidth}
-\end{table}
-
-\begin{table}[!ht]
-	\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
-		\centering
-		\caption{
-			{\bf Table of evaluation result when $\delta=30$.}}
-		\begin{tabular}{l|llllll}
-			&Wake & REM &Light &Deep \\[1pt]
-			\hline
-			Wake &A &B &C &D \\[1pt]
-			REM &B &C &D &E \\[1pt]
-			Light &C &D &E &F \\[1pt]
-			Deep &D &E &F &G \\[1pt]
-		\end{tabular}
-		\label{table:resultSigma30}
-	\end{adjustwidth}
-\end{table}
-
-\begin{table}[!ht]
-	\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
-		\centering
-		\caption{
-			{\bf Table of evaluation result when $\delta=40$.}}
-		\begin{tabular}{l|llllll}
-			&Wake & REM &Light &Deep \\[1pt]
-			\hline
-			Wake &A &B &C &D \\[1pt]
-			REM &B &C &D &E \\[1pt]
-			Light &C &D &E &F \\[1pt]
-			Deep &D &E &F &G \\[1pt]
-		\end{tabular}
-		\label{table:resultSigma40}
-	\end{adjustwidth}
-\end{table}
-
-\begin{table}[!ht]
-	\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
-		\centering
-		\caption{
-			{\bf Table of evaluation result when $\delta=60$.}}
-		\begin{tabular}{l|llllll}
-			&Wake & REM &Light &Deep \\[1pt]
-			\hline
-			Wake &A &B &C &D \\[1pt]
-			REM &B &C &D &E \\[1pt]
-			Light &C &D &E &F \\[1pt]
-			Deep &D &E &F &G \\[1pt]
-		\end{tabular}
-		\label{table:resultSigma60}
-	\end{adjustwidth}
-\end{table}
-
-\section*{Discussion}
-
-\subsection*{WiFi Antennae Installation}
-
-	The Installation of WiFi antennae can affect tremendously in data. We lock the positions in both training and testing process as shown in Fig~\ref{fig:ANTENSETUP01}.
-	2 antennae are connecting to ESP32s and to the PC afterward.
+	Table~\ref{table:resultSigma1}, Table~\ref{table:resultSigma2}, Table~\ref{table:resultSigma3} and  Table~\ref{table:resultSigma4} show the estimation performance of 4 Sleep Stages when $\delta=15$, $\delta=30$, $\delta=50$ and $\delta=200$ respectively.
+	\begin{table}[!ht]
+		\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
+			\centering
+			\caption{
+				{\bf Table of evaluation result when $\delta=15$.}}
+			\begin{tabular}{l|llllll}
+				\backslashbox{Truth}{Predicted} &Wake & REM &Light &Deep \\[1pt]
+				\hline
+				Wake &0.19 & 0.06 & 0.72 & 0.03 \\[1pt]
+				REM &0.03 & 0.83 & 0.14 & 0.00 \\[1pt]
+				Light &0.01 & 0.05 & 0.91 & 0.03 \\[1pt]
+				Deep &0.00 & 0.01 & 0.16 & 0.83 \\[1pt]
+			\end{tabular}
+			\label{table:resultSigma1}
+		\end{adjustwidth}
+	\end{table}
+	
+	\begin{table}[!ht]
+		\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
+			\centering
+			\caption{
+				{\bf Table of evaluation result when $\delta=30$.}}
+			\begin{tabular}{l|llllll}
+				\backslashbox{Truth}{Predicted} &Wake & REM &Light &Deep \\[1pt]
+				\hline
+				Wake &0.28 & 0.16 & 0.50 & 0.06 \\[1pt]
+				REM &0.00 & 0.82 & 0.18 & 0.00 \\[1pt]
+				Light &0.01 & 0.04 & 0.92 & 0.03 \\[1pt]
+				Deep &0.01 & 0.00 & 0.20 & 0.79 \\[1pt]
+			\end{tabular}
+			\label{table:resultSigma2}
+		\end{adjustwidth}
+	\end{table}
+	
+	\begin{table}[!ht]
+		\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
+			\centering
+			\caption{
+				{\bf Table of evaluation result when $\delta=50$.}}
+			\begin{tabular}{l|llllll}
+				\backslashbox{Truth}{Predicted} &Wake & REM &Light &Deep \\[1pt]
+				\hline
+				Wake &0.34 &0.06 &0.5 & 0.09 \\[1pt]
+				REM &0.00 & 0.83 & 0.17 & 0.00 \\[1pt]
+				Light & 0.01 & 0.03 & 0.92 & 0.04 \\[1pt]
+				Deep &0.01 & 0.00 & 0.15 & 0.85 \\[1pt]
+			\end{tabular}
+			\label{table:resultSigma3}
+		\end{adjustwidth}
+	\end{table}
+	
+	\begin{table}[!ht]
+		\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
+			\centering
+			\caption{
+				{\bf Table of evaluation result when $\delta=200$.}}
+			\begin{tabular}{l|llllll}
+				\backslashbox{Truth}{Predicted} &Wake & REM &Light &Deep \\[1pt]
+				\hline
+				Wake &0.19 & 0.06 & 0.66 & 0.09 \\[1pt]
+				REM &0.03 & 0.76 & 0.21 & 0.00 \\[1pt]
+				Light &0.01 & 0.04 & 0.91 & 0.04 \\[1pt]
+				Deep &0.01 & 0.00 & 0.17 & 0.82 \\[1pt]
+			\end{tabular}
+			\label{table:resultSigma4}
+		\end{adjustwidth}
+	\end{table}
+	
+	\section*{Discussion}
+	
+	\subsection*{Environment Installation}
+	
+	The Installation of WiFi antennae can affect tremendously in data. We fixed the positions in both training and testing process as shown in Fig.~\ref{fig:SETUP01}.
+	2 antennae are connecting to ESP32s and to the PC afterward for the AP antennae for CSI collection. Lastly, the human sleeping on the bed need to wear Fitbit sleep tracker as shown in Fig.~\ref{fig:SETUP02}.
 	
 	\begin{figure}[htbp]
-	\centerline{\includegraphics[width=40mm,scale=0.2]{ANTENSETUP01.jpg}}
-	\caption{WiFi Antennae and Camera Setup.}
-	\label{fig:ANTENSETUP01}
-\end{figure}
-
-
-
-
-
-\subsection*{CSI Extraction Method}
-
-There are many soluions for extracting WiFi CSI from the ESP as mentioned in \nameref{ESP32}. This paper picked the solution from ESP32-CSI-Tool$\footnote[1]{https://github.com/StevenMHernandez/ESP32-CSI-Tool}$ since it is considerably well-written and simple to organize. To change the method of extracting WiFi CSI would affect the result significantly.
-
-
-
-
-
-
-\subsection*{Multiple Person Sleep Stage Estimation}
-
-The model does the mapping rule from WiFi CSI with a specific dimension to human pose matrix. So, it is able to only detect single person pose in a range. The annotations originally result all human poses from the videos but we decided to crop it to be only one person in order to increase the precision. If we do training with multiple person pose data instead, we believe the result will be well but the more huge data collection is also needed.
-
-\iffalse
-\subsection*{Human speed of moving to $\sigma$}
-
-As the Table~\ref{table:PCKsigma15}, Table~\ref{table:PCKsigma20}, Table~\ref{table:PCKsigma30} and  Table~\ref{table:PCKsigma40} show the difference of quality by different value of $\sigma$, the fine-tuning says that $\sigma=15$ result the best. This implies length of $15$ frames can represent a specific pattern of move best for the used dataset. So, the volunteer who recorded movement in the datasent perform a move slower, $\sigma$ should be extended to cover the proper time peroid of the movement pattern.
-\fi
-
- 	\section*{Conclusion}
-
+		\centerline{\includegraphics[width=40mm,scale=0.2]{SETUP01.jpg}}
+		\caption{Camera setup and a bed.}
+		\label{fig:SETUP01}
+	\end{figure}
+	
+		\begin{figure}[htbp]
+		\centerline{\includegraphics[width=40mm,scale=0.2]{SETUP03.jpg}}
+		\caption{Fitbit sleep tracker.}
+		\label{fig:SETUP02}
+	\end{figure}
+	
+	
+	
+	\subsection*{CSI Extraction Method}
+	
+	There are many solutions for extracting WiFi CSI from the ESP32 as mentioned in \nameref{ESP32}. This paper picked the solution from ESP32-CSI-Tool$\footnote[1]{https://github.com/StevenMHernandez/ESP32-CSI-Tool}$ since it is considerably well-written and simple to organize. To change the method of extracting WiFi CSI would affect the result significantly.
+	
+	
+	
+	\subsection*{Multiple Person Sleep Stage Estimation}
+	
+	The model does a mapping rule from WiFi CSI with a specific dimension to human sleep stage matrix. So, it is able to only detect single person pose in a range. The annotations originally can result all human sleep stage by using the devices for all specimen. If we do training with multiple sleep stage data instead, we do not believe the result will be well since CSI of a person moving is rarely separatable form others.
+	
+	\iffalse
+	\subsection*{Human speed of moving to $\sigma$}
+	
+	As the Table~\ref{table:PCKsigma15}, Table~\ref{table:PCKsigma20}, Table~\ref{table:PCKsigma30} and  Table~\ref{table:PCKsigma40} show the difference of quality by different value of $\sigma$, the fine-tuning says that $\sigma=15$ result the best. This implies length of $15$ frames can represent a specific pattern of move best for the used dataset. So, the volunteer who recorded movement in the datasent perform a move slower, $\sigma$ should be extended to cover the proper time peroid of the movement pattern.
+	\fi
+	
+	\section*{Conclusion}
+	
+	\iffalse
 	Currently, there are many issues on security occuring in all ranges of human especially in elderlies and those who are not capable to live solely. To solve those, issues on privacy usually comes instead e.g. recording videos for preventing accident in a house, monitoring of people in a room. Many people do not feel very comfortable on these. So, we seek a solution where we can monitor those activity without a camera needed. 
+	\fi
+	Currently, there are many concern on sleepness in all group of people. Especially, those who works in extraordinary time period are facing problem of having deficient sleepness. They are pleased to pay for a device that can inform if their sleepness is well enough e.g. smartwatch, smart ring and smart mattress. Those options come with additional and uncomfortable since users' bodies need a contact to an external device. So, we aim for proposing a contactless Sleep Monitoring device.
 	
-	After having a research, we discoverd that a variation in WiFi called WiFi CSI can tell whether the area is having an activity or moving objects. Moreoever, \cite{chowdhuryTZ}, \cite{zouH} and many other works had been done very well on detecting even what kind of activities is happening in the area. We do not believe that this is the limitation of WiFi CSI. In order to solve the above problem and prove if WiFi CSI is precise enough, we tried to overcome this by extracting a deeper information like Pose Estimation from it. 
+	After having a research, we discoverd that a variation in WiFi called WiFi CSI can tell whether the area is having an activity or moving objects. Moreoever, \cite{chowdhuryTZ}, \cite{zouH} and many other works had been done very well on detecting even what kind of activities is happening in the area. We do not believe that this is the limitation of WiFi CSI. In order to solve the above problem and prove if WiFi CSI is precise enough, we tried to overcome this by extracting a deeper information like Sleep Stage Estimation from it. 
 	
-	We controlled environments and enhanced WiFi Antennae stability as much as possible then mapped it to the Pose annotated by an existing Image to Pose Model. The result was very poor since the WiFi CSI is very vague. It penetrates through most of the things. We learned from \cite{bib20} that WiFi CSI value does not matter than its change. The works used Long-short term memory (LSTM), a neural network where focusing on sequence of the data, and obtained a very good result. 
+	We controlled environments and enhanced WiFi antennae stability as much as possible then mapped it to the Sleep Stage annotated by Fitbit technology. The result was very poor since the WiFi CSI is very vague. It penetrates through most of the things. We learned from \cite{bib20} that WiFi CSI value does not matter than its change. The works used Long-short term memory (LSTM), a neural network where focusing on sequence of the data, and obtained a very good result.  
+	
+	We applied the idea of LSTM instead and obtained a lot better result with more than 80\% of overall accuracy. Then, we adjusted the model to be suitable for our type of data and did fine-tuning for the frame size to be fit the most for normal human speed of moving while sleeping. So, This paper proposed a model of mapping rule that can takes a sequence of 30-second WiFi circumstance as an input and return an according human sleep stage as an output. The work can help people to monitor Sleep Stage of elderlies and those who are in need of sleep concerning. Moreover as a contact is not needed, users can not differentiate thier sleeping with or without the device. Significantly, the WiFi CSI obtained from ESP32 which is affordable and widely reachable so, people can simply apply the method on their own. The result of various fine-tuned environments and parammeters is acceptable and shown in \nameref{result}.
 	
 	
-	We applied the idea of LSTM on our work which made it not Pose Estimation but Moving Pose Estimation instead and obtained a lot better result. Then, we adjusted the model to be suite to our type of data and did fine-tuning for the frame size to be fit the most for normal human speed of moving. So, This paper proposed a model of mapping rule that can takes a sequence of WiFi circumstance as an input and return an according sequence of human pose as an output. The work can help people to monitor activity of elderlies and people who are in need of caring. Moreover as a camera is not needed, we can reduce an issue on privacy infringement and also cure the data size normal camera conducted as WiFi CSI is carrying much lower data size.
-	The result of various fine-tuned environments and parammeters is acceptable and shown in \nameref{result}.
-	
-
 	\section*{Acknowledgments}
 	We thank to Sirindhorn International Institute of Technology for providing technical environment and supportive information.
 	
@@ -639,9 +641,9 @@ As the Table~\ref{table:PCKsigma15}, Table~\ref{table:PCKsigma20}, Table~\ref{ta
 	
 	% Either type in your references using
 	% \begin{thebibliography}{}
-	% \bibitem{}
-	% Text
-	% \end{thebibliography}
+		% \bibitem{}
+		% Text
+		% \end{thebibliography}
 	%
 	% or
 	%
