@@ -45,7 +45,7 @@ poseFilePaths = ['data/SS'+label+'.csv']
 
 csiList = pd.read_csv(csiFilePaths[0], delimiter=',', header=None).values
 sleepList = pd.read_csv(poseFilePaths[0], delimiter=',', header=None).values
-startFrom = 0
+startFrom = 16
 print("read files done")
 SSWindowSize = 10
 
@@ -53,11 +53,11 @@ SSWindowSize = 10
 if True:  # plot pose3D
     fig = plt.figure()
     # gs = gridspec.GridSpec(3,2)
-    gs = gridspec.GridSpec(3, 2)
-    ax0 = fig.add_subplot(gs[0, :])
+    gs = gridspec.GridSpec(7, 2)
+    ax0 = fig.add_subplot(gs[0:3, :])
     # ax1=fig.add_subplot(gs[0,1])
-    ax2 = fig.add_subplot(gs[1, :])
-    ax3 = fig.add_subplot(gs[2, :])
+    # ax2 = fig.add_subplot(gs[3, :])
+    ax3 = fig.add_subplot(gs[4:6, :])
 
     x_values = [[] for i in range(64)]
     y_values = [[] for i in range(64)]
@@ -67,15 +67,17 @@ if True:  # plot pose3D
     ln = [ln1, ln2]
 
     def init():
-        ax0.set_yticklabels(['wake', 'rem', 'light', 'deep'])
+        ax0.set_yticklabels(['','wake', 'rem', 'light', 'deep',''])
         plt.setp(ax0, xlabel="Frame (1/30s)", ylabel="Sleep Stage")
-        ax0.set_xlim([0, SSWindowSize])
-        ax0.set_ylim([1, 4])
-        plt.setp(ax2, xlabel="Frame (30s)", ylabel="Amplitude(dB)")
+        # ax0.set_xlim([0, SSWindowSize])
+        # ax0.set_xlim([0, len(sleepList)])
+        ax0.set_xlim([startFrom, startFrom+SSWindowSize])
+        ax0.set_ylim([0, 5])
+        # plt.setp(ax2, xlabel="Frame (30s)", ylabel="Amplitude(dB)")
+        # ax2.set_ylim([-10, +40])
+        # ax2.set_xlim([0, 15000000])
         plt.setp(ax3, xlabel="Frame (30s)", ylabel="Amplitude(dB)")
-        ax2.set_ylim([-10, +40])
         ax3.set_ylim([-10, +40])
-        ax2.set_xlim([0, 15000000])
         ax3.set_xlim([0, 15000000])
         return ln
     SSX = []
@@ -111,7 +113,7 @@ if True:  # plot pose3D
         ax0.plot(SSX, SSY, label='Sleep stage')
 
         csiIndices = sleepIdx2csiIndices_timestamp(
-            sleepIdx, sleepList, csiList, skipframe=skipframe)
+            sleepIdx, sleepList, csiList, timeLen=skipframe)
         if(len(csiIndices) > 0):
             startCSIIdx = csiIndices[0]
             endCSIIdx = csiIndices[len(csiIndices)-1]
@@ -124,23 +126,23 @@ if True:  # plot pose3D
             # ax2.set_xlim([ csiList[startCSIIdx][0] , csiList[endCSIIdx][0] ])
 
             # plot normal AMPLITUDE
-            normalAmp = [filterNullSC(rawCSItoAmp(csiList[j][1:]))
-                         for j in csiIndices]
-            for j in range(0, 52):
-                textX = []
-                textY = []
-                for k in range(len(normalAmp)):
-                    curCsi = normalAmp[k]
-                    textX.append(csiList[csiIndices[0]+k][0])
-                    textY.append(curCsi[j])
-                ax2.plot(textX, gaussian_filter(
-                    textY, sigma=0), label='CSI subcarrier')
+            # normalAmp = [filterNullSC(rawCSItoAmp(csiList[j][1:]))
+            #              for j in csiIndices]
+            # for j in range(0, 52):
+            #     textX = []
+            #     textY = []
+            #     for k in range(len(normalAmp)):
+            #         curCsi = normalAmp[k]
+            #         textX.append(csiList[csiIndices[0]+k][0])
+            #         textY.append(curCsi[j])
+            #     ax2.plot(textX, gaussian_filter(
+            #         textY, sigma=0), label='CSI subcarrier')
+            # ax2.set_xlim([csiList[startCSIIdx][0], csiList[endCSIIdx][0]])
+
 
             # plot resamplinged AMPLITUDE
-            # sleepIndices=[j for j in range(sleepIdx-skipframe,sleepIdx)]
-            # print(sleepIndices)
             samplingedAmp, expectedTSs = samplingCSISleep(
-                csiList, csiIndices, sleepList, [sleepIdx, sleepIdx+1], 200)
+                csiList, csiIndices, sleepList, sleepIdx, 50,30)
             for j in range(0, 52):
                 textX = []
                 textY = []
@@ -150,7 +152,6 @@ if True:  # plot pose3D
                     textY.append(curCsi[j])
                 ax3.plot(textX, gaussian_filter(textY, sigma=0),
                          label='CSI samplinged subcarrier')
-            ax2.set_xlim([csiList[startCSIIdx][0], csiList[endCSIIdx][0]])
             ax3.set_xlim([csiList[startCSIIdx][0], csiList[endCSIIdx][0]])
 
             if False:
@@ -170,7 +171,7 @@ if True:  # plot pose3D
         # ax2.set_ylim([-10, +40])
         # ax3.set_ylim([-10, +40])
 
-        return [ax0, ax2, ax3]
+        return [ax0, ax3]
     # ani = animation.FuncAnimation(fig, updatefig, interval=1000, blit=True,frames=len(csiList),repeat=False,init_func=init)
     # custom_ylim = (-10, +40)
     ani = animation.FuncAnimation(fig, updatefig, frames=len(csiList), interval=5000,
