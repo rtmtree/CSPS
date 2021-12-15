@@ -190,13 +190,14 @@ def imageIdx2csiIndices_timestamp(poseIdx,poseList,csiList,skipframe=1):
     
     return csiIndices
 
-
-def sleepIdx2csiIndices_timestamp(sleepIndex,sleepList,csiList,timeLen=30):
+def sleepIdx2csiIndices_timestamp(sleepIndex,sleepList,csiStartIdx,csiList,timeLen=30):
     timeInPose=sleepList[sleepIndex][0]
     prevTimeInPose=sleepList[sleepIndex][0]-timeLen
     csiIndices=[]
-    for i in range(len(csiList)):
+    for i in range(csiStartIdx,len(csiList)):
         if(prevTimeInPose <= csiList[i][0] < timeInPose):
             csiIndices.append(i)
+        elif(csiList[i][0]>=timeInPose):
+            break
     
     return csiIndices

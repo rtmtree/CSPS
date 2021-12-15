@@ -21,7 +21,7 @@ from tensorflow.keras.layers import RepeatVector
 from tensorflow.keras.layers import TimeDistributed
 from tensorflow.keras.layers import Input, Embedding, Concatenate
 from modules.draw import Plotter3d, draw_poses
-from functions.csi_util import rawCSItoAmp,filterNullSC,csiIndices_sec,poseIndices_sec,samplingCSISleep,featureEngineer,featureEngineerNorm
+from functions.csi_util import rawCSItoAmp,filterNullSC,csiIndices_sec,poseIndices_sec,samplingCSISleep,sleepIdx2csiIndices_timestamp
 from functions.pose_util import poseToPAM,PAMtoPose,rotate_poses,getPCK
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -95,13 +95,19 @@ if __name__ == "__main__":
     # path = ''
     realData = True
 
-    labels=['sleep29-11-2021end1020','sleep30-11-2021end1020','sleep8-12-2021end1000','sleep11-12-2021end0930']
+    labels=[
+      # 'sleep29-11-2021end1020','sleep30-11-2021end1020',
+      'sleep08-12-2021end1000','sleep11-12-2021end0930',
+      'sleep12-12-2021end1000','sleep13-12-2021end1010'
+      ]
     labelsAlt=[]
+    timeLen=30
     batch_size = 128
     runTrain=True
+    runEval=True
     sleepWinSize=1 #sigma
-    samplingedCSIWinSize = 20 #delta
-    epoch=300
+    samplingedCSIWinSize = 100 #delta
+    epoch=500
     n_unit_lstm=200
     n_unit_atten=400
     downsample=2
@@ -139,6 +145,7 @@ if __name__ == "__main__":
                 csiFileName=csiFilePathsAlt[fileIndx-len(csiFilePaths)]
                 sleepFileName=sleepFilePathsAlt[fileIndx-len(csiFilePaths)]
                 isAlt=True
+            print("fileIndx",fileIndx,csiFileName)
             csiList=[]
             sleepList=[]
             csiList.extend(pd.read_csv(path+csiFileName,delimiter=',',header=None).values)
@@ -146,18 +153,26 @@ if __name__ == "__main__":
 
             dataLooper=len(sleepList)
             dataStep=sleepWinSize
+            csiStartIdx=0
             for i in range(0,dataLooper,dataStep):
 
                 # get pose in the time period
-                sleepIndices,startTime,endTime=poseIndices_sec(i,sleepList,sec=30)
+                # sleepIndices,startTime,endTime=poseIndices_sec(i,sleepList,sec=30)
+                sleepIdx=i
                 print("index",i,"/",dataLooper)
-                print("sleepIndices",sleepIndices)
-                print("startTime",startTime)
-                print("endTime",endTime)
+                print("sleepIdx",sleepIdx)
 
-                csiIndices=csiIndices_sec(startTime,endTime,csiList)
+                # way 1
+                # startTime=sleepList[sleepIdx][0]-timeLen
+                # endTime=sleepList[sleepIdx][0]
+                # print("startTime",startTime)
+                # print("endTime",endTime)
+                # csiIndices=csiIndices_sec(startTime,endTime,csiList)
+                # way 2
+                csiIndices = sleepIdx2csiIndices_timestamp(sleepIdx, sleepList, csiStartIdx, csiList, timeLen=timeLen)
                 print("len csiIndices",len(csiIndices))
                 if (len(csiIndices)>0):
+                  csiStartIdx = csiIndices[-1]
                   print("csiIndices",csiIndices[0],"-",csiIndices[-1])
 
                   # check if there is csi more than minCSIthreshold
@@ -165,22 +180,23 @@ if __name__ == "__main__":
                       print("too low csi number",len(csiIndices),minCSIthreshold)
                       continue
                   
-                  print(len(csiIndices),"csis to ",len(sleepIndices),"SS")
-
-                  curCSIs,_=samplingCSISleep(csiList,csiIndices,sleepList,sleepIndices,samplingedCSIWinSize)
+                  # sleep stage matrix formation
+                  print(len(csiIndices),"csis to 1 SS")
                   stage = False
-                  if(sleepList[sleepIndices[0]][1] == 1):
+                  if(sleepList[sleepIdx][1] == 1):
                       stage = [1,0,0,0]
-                  elif(sleepList[sleepIndices[0]][1] == 2):
+                  elif(sleepList[sleepIdx][1] == 2):
                       stage = [0,1,0,0]
-                  elif(sleepList[sleepIndices[0]][1] == 3):
+                  elif(sleepList[sleepIdx][1] == 3):
                       stage = [0,0,1,0]
-                  elif(sleepList[sleepIndices[0]][1] == 4):
+                  elif(sleepList[sleepIdx][1] == 4):
                       stage = [0,0,0,1]
-                  curSleeps = stage
-                  
                   if(stage==False):
                     continue
+                  curSleeps = stage
+
+                  # CSI matrix formation
+                  curCSIs,_=samplingCSISleep(csiList, csiIndices, sleepList, sleepIdx, samplingedCSIWinSize,timeLen=timeLen)
 
                   if(isAlt==False):
                       X.append(curCSIs)
@@ -191,8 +207,8 @@ if __name__ == "__main__":
 
         X=np.array(X)
         Y=np.array(Y)
-        print('bf shape X',(X.shape))
-        print('bf shape Y',(Y.shape))
+        print('shape X',(X.shape))
+        print('shape Y',(Y.shape))
 
         Xalt=np.array(Xalt)
         Yalt=np.array(Yalt)
@@ -238,7 +254,6 @@ if __name__ == "__main__":
     print('shape y_train',(y_train.shape))
     print('shape y_test',(y_test.shape))
     
-
     if runTrain:
 
         model = build_model(downsample=downsample,win_len=samplingedCSIWinSize*2,n_unit_lstm=n_unit_lstm, n_unit_atten=n_unit_atten,label_n=label_n)
@@ -248,20 +263,19 @@ if __name__ == "__main__":
         metrics=['accuracy'])
         print(model.summary())
         model.fit(
-        x_train,
-        y_train,
-        batch_size=batch_size, epochs=epoch,
-        validation_data=(x_test, y_test),
-        callbacks=[
-            tf.keras.callbacks.ModelCheckpoint(path+modelFileName,
-                                                monitor='val_accuracy',
-                                                save_best_only=True,
-                                                save_weights_only=False)
-            ])
-
+          x_train,
+          y_train,
+          batch_size=batch_size, epochs=epoch,
+          validation_data=(x_test, y_test),
+          callbacks=[
+              tf.keras.callbacks.ModelCheckpoint(path+modelFileName,
+                                                  monitor='val_accuracy',
+                                                  save_best_only=True,
+                                                  save_weights_only=False)
+        ])
         # model.save(path+modelFileName)
 
-    if True:
+    if runEval:
         # load the best model
         model = load_model(path+modelFileName)
         y_pred = model.predict(x_test)
