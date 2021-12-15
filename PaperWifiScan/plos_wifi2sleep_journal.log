@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.12.9)  15 DEC 2021 03:24
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.12.9)  15 DEC 2021 13:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -615,28 +615,38 @@ Package pdftex.def Info: CSIResampling03.png  used on input line 358.
 Package hyperref Warning: Suppressing empty link on input line 387.
 
 [5 <./TRAINSTEP07.png>] [6 <./TESTSTEP08.png> <./CSIResampling03.png>] [7]
-<VIS02.png, id=129, 640.3925pt x 479.7925pt>
-File: VIS02.png Graphic file (type png)
-<use VIS02.png>
-Package pdftex.def Info: VIS02.png  used on input line 486.
-(pdftex.def)             Requested size: 128.07622pt x 95.95679pt.
-<VIS03.png, id=130, 640.3925pt x 481.8pt>
-File: VIS03.png Graphic file (type png)
-<use VIS03.png>
-Package pdftex.def Info: VIS03.png  used on input line 491.
-(pdftex.def)             Requested size: 128.07622pt x 96.35829pt.
+<VIS05.png, id=131, 642.4pt x 481.8pt>
+File: VIS05.png Graphic file (type png)
+<use VIS05.png>
+Package pdftex.def Info: VIS05.png  used on input line 486.
+(pdftex.def)             Requested size: 128.47772pt x 96.35829pt.
+<VIS06.png, id=132, 642.4pt x 481.8pt>
+File: VIS06.png Graphic file (type png)
+<use VIS06.png>
+Package pdftex.def Info: VIS06.png  used on input line 491.
+(pdftex.def)             Requested size: 128.47772pt x 96.35829pt.
+<VIS07.png, id=133, 643.40375pt x 482.80376pt>
+File: VIS07.png Graphic file (type png)
+<use VIS07.png>
+Package pdftex.def Info: VIS07.png  used on input line 496.
+(pdftex.def)             Requested size: 128.67847pt x 96.55904pt.
+<VIS08.png, id=134, 642.4pt x 481.8pt>
+File: VIS08.png Graphic file (type png)
+<use VIS08.png>
+Package pdftex.def Info: VIS08.png  used on input line 501.
+(pdftex.def)             Requested size: 128.47772pt x 96.35829pt.
 
-[8 <./VIS02.png>]
-<ANTENSETUP01.jpg, id=158, 1483.5425pt x 1112.155pt>
+[8 <./VIS05.png>] [9 <./VIS06.png> <./VIS07.png> <./VIS08.png>]
+<ANTENSETUP01.jpg, id=172, 1483.5425pt x 1112.155pt>
 File: ANTENSETUP01.jpg Graphic file (type jpg)
 <use ANTENSETUP01.jpg>
-Package pdftex.def Info: ANTENSETUP01.jpg  used on input line 583.
+Package pdftex.def Info: ANTENSETUP01.jpg  used on input line 592.
 (pdftex.def)             Requested size: 296.70325pt x 222.42706pt.
- [9 <./VIS03.png>] [10 <./ANTENSETUP01.jpg>]
+ [10] [11 <./ANTENSETUP01.jpg>]
 (/usr/local/texlive/2021/texmf-dist/tex/latex/ucs/data/uni-32.def
 File: uni-32.def 2013/05/13 UCS: Unicode data U+2000..U+20FF
-) [11]
-[12] 
+) [12]
+
 AED: lastpage setting LastPage
 [13] (./plos_wifi2sleep_journal.aux)
 Package rerunfilecheck Info: File `plos_wifi2sleep_journal.out' has not changed
@@ -644,13 +654,13 @@ Package rerunfilecheck Info: File `plos_wifi2sleep_journal.out' has not changed
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 14365 strings out of 478994
- 216974 string characters out of 5858184
- 576177 words of memory out of 5000000
- 31444 multiletter control sequences out of 15000+600000
+ 14381 strings out of 478994
+ 217208 string characters out of 5858184
+ 577370 words of memory out of 5000000
+ 31456 multiletter control sequences out of 15000+600000
  413786 words of font info for 100 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 80i,12n,88p,1045b,471s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 80i,12n,88p,1045b,475s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 }</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb>
 </usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><
@@ -668,10 +678,10 @@ e/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/
 1/texmf-dist/fonts/type1/public/marvosym/marvosym.pfb></usr/local/texlive/2021/
 texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2021/te
 xmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on plos_wifi2sleep_journal.pdf (13 pages, 1626576 bytes).
+Output written on plos_wifi2sleep_journal.pdf (13 pages, 1080316 bytes).
 PDF statistics:
- 298 PDF objects out of 1000 (max. 8388607)
- 249 compressed objects within 3 object streams
- 94 named destinations out of 1000 (max. 500000)
- 26665 words of extra memory for PDF output out of 29859 (max. 10000000)
+ 306 PDF objects out of 1000 (max. 8388607)
+ 253 compressed objects within 3 object streams
+ 96 named destinations out of 1000 (max. 500000)
+ 26675 words of extra memory for PDF output out of 29859 (max. 10000000)
 

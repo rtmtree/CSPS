@@ -479,18 +479,28 @@ and
 	
 	\subsection*{Data Collection}
 
-	We recruited 10 volunteers to sleep in between the devices (2 WiFi anntennae) while wearing a Fitbit smartwatch in 3 different environments. The example of the data collection are shown in Fig.~\ref{fig:VIS02} and Fig.~\ref{fig:VIS03} where the top is the annotated Sleep State, the vertically middle is a raw WiFi CSI and the bottom is a resampled WiFi CSI.
+	We recruited 10 volunteers to sleep in between the devices (2 WiFi anntennae) while wearing a Fitbit smartwatch in 3 different environments. The example of the data collection are shown in Fig.~\ref{fig:dataCollect01}, Fig.~\ref{fig:dataCollect02}, Fig.~\ref{fig:dataCollect03} and Fig.~\ref{fig:dataCollect04} where the top is the annotated Sleep State and the bottom is a resampled WiFi CSI with $\delta = 50$.
 	
 	
 \begin{figure}[htbp]
-	\centerline{\includegraphics[width=70mm,scale=0.2]{VIS02.png}}
-	\caption{An example of data collection.}
-	\label{fig:VIS02}
+	\centerline{\includegraphics[width=70mm,scale=0.2]{VIS05.png}}
+	\caption{An example of data collection with Wake Stage.}
+	\label{fig:dataCollect01}
 \end{figure}
 \begin{figure}[htbp]
-	\centerline{\includegraphics[width=70mm,scale=0.2]{VIS03.png}}
-	\caption{An example of data collection.}
-	\label{fig:VIS03}
+	\centerline{\includegraphics[width=70mm,scale=0.2]{VIS06.png}}
+	\caption{An example of data collection with REM Stage.}
+	\label{fig:dataCollect02}
+\end{figure}
+\begin{figure}[htbp]
+	\centerline{\includegraphics[width=70mm,scale=0.2]{VIS07.png}}
+	\caption{An example of data collection with Light Stage.}
+	\label{fig:dataCollect03}
+\end{figure}
+\begin{figure}[htbp]
+	\centerline{\includegraphics[width=70mm,scale=0.2]{VIS08.png}}
+	\caption{An example of data collection with Deep Stage.}
+	\label{fig:dataCollect04}
 \end{figure}
 
 	The whole data collected is an hour of videos and WiFi CSI which worths 180,000 frames for 30 fps rate. The ratio of dataset for training and testing is 80/20.

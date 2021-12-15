@@ -191,12 +191,12 @@ def imageIdx2csiIndices_timestamp(poseIdx,poseList,csiList,skipframe=1):
     return csiIndices
 
 
-def sleepIdx2csiIndices_timestamp(poseIdx,poseList,csiList,timeLen=30):
-    timeInPose=poseList[poseIdx][0]
-    prevTimeInPose=poseList[poseIdx][0]-timeLen
+def sleepIdx2csiIndices_timestamp(sleepIndex,sleepList,csiList,timeLen=30):
+    timeInPose=sleepList[sleepIndex][0]
+    prevTimeInPose=sleepList[sleepIndex][0]-timeLen
     csiIndices=[]
     for i in range(len(csiList)):
-        if(prevTimeInPose < csiList[i][0] <= timeInPose):
+        if(prevTimeInPose <= csiList[i][0] < timeInPose):
             csiIndices.append(i)
     
     return csiIndices
