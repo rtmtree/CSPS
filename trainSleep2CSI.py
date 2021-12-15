@@ -65,65 +65,46 @@ class AttenLayer(tf.keras.layers.Layer):
             'num_state': self.num_state,})
         return config
 
-
-class CSIModelConfig:
+def build_model(downsample=1,win_len=1000, n_unit_lstm=200, n_unit_atten=400,label_n=2):
     """
-    class for Human Activity Recognition ("bed", "fall", "pickup", "run", "sitdown", "standup", "walk")
-    Using CSI (Channel State Information)
-    Specifically, the author here wants to classify Human Activity using Channel State Information. 
-    The deep learning architecture used here is Bidirectional LSTM stacked with One Attention Layer.
-       2019-12, https://github.com/ludlows
+    Returns the Tensorflow Model which uses AttenLayer
+    """
+    if downsample > 1:
+        length = len(np.ones((win_len,))[::downsample])
+        x_in = tf.keras.Input(shape=(length, 52))
+    else:
+        x_in = tf.keras.Input(shape=(win_len, 52))
+    x_tensor = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=n_unit_lstm, return_sequences=True))(x_in)
+    x_tensor = AttenLayer(n_unit_atten)(x_tensor)
+    pred = tf.keras.layers.Dense(label_n, activation='softmax')(x_tensor)
+    model = tf.keras.Model(inputs=x_in, outputs=pred)
+    return model
+
+def load_model(hdf5path):
+    """
+    Returns the Tensorflow Model for AttenLayer
     Args:
-        win_len   :  integer (1000 default) window length for batching sequence
-        step      :  integer (200  default) sliding window by this step
-        thrshd    :  float   (0.6  default) used to check if the activity is intensive inside a window
-        downsample:  integer >=1 (2 default) downsample along the time axis
+        hdf5path: str, the model file path
     """
-    def __init__(self, win_len=1000, step=200, thrshd=0.6, downsample=2):
-        self._win_len = win_len
-        self._step = step
-        self._thrshd = thrshd
-        self._labels = ("bed", "fall", "pickup", "run", "sitdown", "standup", "walk")
-        self._downsample = downsample
+    model = tf.keras.models.load_model(hdf5path, custom_objects={'AttenLayer':AttenLayer})
+    return model
 
-    def build_model2(self, n_unit_lstm=200, n_unit_atten=400,label_n=2):
-        """
-        Returns the Tensorflow Model which uses AttenLayer
-        """
-        if self._downsample > 1:
-            length = len(np.ones((self._win_len,))[::self._downsample])
-            x_in = tf.keras.Input(shape=(length, 52))
-        else:
-            x_in = tf.keras.Input(shape=(self._win_len, 52))
-        x_tensor = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=n_unit_lstm, return_sequences=True))(x_in)
-        x_tensor = AttenLayer(n_unit_atten)(x_tensor)
-        pred = tf.keras.layers.Dense(label_n, activation='softmax')(x_tensor)
-        model = tf.keras.Model(inputs=x_in, outputs=pred)
-        return model
-
-    @staticmethod
-    def load_model(hdf5path):
-        """
-        Returns the Tensorflow Model for AttenLayer
-        Args:
-            hdf5path: str, the model file path
-        """
-        model = tf.keras.models.load_model(hdf5path, custom_objects={'AttenLayer':AttenLayer})
-        return model
-    
 if __name__ == "__main__":
  
     path = 'drive/MyDrive/Project/'
     # path = ''
     realData = True
 
-    labels=['sleep29-11-2021end1020','sleep30-11-2021end1020','sleep8-12-2021end1000']
+    labels=['sleep29-11-2021end1020','sleep30-11-2021end1020','sleep8-12-2021end1000','sleep11-12-2021end0930']
     labelsAlt=[]
-    batch_size = 64
+    batch_size = 128
     runTrain=True
-    sleepWinSize=1
-    samplingedCSIWinSize = 1000
+    sleepWinSize=1 #sigma
+    samplingedCSIWinSize = 20 #delta
     epoch=300
+    n_unit_lstm=200
+    n_unit_atten=400
+    downsample=2
 
     if realData:
         label_n = 4
@@ -187,7 +168,7 @@ if __name__ == "__main__":
                   print(len(csiIndices),"csis to ",len(sleepIndices),"SS")
 
                   curCSIs,_=samplingCSISleep(csiList,csiIndices,sleepList,sleepIndices,samplingedCSIWinSize)
-                  stage = [0,0,0,0]
+                  stage = False
                   if(sleepList[sleepIndices[0]][1] == 1):
                       stage = [1,0,0,0]
                   elif(sleepList[sleepIndices[0]][1] == 2):
@@ -198,6 +179,9 @@ if __name__ == "__main__":
                       stage = [0,0,0,1]
                   curSleeps = stage
                   
+                  if(stage==False):
+                    continue
+
                   if(isAlt==False):
                       X.append(curCSIs)
                       Y.append(curSleeps)
@@ -257,9 +241,7 @@ if __name__ == "__main__":
 
     if runTrain:
 
-        # parameters for Deep Learning Model
-        cfg = CSIModelConfig(win_len=samplingedCSIWinSize*2, step=200, thrshd=0.6, downsample=2)
-        model = cfg.build_model2(n_unit_lstm=200, n_unit_atten=400,label_n=label_n)
+        model = build_model(downsample=downsample,win_len=samplingedCSIWinSize*2,n_unit_lstm=n_unit_lstm, n_unit_atten=n_unit_atten,label_n=label_n)
         model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),
         loss='categorical_crossentropy', 
@@ -281,21 +263,38 @@ if __name__ == "__main__":
 
     if True:
         # load the best model
-        model = cfg.load_model(path+modelFileName)
+        model = load_model(path+modelFileName)
         y_pred = model.predict(x_test)
 
         print("evaluate")
         matchCounter = 0
+        stageTestCounter = [0,0,0,0]
+        stagePredCounter = [0,0,0,0]
         for i in range(0,len(y_test)):
           maximum_test = np.max(y_test[i])
           maximum_pred = np.max(y_pred[i])
           index_of_maximum_test = np.where(y_test[i] == maximum_test)
           index_of_maximum_pred = np.where(y_pred[i] == maximum_pred)
-          print(i,"test",index_of_maximum_test[0])
-          print(i,"pred",index_of_maximum_pred[0])
-          if(index_of_maximum_test[0]==index_of_maximum_pred[0]):
+          print(i,"test",index_of_maximum_test[0][0])
+          print(i,"pred",index_of_maximum_pred[0][0])
+
+          stageTestCounter[index_of_maximum_test[0][0]] = stageTestCounter[index_of_maximum_test[0][0]] + 1
+          if(index_of_maximum_test[0][0]==index_of_maximum_pred[0][0]):
             print("match")
             matchCounter = matchCounter+1
+            stagePredCounter[index_of_maximum_test[0][0]] = stagePredCounter[index_of_maximum_test[0][0]] + 1
           else:
             print("unmatch")
+          
+        print("score percent",matchCounter/len(y_test)*100,"/100")
         print("score",matchCounter,"/",len(y_test))
+        print("stagePredCounter",stagePredCounter)
+        print("stageTestCounter",stageTestCounter)
+
+
+
+
+
+
+
+

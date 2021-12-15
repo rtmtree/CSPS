@@ -78,6 +78,11 @@
 % amsmath and amssymb packages, useful for mathematical formulas and symbols
 \usepackage{amsmath,amssymb}
 
+\DeclareMathOperator{\atantwo}{atan2}
+\DeclareMathOperator{\arctantwo}{arctan2}
+\DeclareMathOperator*{\argmax}{argmax} % thin space, limits underneath in displays
+
+
 % Use adjustwidth environment to exceed column width (see example table in text)
 \usepackage{changepage}
 
@@ -243,9 +248,6 @@
 	
 	Actually, there are other existing ways for obtaining the CSI. One is from a ubiquitously used microprocessor, ESP32. which is still not much explored in Wi-Fi exploiting field. It is simple to implement and can be easily integrated with other tools in many platforms due to its massively produced external tools. 
 	
-	\iffalse
-	Human pose estimation is one of the most popular topics in machine-learning-based field. It can be used for visualization directly and also applied for further applications like Game-controlling, Activity Classification, Violence Detection and many more. Most of the models extract human pose from videos which are taken from camera which conduct privacy issues like statement above. We are expecting to extract human pose from Wi-Fi CSI to solve the issue. So, this paper proposes a machine-learning-based model to create a mapping rule from Wi-Fi CSI to 3D moving human pose estimation by using ESP32.
-	\fi
 	
 	Human sleep stage monitoring is being observed for a whlie and recently applied on commercial products. As sleeping is significant to all persons and can lead to many serious deceases, people are more concerned on utilizing their sleepness with using devices those are able to inform them their sleep information e.g. smartwatches, smart mattress, smart rings and etc.
 	But, those devices are considerably affect sleepness since it needs to contact with users' bodies. 
@@ -258,7 +260,7 @@
 	\section*{Background}
 	
 	\subsection*{Human sleep stage monitoring}
-	Human sleep stage monitoring is widely used as stated above. There are many types of staging. But most common and what we chose are stages of 4 which are Wake, Light Sleep, Deep Sleep, REM (Rapid Eye Movement). Many tools can inform this information in time sequence and various at accuracy. We use .... as our ground truth as it is the most accurate among others (ref). The ..... can log stages with resolution of 30 seconds so, we consider a sequence of 30-second stage with a sequence of 30-second CSI data from Wi-Fi.
+	Human sleep stage monitoring is widely used as stated above. There are many types of staging. But most common and what we chose are stages of 4 which are Wake, REM (Rapid Eye Movement),  Light Sleep and Deep Sleep. Many commercial devices can log such information in time sequence. We use {(Fitbit)} as our ground truth as it is a device with the most accuracy at Sleep Stage Estimation among others (ref). The {(Fitbit)}  can log stages with resolution of 30 seconds so, we consider a sequence of 30-second stage with a sequence of 30-second CSI data from Wi-Fi.
 	
 	
 	\subsection*{Wi-Fi}\label{wifi}
@@ -314,32 +316,34 @@
 	
 	
 	So, the definite detection of human standing still in every environment is nearly impossible since the CSI of that situation may be found exactly matched to a CSI of the environment that a big bottle of water placed in front of ESP32.
-	In short, if it does not move, we do not know if it is a human.
+	In short, CSI is good for moving objects.
 	
 	Meanwhile, the moving pose is totally different because we focus on its change instead. The example of mapping CSI's change to Activity Classification can be found in \cite{chowdhuryTZ} and \cite{zouH}. Our work does likewise but focusing on Sleep stage monitoring instead of Activity Classification.
 	
 	In different environment, the CSIs are different. But, the corresponding changing of sleep stage may affect to the same changing pattern of CSI. This hypothesis is investigated in the upcoming parts.
 	
-	All steps of training method is shown in Fig~\ref{fig:TRAINSTEP}. 
+	All steps of training and testing method are shown in Fig~\ref{fig:TRAINSTEP} and Fig~\ref{fig:TESTSTEP} respectively. 
 	
 	
 	\begin{figure}[htbp]
-		\centerline{\includegraphics[width=70mm,scale=0.2]{TRAINSTEP06.png}}
+		\centerline{\includegraphics[width=70mm,scale=0.2]{TRAINSTEP07.png}}
 		\caption{All steps of training method.}
 		\label{fig:TRAINSTEP}
 	\end{figure}
+		\begin{figure}[htbp]
+		\centerline{\includegraphics[width=60mm,scale=0.2]{TESTSTEP08.png}}
+		\caption{All steps of testing method.}
+		\label{fig:TESTSTEP}
+	\end{figure}
 	
-	
-	
-	\subsection*{Pre-processing}\label{Processing}
+	\subsection*{Training}
 	
 	\subsubsection*{CSI Resampling}
 	
+	As mentioned in \nameref{ESP32}, there are 64 subcarriers in CSI data from ESP32 but there are only 52 those are usable while the rest are null. So, we can construst a tensor of $1 \times 52$ to represent each CSI. We are to map CSI from the ESP32 to human sleep stage from {(Fitbit)}. The sampling rate of the sleep stage are locked at 30 seconds 
+	 since the device's limitation. So, we have one sleep stage annotations for 30 seconds. For the ESP32, the sampling rate is originally unpredictable and not constant but it is running around 70Hz. So, we do a process called ``Resampling" to the CSI data in order to maintain the dimension of each sequence. The CSI data can be resampled into any size so, we determine it as one of the parameter.
 	
-	As mentioned in \nameref{ESP32}, there are 64 subcarriers in CSI data from ESP32 but there are only 52 those are usable while the rest are null. So, we can construst a tensor of $1 \times 52$ to represent each CSI. We are to map CSI from the ESP32 to human sleep stage from ........ The sampling rate of the ..... can log sleep stage once 30 seconds 
-	 since its limitation. So, we have one sleep stage annotations for 30 seconds. For the ESP32, the sampling rate is originally unpredictable and not constant but it is running around 120Hz. So, we do a process called ``Resampling" to obtain CSI at rate 30Hz in order to maintain the dimension of each sequence.
-	
-	An example of CSI Resampling is shown in Fig~\ref{fig:CSIResampling01}. The top graph shows that the the original CSI is logged unstably. The bottom one is to pick a timestamp at rate 30Hz and calculated each with 2 data at the closet timestamps from the original with a simple mathematical weight equation as in Eq.~\ref{eq:CSIResampling01} in order to predict CSI at timestamp corresponding to each human pose annotation.
+	An example of CSI Resampling is shown in Fig~\ref{fig:CSIResampling01}. The top graph shows that the the original CSI is logged unstably. The bottom one is to recreate a CSI data at rate 30Hz by calculating each with 2 data at the closet timestamps from the original with a simple mathematical weight equation as in Eq.~\ref{eq:CSIResampling01} in order to recreate a CSI data with fixed identical size for all sequences.
 	
 	\begin{equation}
 	\begin{aligned}
@@ -356,127 +360,88 @@
 		\label{fig:CSIResampling01}
 	\end{figure}
 	
-	Thus, we are able to map each CSI sequence of 30 seconds to one sleep stage annotation at the corresponding timestamp.
+	Thus, we are able to map each CSI sequence of 30 seconds to one sleep stage annotation.		
 	
 	
-	\subsubsection*{Pose Estimation and PAM formation}
+
+	\subsubsection*{Data Preparation}
+	Let $D$ be a set of synchronized CSI sequences and Sleep Stage package. Each pair has corresponding timestamp.
 	
 	
-	\begin{figure}[htbp]
-		\centerline{\includegraphics[width=30mm,scale=0.5]{POSEkeypoint02.png}}
-		\caption{19 keypoints of human pose.}
-		\label{fig:POSEkeypoint}
-	\end{figure}
-	
-	
-	
-	We use Github-Lw3d$\footnote[1]{https://github.com/Daniil-Osokin/lightweight-human-pose-estimation-3d-demo.pytorch}$ to estimate 3D human pose from videos as stated above. the estimation gives us a $19 \times 3$ matrix for each image. The $19 \times 3$ matrix are used as an annotation where $19$ is for keypoints in human body and $3$ is for 3 axes coordination as shown in Fig~\ref{fig:POSEkeypoint}. But, the annotation can still possess too much independency. Some alignment of keypoints may lead to some impossible pose e.g. hip keypoint found very far from neck keypoint or head keypoint attached to hip keypoint. We assume those poses are not possible for normal human pose. To preserve those constraints, we form a pose adjacent matrix (PAM) from an original $19\times3$ matrix. the PAM is applied for all x, y and z axes. Each are to form their $19\times19$ matrix by the following equations.
 	
 	\begin{equation}
-	x_{i,j}' = \begin{cases}
-	x_i-x_j &\text{$i\neq j$}\\
-	x_i &\text{$i=j$}\\
-	\end{cases}
-	\label{eq:xPAM}
-	\end{equation},
-	\begin{equation}
-	y_{i,j}' = \begin{cases}
-	y_i-y_j &\text{$i\neq j$}\\
-	y_i &\text{$i=j$}\\
-	\end{cases}
-	\label{eq:yPAM}
-	\end{equation}
-	and
-	\begin{equation}
-	z_{i,j}' = \begin{cases}
-	z_i-x_j &\text{$i\neq j$}\\
-	z_i &\text{$i=j$}\\
-	\end{cases}
-	\label{eq:zPAM}
-	\end{equation}.
-	
-	The PAM is finally a $3\times19\times19$ matrix created from 3 matrices of $x'$,$y'$ and $z'$ stacked.
-	Apparently, one PAM represents one human pose.
-	
-	
-	
-	Conclusively, we are making a model by mapping a sequence of $1\times52$ matrix from CSI to each sequence of $ 19 \times 3 \times 3 $ PAM from moving human pose annotation with the corresponding timestamp as shown in Fig~\ref{fig:STEP01}. 
-	
-	\begin{figure}[htbp]
-		\centerline{\includegraphics[width=110mm,scale=0.5]{STEP06.png}}
-		\caption{A mapping rule from CSI frames to 3D human poses.}
-		\label{fig:STEP01}
-	\end{figure}
-	
-	
-	
-	\subsection*{Processing}
-	
-	
-	\subsubsection*{Mapping CSI and PAM}
-	Let $D$ be a set of synchronized pose and CSI data package. Each pair has corresponding timestamp.
-	
-	\begin{equation}
-	D =  {(C_t, P_t), t \in [1, n]},
+	D =  {(C_t, S_t), t \in [1, n]},
 	\label{eq:Dataset}
-	\end{equation} where  $n$ is a number of pairs, $C$ is for CSI data from ESP32, $P$ is for PAM annotation as the ground truth and $t$ is the timestamp index when those 2 were collected.
-	
-	
-	
-	\subsubsection*{Grouping By Sequence Size}
-	
-	Let $\sigma$ be an adjustable window size. $\sigma$ size of $D$ are fed to the model solely. So,  $\sigma \le n$. And, Let $m$ be the number of feeding iteration, $m = \lfloor \frac{n}{\sigma} \rfloor$.
-	
-	
-	The training model swallow $m$ training data as an input, where each is a sequencial set of $(C_t,P_t)$ at a corresponding timestamp with size $\sigma$.
-	Let $\Gamma$ be a representation of each sequencial set.
-	
-	\begin{equation}
-	\Gamma =  {(C_u, P_u), u \in [1, \sigma]},
-	\label{eq:SubDataset}
-	\end{equation}
-	where $u$ is the timestamp index when those 2 were collected. Apparently, the size of $\Gamma$ is $m$.
-	
-	
-	As the $\Gamma$ is a sequencial set with size $\sigma$, we assume that Long-short term memory (LSTM) \cite{hochreiterS} is suitable for this type of data.
-	
-	\iffalse
-	\paragraph*{(Optional) CSI Feature Extractor}
-	We may extract feature from the CSI before feed it to the model. Or ignore it and feed original CSI to the model directly.
+	\end{equation} where  $n$ is a number of pairs, $t$ is a timestamp, $C_t$ is a sequence of CSI data which is collected between 30 seconds before $t$ to $t$ and $S_t$ is a Sleep Stage annotation as the ground truth which are collected at $t$.
+
+	All $C$s has the same dimension since they are all resampled  beforehand. Let $\delta$ be the length of $C$s.
+		\iffalse
 	\fi
 	
-	\subsubsection*{CSI Feature Engineering}
-	As mentioned in \nameref{concept}, CSI ($C$) value implies environment where signal propagating. So, we need to ignore it and focus only on its change in order to universalize the circumstance. It means CSI variousity makes the model not to be applicable in every environment. To solve it, we simply sequentially substract $C_u$  in each $\Gamma$ backward to preserve only how CSI changes over each sequence by the following equation,
+	\subsubsection*{Forming Matrices}
+	To make the CSI and Sleep Stage data valid to the training model, they are to be formed in to a sequence of matrices.
 	
+	\paragraph{CSI data}
+	For CSI data (left part in \ref{fig:TRAINSTEP}), the streaming data is cut into a serie of $\delta \times 52$ matrices.
 	
-	\begin{equation}
-	C_u =  \begin{cases}
-	\text{all } 0 &\text{$u = 1$}\\
-	C_u - C_{u-1} &\text{$u > 1 $}\\
-	\end{cases}, C_u \in \Gamma.
-	\label{eq:CSIFeatureEn}
+	However, original CSI data is complex number so, we can either convert it into phase or amplitude. As mentioned in \ref{CSI}, the CSI is originally in form $h=y/x=v+wi$ so, they are parsed. For amplitude,  $\sqrt{ v^2+w^2 }$ and $\arctantwo(v, 2 )$ for phase.
+	In the paper, we use amplitude.
+	
+		\begin{equation}
+		amp =  {  \sqrt{ v_{sc}^2+w_{sc}^2 } , sc \in [1, 52]}
+		\label{eq:CSIampParser}
 	\end{equation}
+and
+\begin{equation}
+	C =  [amp_1,...,amp_{\delta}].
+	\label{eq:CSIseq}
+\end{equation}
+
+ The serie length is $n$ so, a single matrix of  $n \times \delta \times 52$ is for the CSI data side.
+	
+	\paragraph{Sleep Stage data}
+	For Sleep Stage data (right part in \ref{fig:TRAINSTEP}), the streaming data is cut into a serie of  $n$ length resulting a single matrix of  $n \times 1$. Furthermore, each is mapped into a $1 \times 4$ matrix as follows.
+
+	\begin{equation}
+		S = \begin{cases}
+		[1,0,0,0] &\text{,if sleep stage is Wake}\\
+		[0,1,0,0] &\text{,if sleep stage is REM}\\
+		[0,0,1,0] &\text{,if sleep stage is Light}\\
+		[0,0,0,1] &\text{,if sleep stage is Deep}\\
+	\end{cases}
+	\label{eq:SSparser}
+\end{equation}	
+		
+	Eventually, a single matrix of  $n \times 1 \times 4$ is resulted and used for the Sleep Stage data side.
+	
+	\subsubsection*{Grouping / Shuffling}
+	
+	
+	The training model swallow training data $D$ as an input, where each is a sequencial set of $(C_t,S_t)$ at a corresponding timestamp with size $n$.	
+	As each $C$ is a sequencial set with size $\delta$, we assume that Long-short term memory (LSTM) \cite{hochreiterS} is suitable for this type of data.
+	
+	Moreover, the order of $D$ are shuffled in order to reduce the sequencial relation that might come with the data.
 	
 	\subsubsection*{Forming Network Layer}
 	
-	\paragraph*{CSI Sequence to Pose Sequence (CSPS)}
+	\paragraph*{CSI Sequence to Sleep Stage (CSSS)}
 	
 	The summation of layers is shown in Table~\ref{table:CSPS}.
-	It is designed to shape a CSI Sequence ( $\sigma \times 52$ tensor) to a predicted sequence of pose ( $\sigma \times 3\times 19\times 19$ tensor).
+	It is designed to shape a CSI Sequence ( $n \times \delta \times 52$ tensor) to a predicted Sleep Stage ( $n \times 1 \times 4$ tensor).
 	
 	\begin{table}[!ht]
 		\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
 			\centering
 			\caption{
-				{\bf Layers in CSPS.}}
+				{\bf Layers in CSSS.}}
 			\begin{tabular}{lll}
 				\hline
 				Layer (type)       & Output Shape     & Param \# \\ 
 				\thickhline
-				Bidirectional LSTM & (None, 200)      & 122400   \\
-				RepeatVector       & (None, $\sigma$, 200)  & 0        \\
-				Bidirectional LSTM & (None, $\sigma$, 200)  & 240800   \\
-				TimeDistributed over Dense    & (None, $\sigma$, 1083) & 217683   \\ \hline
+				Input Layer & (None, $\delta$, 52)      & 0   \\
+				Bidirectional LSTM & (None, $\delta$, 400)  & 404800   \\
+				Attention Layer       & (None, 400)  & 160800       \\
+				TimeDistributed over Dense    & (None, 4) & 1604   \\ \hline
 			\end{tabular}
 			
 			\begin{flushleft} 
@@ -485,22 +450,36 @@
 		\end{adjustwidth}
 	\end{table}
 	
-	
-	We first use Bidirectional LSTM as an encoder layer with the input size of $(\sigma,52)$ to satisfy dimension of sequential $C_u$ in $\Gamma$.
-	Then, the repeat vector is added with time $\sigma$ to make the model treat with correct time-step. Afterward, we place a decoder layer with another Bidirectional LSTM. 
-	
-	Next, we dense the decoder to be $1083$ where can be reshaped into $3\times 19\times 19$ later.
-	
-	Lastly,  the TimeDistributed layer is used in order to make the model treat the output for each time-step individually.
+	We first use Input Layer with the input size of $(\delta,52)$ to satisfy dimension of sequential $C$ in $D$.
+	Then, use Bidirectional LSTM as an encoder layer. The Attention Layer is added afterward to make the model treat with correct time-step. Lastly, we dense the decoder to be $4$ where is reshaped into $1\times 4$ latter.
 	
 	
+	\subsection*{Testing}
+		Most of the processes are similar to those which are in the training method.
+		
+		
+		\subsubsection*{Reforming Matrices}
 	
+	\paragraph{Sleep Stage data}
+	For Sleep Stage data (right part in \ref{fig:TESTSTEP}), the data is resulted as a serie of  $n$ length resulting a single matrix of  $n \times 1 \times 4$. As the Sleep Stage data is parsed in Eq.~\ref{eq:SSparser}, they are reverted back with the same manners as follows.
+	
+	
+		\begin{equation}
+		\text{The Sleep Stage is} \begin{cases}
+			\text{Wake} & ,\argmax_i x'_i=1  \\
+			\text{REM} & ,\argmax_i x'_i=2  \\
+			\text{Light} & ,\argmax_i x'_i=3  \\
+			\text{Deep} & ,\argmax_i x'_i=4  \\
+		\end{cases}
+		\label{eq:SSparserRV}
+	\end{equation}	
+		
 	% Results and Discussion can be combined.
 	\section*{Results}
 	
 	\subsection*{Data Collection}
 
-	We recruited 10 volunteers to act common movements in front of the devices (a camera and WiFi anntennae) in 3 different environments. The example of the data collection are shown in Fig.~\ref{fig:VIS02} and Fig.~\ref{fig:VIS03} where the top-left is the annotated Pose Estimation, the top-right is a raw video, the vertical center is a raw WiFi CSI and the bottom is a resampled WiFi CSI.
+	We recruited 10 volunteers to sleep in between the devices (2 WiFi anntennae) while wearing a Fitbit smartwatch in 3 different environments. The example of the data collection are shown in Fig.~\ref{fig:VIS02} and Fig.~\ref{fig:VIS03} where the top is the annotated Sleep State, the vertically middle is a raw WiFi CSI and the bottom is a resampled WiFi CSI.
 	
 	
 \begin{figure}[htbp]
@@ -514,100 +493,30 @@
 	\label{fig:VIS03}
 \end{figure}
 
-
 	The whole data collected is an hour of videos and WiFi CSI which worths 180,000 frames for 30 fps rate. The ratio of dataset for training and testing is 80/20.
 	
-	
-	\subsection*{Error Metric}
-	
-	
-	Percentage of Correct Keypoint (PCK) is widely used to evaluate the performance of human pose estimation according to \cite{wangF}.
-	
-	\begin{equation}
-	\begin{aligned}
-	PCK_i@a = \frac{1}{N} \sum_{i=1}^{N}
-	I(
-	\frac{\mid \mid  pd_i \text{ - } gt_i \mid \mid^2_2}{\sqrt{rh^2+lh^2}}  \le a ),
-	\label{eq:PCK}
-	\end{aligned}
-	\end{equation}
-	
-	
-	where $I$(·) is a binary indicator that outputs 1 while true and 0 while false, 
-	$N$ is the number of frames and $i$ is the index of keypoints that $i \in {1, 2, ..., 19}$. The $rh$ and
-	$lh$ are for the positions of the right shoulder and the left hip from the ground truth, respectively.
-	So, the ${\sqrt{rh^2+lh^2}}$ is  considered as the length of the upper limb from the ground truth, which is used to normalize the prediction error length
-	$ \mid \mid pd_i \text{ - } gt_i \mid \mid _2^2$, and $pd_i$ and $gt_i$ are coordinates of prediction and ground-truth at the keypoint $i$ respectively.
-	
-	
-	
 	\subsection*{Experimental Result}
-	\label{result}
-	All steps of testing method is shown in Fig~\ref{fig:TESTSTEP}. 
-	
-	\begin{figure}[htbp]
-		\centerline{\includegraphics[width=60mm,scale=0.2]{TESTSTEP06.png}}
-		\caption{All steps of testing method.}
-		\label{fig:TESTSTEP}
-	\end{figure}
-	
-	
-	
+	\label{result}	
 	
 	An evaluation is achieved   by the algorithm written in Python 3.8. The code is available on 	Github$\footnote[1]{https://github.com/rtmtree/CSPS}$.
-	An environment under the evaluation is MacBook Pro 2016, 2.6 GHz i7 processor, 16 GB of RAM.
-	
-		The visual examples are shown in \ref{fig:PREDANNO01} and \ref{fig:PREDANNO02} where the top-left is the predicted pose, the top-right is the annotated pose and bottom is the resampled WiFi CSI that the prediction took as an input. Note that the predicted  and the annotated pose are actually moving in range of $\sigma$.
-	
-	
-	\begin{figure}[htbp]
-		\centerline{\includegraphics[width=100mm,scale=0.2]{PREDANNO01.png}}
-		\caption{An example of comparison between predicted pose and annotated pose when $\sigma=15$.}
-		\label{fig:PREDANNO01}
-	\end{figure}
-	\begin{figure}[htbp]
-		\centerline{\includegraphics[width=100mm,scale=0.2]{PREDANNO02.png}}
-		\caption{An example of comparison between predicted pose and annotated pose when $\sigma=15$.}
-		\label{fig:PREDANNO02}
-	\end{figure}
-	
 	
 	As parameters stated in the previous sections, we demostrated the prediction by the followings.
 	
-	Table~\ref{table:PCKsigma15}, Table~\ref{table:PCKsigma20}, Table~\ref{table:PCKsigma30} and  Table~\ref{table:PCKsigma40} show the estimation performance of 19 body keypoints in PCK when $\sigma=15$, $\sigma=20$, $\sigma=30$ and $\sigma=40$ respectively.
-
-
-	
+	Table~\ref{table:resultSigma15}, Table~\ref{table:resultSigma15}, Table~\ref{table:resultSigma15} and  Table~\ref{table:resultSigma15} show the estimation performance of 19 body keypoints in PCK when $\delta=15$, $\delta=20$, $\delta=30$ and $\delta=40$ respectively.
 \begin{table}[!ht]
-\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
-	\centering
-	\caption{
-		{\bf Table of PCK when $\sigma=15$.}}
-	\begin{tabular}{|l|l|l|l|l|l|l|l|}
-		\hline
-		Order & Keypoint & PCK@5 & PCK@10 & PCK@20 & PCK@30 & PCK@40 & PCK@50 \\ \thickhline
-		1     &  Neck       & 0.7553      &  0.8993      &  0.9443      & 0.9590       &   0.9717     & 0.9810       \\ \hline
-		2     &  Nose        & 0.0383      &  0.4885      &  0.9038      &  0.9498      &   0.9649     & 0.9724        \\ \hline
-		3     &  Hip (Invisible)        & 0.7626      &  0.9033      &  0.9437      & 0.9583       &  0.9688      & 0.9796       \\ \hline
-		4     &  L. Shoulder         & 0.6502      & 0.8436       & 0.9426       & 0.9665       &  0.9766      & 0.9828       \\ \hline
-		5     &  L. Elbow        & 0.6055      &  0.7786      &  0.9001      &  0.9482      &  0.9681      &  0.9772      \\ \hline
-		6     &  L. Wrist        & 0.3149      &  0.5845      &  0.8135      &  0.9013      &  0.9415      &  0.9625      \\ \hline
-		7     &  L. Hip        &  0.6866     &   0.8678     &  0.9485      & 0.9653       &  0.9765      &  0.9862      \\ \hline
-		8     &  L. Knee         & 0.5571      &  0.7794      &  0.9194      & 0.9587       &  0.9747      &  0.9837      \\ \hline
-		9     &  L. Ankle         &  0.4132     &  0.6572      &   0.8617     &   0.9292     &  0.9583      & 0.9740       \\ \hline
-		10    &  R. Shoulder        & 0.6419      &  0.8407      &  0.9364      & 0.9527       & 0.9618       &  0.9709      \\ \hline
-		11    &  R. Elbow        & 0.5966      &  0.7596      &  0.8854      &  0.9321      &  0.9532      &  0.9632      \\ \hline
-		12    &  R. Wrist        & 0.3031      &  0.5936      &  0.8204      &  0.9132      &  0.9386      &  0.9496      \\ \hline
-		13    &  R. Hip        & 0.6895      &   0.8690     &  0.9404      &  0.9547      &    0.9663    &   0.9778     \\ \hline
-		14    &  R. Knee        &  0.5626     &  0.7750      &  0.9169      &  0.9493      &   0.9631     &  0.9753      \\ \hline
-		15    &  R. Ankle        & 0.4370  &   0.6611     &   0.8627     &  0.9301      &    0.9552    &   0.9711     \\ \hline
-		16    &  L. Eye        & 0.0279      &  0.4281      &  0.8955      & 0.9493       &  0.9638      &  0.9740      \\ \hline
-		17    &  L. Ear        &  0.0677     &  0.6447      &  0.9250     & 0.9571       &   0.9709     &  0.9830      \\ \hline
-		18    &  R. Eye        & 0.0204      &  0.2476      &  0.8729      & 0.9476       &  0.9617      & 0.9706       \\ \hline
-		19    &  R. Ear        & 0.0326      &  0.5010      &  0.9182      &  0.9527      &  0.9638      &  0.9729      \\ \hline
-		Avg    &  &  0.4296        & 0.6907      & 0.9027       &  0.9461      &   0.9631     &   0.9741             \\ \hline
-	\end{tabular}
-	\label{table:PCKsigma15}
+	\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
+		\centering
+		\caption{
+			{\bf Table of evaluation result when $\delta=15$.}}
+	\begin{tabular}{l|llllll}
+	 &Wake & REM &Light &Deep \\[1pt]
+	\hline
+	Wake &A &B &C &D \\[1pt]
+	REM &B &C &D &E \\[1pt]
+	Light &C &D &E &F \\[1pt]
+	Deep &D &E &F &G \\[1pt]
+\end{tabular}
+	\label{table:resultSigma15}
 \end{adjustwidth}
 \end{table}
 
@@ -615,66 +524,16 @@
 	\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
 		\centering
 		\caption{
-			{\bf Table of PCK when $\sigma=20$.}}
-		\begin{tabular}{|l|l|l|l|l|l|l|l|}
+			{\bf Table of evaluation result when $\delta=30$.}}
+		\begin{tabular}{l|llllll}
+			&Wake & REM &Light &Deep \\[1pt]
 			\hline
-			Order & Keypoint & PCK@5 & PCK@10 & PCK@20 & PCK@30 & PCK@40 & PCK@50 \\ \thickhline
-			1     &  Neck       &0.7698 & 0.9026 & 0.9511 & 0.9658 & 0.9748 & 0.9816       \\ \hline
-			2     &  Nose        &  0.6612 & 0.8463 & 0.9452 & 0.9625 & 0.9710 & 0.9771        \\ \hline
-			3     &  Hip (Invisible)        & 0.7601 & 0.9025 & 0.9522 & 0.9671 & 0.9750 & 0.9815       \\ \hline
-			4     &  L. Shoulder         & 0.6680 & 0.8563 & 0.9483 & 0.9717 & 0.9810 & 0.9864       \\ \hline
-			5     &  L. Elbow        & 0.6056 & 0.7845 & 0.9051 & 0.9571 & 0.9753 & 0.9827      \\ \hline
-			6     &  L. Wrist        & 0.3196 & 0.5872 & 0.8178 & 0.9027 & 0.9400 & 0.9614      \\ \hline
-			7     &  L. Hip        &  0.6827 & 0.8711 & 0.9508 & 0.9700 & 0.9805 & 0.9873      \\ \hline
-			8     &  L. Knee         & 0.5637 & 0.7773 & 0.9169 & 0.9584 & 0.9767 & 0.9844      \\ \hline
-			9     &  L. Ankle         &  0.4373 & 0.6639 & 0.8598 & 0.9269 & 0.9571 & 0.9740       \\ \hline
-			10    &  R. Shoulder        & 0.6589 & 0.8506 & 0.9444 & 0.9618 & 0.9705 & 0.9757      \\ \hline
-			11    &  R. Elbow        & 0.5979 & 0.7650 & 0.8904 & 0.9394 & 0.9636 & 0.9725      \\ \hline
-			12    &  R. Wrist        & 0.2985 & 0.5901 & 0.8169 & 0.9148 & 0.9465 & 0.9593      \\ \hline
-			13    &  R. Hip        & 0.6917 & 0.8765 & 0.9501 & 0.9637 & 0.9728 & 0.9800     \\ \hline
-			14    &  R. Knee        &  0.5676 & 0.7853 & 0.9259 & 0.9561 & 0.9682 & 0.9774       \\ \hline
-			15    &  R. Ankle        & 0.4532 & 0.6723 & 0.8734 & 0.9385 & 0.9600 & 0.9730     \\ \hline
-			16    &  L. Eye        & 
-			0.6721 & 0.8515 & 0.9455 & 0.9632 & 0.9723 & 0.9785      \\ \hline
-			17    &  L. Ear        &  0.7239 & 0.8810 & 0.9482 & 0.9660 & 0.9762 & 0.9843      \\ \hline
-			18    &  R. Eye        & 0.6658 & 0.8477 & 0.9459 & 0.9626 & 0.9706 & 0.9764       \\ \hline
-			19    &  R. Ear        & 0.7091 & 0.8810 & 0.9492 & 0.9631 & 0.9715 & 0.9775      \\ \hline
-			Avg    &  &  0.6056 & 0.7996 & 0.9177 & 0.9532 & 0.9686 & 0.9774             \\ \hline
+			Wake &A &B &C &D \\[1pt]
+			REM &B &C &D &E \\[1pt]
+			Light &C &D &E &F \\[1pt]
+			Deep &D &E &F &G \\[1pt]
 		\end{tabular}
-		\label{table:PCKsigma20}
-	\end{adjustwidth}
-\end{table}
-	
-\begin{table}[!ht]
-	\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
-		\centering
-		\caption{
-			{\bf Table of PCK when $\sigma=30$.}}
-		\begin{tabular}{|l|l|l|l|l|l|l|l|}
-			\hline
-			Order & Keypoint & PCK@5 & PCK@10 & PCK@20 & PCK@30 & PCK@40 & PCK@50 \\ \thickhline
-			1     &  Neck    & 0.7580 & 0.8866 & 0.9373 & 0.9547 & 0.9654 & 0.9748      \\ \hline
-			2     &  Nose     & 0.6631 & 0.8315 & 0.9315 & 0.9512 & 0.9620 & 0.9688       \\ \hline
-			3     &  Hip (Invisible)     & 0.7507 & 0.8873 & 0.9390 & 0.9561 & 0.9659 & 0.9759      \\ \hline
-			4     &  L. Shoulder      & 0.6680 & 0.8418 & 0.9300 & 0.9564 & 0.9703 & 0.9785      \\ \hline
-			5     &  L. Elbow      & 0.6143 & 0.7760 & 0.8943 & 0.9426 & 0.9644 & 0.9740     \\ \hline
-			6     &  L. Wrist     & 0.3116 & 0.5755 & 0.8023 & 0.8888 & 0.9316 & 0.9541      \\ \hline
-			7     &  L. Hip     & 0.6828 & 0.8597 & 0.9366 & 0.9590 & 0.9694 & 0.9806      \\ \hline
-			8     &  L. Knee      & 0.5584 & 0.7719 & 0.9096 & 0.9492 & 0.9669 & 0.9778      \\ \hline
-			9     &  L. Ankle      & 0.4332 & 0.6620 & 0.8575 & 0.9215 & 0.9498 & 0.9665      \\ \hline
-			10    &  R. Shoulder     & 0.6719 & 0.8453 & 0.9322 & 0.9495 & 0.9613 & 0.9696      \\ \hline
-			11    &  R. Elbow     & 0.6255 & 0.7772 & 0.8859 & 0.9331 & 0.9548 & 0.9653      \\ \hline
-			12    &  R. Wrist     & 0.3134 & 0.6091 & 0.8155 & 0.9038 & 0.9336 & 0.9477      \\ \hline
-			13    &  R. Hip     & 0.6974 & 0.8637 & 0.9361 & 0.9536 & 0.9673 & 0.9770      \\ \hline
-			14    &  R. Knee     & 0.5828 & 0.7854 & 0.9127 & 0.9455 & 0.9617 & 0.9730      \\ \hline
-			15    &  R. Ankle     & 0.4678 & 0.6847 & 0.8693 & 0.9303 & 0.9523 & 0.9671      \\ \hline
-			16    &  L. Eye     & 0.6712 & 0.8364 & 0.9316 & 0.9518 & 0.9629 & 0.9704      \\ \hline
-			17    &  L. Ear     & 0.7145 & 0.8664 & 0.9337 & 0.9544 & 0.9660 & 0.9767      \\ \hline
-			18    &  R. Eye     & 0.6648 & 0.8322 & 0.9322 & 0.9508 & 0.9612 & 0.9685      \\ \hline
-			19    &  R. Ear     & 0.7068 & 0.8645 & 0.9350 & 0.9522 & 0.9622 & 0.9709      \\ \hline
-			Avg  &  &    0.6082 & 0.7925 & 0.9064 & 0.9423 & 0.9594 & 0.9704        \\ \hline
-		\end{tabular}
-		\label{table:PCKsigma30}
+		\label{table:resultSigma30}
 	\end{adjustwidth}
 \end{table}
 
@@ -682,43 +541,43 @@
 	\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
 		\centering
 		\caption{
-			{\bf Table of PCK when $\sigma=40$.}}
-		\begin{tabular}{|l|l|l|l|l|l|l|l|}
+			{\bf Table of evaluation result when $\delta=40$.}}
+		\begin{tabular}{l|llllll}
+			&Wake & REM &Light &Deep \\[1pt]
 			\hline
-			Order & Keypoint & PCK@5 & PCK@10 & PCK@20 & PCK@30 & PCK@40 & PCK@50 \\ \thickhline
-			1     &  Neck    & 0.7480 & 0.8822 & 0.9339 & 0.9519 & 0.9658 & 0.9746      \\ \hline
-			2     &  Nose     & 0.6546 & 0.8270 & 0.9273 & 0.9484 & 0.9614 & 0.9707       \\ \hline
-			3     &  Hip (Invisible)     & 0.7435 & 0.8832 & 0.9361 & 0.9542 & 0.9675 & 0.9780      \\ \hline
-			4     &  L. Shoulder      & 0.6703 & 0.8406 & 0.9263 & 0.9529 & 0.9683 & 0.9781      \\ \hline
-			5     &  L. Elbow      & 0.6156 & 0.7802 & 0.8968 & 0.9398 & 0.9618 & 0.9727     \\ \hline
-			6     &  L. Wrist     & 0.3259 & 0.5890 & 0.8076 & 0.8939 & 0.9330 & 0.9551      \\ \hline
-			7     &  L. Hip     & 0.6649 & 0.8491 & 0.9339 & 0.9556 & 0.9684 & 0.9805      \\ \hline
-			8     &  L. Knee      & 0.5393 & 0.7585 & 0.9044 & 0.9471 & 0.9663 & 0.9765      \\ \hline
-			9     &  L. Ankle      & 0.4188 & 0.6476 & 0.8437 & 0.9162 & 0.9485 & 0.9664      \\ \hline
-			10    &  R. Shoulder     & 0.6654 & 0.8353 & 0.9264 & 0.9473 & 0.9605 & 0.9703      \\ \hline
-			11    &  R. Elbow     & 0.6245 & 0.7786 & 0.8791 & 0.9272 & 0.9525 & 0.9656      \\ \hline
-			12    &  R. Wrist     & 0.3115 & 0.5966 & 0.8159 & 0.9057 & 0.9340 & 0.9481      \\ \hline
-			13    &  R. Hip     & 0.6894 & 0.8598 & 0.9328 & 0.9525 & 0.9683 & 0.9785      \\ \hline
-			14    &  R. Knee     & 0.5753 & 0.7826 & 0.9090 & 0.9448 & 0.9621 & 0.9737      \\ \hline
-			15    &  R. Ankle     & 0.4619 & 0.6786 & 0.8663 & 0.9281 & 0.9521 & 0.9668      \\ \hline
-			16    &  L. Eye     & 0.6629 & 0.8317 & 0.9274 & 0.9493 & 0.9630 & 0.9723      \\ \hline
-			17    &  L. Ear     & 0.7088 & 0.8610 & 0.9302 & 0.9521 & 0.9678 & 0.9767      \\ \hline
-			18    &  R. Eye     & 0.6579 & 0.8285 & 0.9269 & 0.9483 & 0.9608 & 0.9701      \\ \hline
-			19    &  R. Ear     & 0.6950 & 0.8608 & 0.9312 & 0.9491 & 0.9629 & 0.9715      \\ \hline
-			Avg  &  &    0.6018 & 0.7880 & 0.9029 & 0.9402 & 0.9592 & 0.9709        \\ \hline
+			Wake &A &B &C &D \\[1pt]
+			REM &B &C &D &E \\[1pt]
+			Light &C &D &E &F \\[1pt]
+			Deep &D &E &F &G \\[1pt]
 		\end{tabular}
-		\label{table:PCKsigma40}
+		\label{table:resultSigma40}
 	\end{adjustwidth}
 \end{table}
 
-
+\begin{table}[!ht]
+	\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
+		\centering
+		\caption{
+			{\bf Table of evaluation result when $\delta=60$.}}
+		\begin{tabular}{l|llllll}
+			&Wake & REM &Light &Deep \\[1pt]
+			\hline
+			Wake &A &B &C &D \\[1pt]
+			REM &B &C &D &E \\[1pt]
+			Light &C &D &E &F \\[1pt]
+			Deep &D &E &F &G \\[1pt]
+		\end{tabular}
+		\label{table:resultSigma60}
+	\end{adjustwidth}
+\end{table}
 
 \section*{Discussion}
 
-\subsection*{WiFi Antennae and Camera Installation}
+\subsection*{WiFi Antennae Installation}
 
-	The Installation of WiFi antennae and camera can affect tremendously in data. We used a hanger and a camera stand to lock the fixed installation in both training and testing process as shown in Fig~\ref{fig:ANTENSETUP01}.
+	The Installation of WiFi antennae can affect tremendously in data. We lock the positions in both training and testing process as shown in Fig~\ref{fig:ANTENSETUP01}.
 	2 antennae are connecting to ESP32s and to the PC afterward.
+	
 	\begin{figure}[htbp]
 	\centerline{\includegraphics[width=40mm,scale=0.2]{ANTENSETUP01.jpg}}
 	\caption{WiFi Antennae and Camera Setup.}
@@ -738,14 +597,15 @@ There are many soluions for extracting WiFi CSI from the ESP as mentioned in \na
 
 
 
-\subsection*{Multiple Person Pose Estimation}
+\subsection*{Multiple Person Sleep Stage Estimation}
 
 The model does the mapping rule from WiFi CSI with a specific dimension to human pose matrix. So, it is able to only detect single person pose in a range. The annotations originally result all human poses from the videos but we decided to crop it to be only one person in order to increase the precision. If we do training with multiple person pose data instead, we believe the result will be well but the more huge data collection is also needed.
 
+\iffalse
 \subsection*{Human speed of moving to $\sigma$}
 
 As the Table~\ref{table:PCKsigma15}, Table~\ref{table:PCKsigma20}, Table~\ref{table:PCKsigma30} and  Table~\ref{table:PCKsigma40} show the difference of quality by different value of $\sigma$, the fine-tuning says that $\sigma=15$ result the best. This implies length of $15$ frames can represent a specific pattern of move best for the used dataset. So, the volunteer who recorded movement in the datasent perform a move slower, $\sigma$ should be extended to cover the proper time peroid of the movement pattern.
-
+\fi
 
  	\section*{Conclusion}
 
