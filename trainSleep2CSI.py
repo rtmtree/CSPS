@@ -96,18 +96,21 @@ if __name__ == "__main__":
     realData = True
 
     labels=[
-      # 'sleep29-11-2021end1020','sleep30-11-2021end1020',
+      # 'sleep29-11-2021end1020',
+      'sleep30-11-2021end1020',
       'sleep08-12-2021end1000','sleep11-12-2021end0930',
       'sleep12-12-2021end1000','sleep13-12-2021end1010'
       ]
     labelsAlt=[]
     timeLen=30
-    batch_size = 128
-    runTrain=True
+    runTrain=False
     runEval=True
+
+
+    batch_size = 128
     sleepWinSize=1 #sigma
-    samplingedCSIWinSize = 100 #delta
-    epoch=500
+    samplingedCSIWinSize = 50 #delta
+    epoch=800
     n_unit_lstm=200
     n_unit_atten=400
     downsample=2
@@ -160,7 +163,7 @@ if __name__ == "__main__":
                 # sleepIndices,startTime,endTime=poseIndices_sec(i,sleepList,sec=30)
                 sleepIdx=i
                 print("index",i,"/",dataLooper)
-                print("sleepIdx",sleepIdx)
+                print("sleepIdx",sleepIdx,'ts',sleepList[sleepIdx][0])
 
                 # way 1
                 # startTime=sleepList[sleepIdx][0]-timeLen
@@ -284,26 +287,57 @@ if __name__ == "__main__":
         matchCounter = 0
         stageTestCounter = [0,0,0,0]
         stagePredCounter = [0,0,0,0]
+
+        wakePredCounter = [0,0,0,0]
+        remPredCounter = [0,0,0,0]
+        lightPredCounter = [0,0,0,0]
+        deepPredCounter = [0,0,0,0]
+
         for i in range(0,len(y_test)):
           maximum_test = np.max(y_test[i])
           maximum_pred = np.max(y_pred[i])
           index_of_maximum_test = np.where(y_test[i] == maximum_test)
           index_of_maximum_pred = np.where(y_pred[i] == maximum_pred)
-          print(i,"test",index_of_maximum_test[0][0])
-          print(i,"pred",index_of_maximum_pred[0][0])
+          curTest=index_of_maximum_test[0][0]
+          curPred=index_of_maximum_pred[0][0]
+          print(i,"test",curTest)
+          print(i,"pred",curPred)
 
-          stageTestCounter[index_of_maximum_test[0][0]] = stageTestCounter[index_of_maximum_test[0][0]] + 1
-          if(index_of_maximum_test[0][0]==index_of_maximum_pred[0][0]):
-            print("match")
+          if(curTest==curPred):
             matchCounter = matchCounter+1
-            stagePredCounter[index_of_maximum_test[0][0]] = stagePredCounter[index_of_maximum_test[0][0]] + 1
-          else:
-            print("unmatch")
+            stagePredCounter[curPred] = stagePredCounter[curPred] + 1
+
+          stageTestCounter[curTest] = stageTestCounter[curTest] + 1
+          if(curTest == 0):
+            wakePredCounter[curPred] = wakePredCounter[curPred] + 1
+          elif(curTest == 1):
+            remPredCounter[curPred] = remPredCounter[curPred] + 1
+          elif(curTest == 2):
+            lightPredCounter[curPred] = lightPredCounter[curPred] + 1
+          elif(curTest == 3):
+            deepPredCounter[curPred] = deepPredCounter[curPred] + 1
           
-        print("score percent",matchCounter/len(y_test)*100,"/100")
-        print("score",matchCounter,"/",len(y_test))
         print("stagePredCounter",stagePredCounter)
         print("stageTestCounter",stageTestCounter)
+        print("score",matchCounter,"/",len(y_test))
+        print("score percent",matchCounter/len(y_test)*100,"/100")
+        
+        wakePredCounter = np.array(wakePredCounter) / stageTestCounter[0]
+        remPredCounter = np.array(remPredCounter) / stageTestCounter[1]
+        lightPredCounter = np.array(lightPredCounter) / stageTestCounter[2]
+        deepPredCounter = np.array(deepPredCounter) / stageTestCounter[3]
+
+        #toFixed 2
+        wakePredCounter = np.around(wakePredCounter,decimals=2)
+        remPredCounter = np.around(remPredCounter,decimals=2)
+        lightPredCounter = np.around(lightPredCounter,decimals=2) 
+        deepPredCounter = np.around(deepPredCounter,decimals=2)
+
+        print("wake rem light deep")
+        print("wake ",wakePredCounter)
+        print("rem ",remPredCounter)
+        print("light ",lightPredCounter)
+        print("deep ",deepPredCounter)
 
 
 
