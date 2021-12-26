@@ -301,3 +301,76 @@ wake   [0.28 & 0.16 & 0.50 & 0.06]
 rem    [0.00 & 0.82 & 0.18 & 0.00]
 light  [0.01 & 0.04 & 0.92 & 0.03]
 deep   [0.01 & 0.00 & 0.20 & 0.79]
+
+   #========== adjustable
+    labels=[
+      'sleep29-11-2021end1020',
+      'sleep30-11-2021end1020',
+      'sleep08-12-2021end1000','sleep11-12-2021end0930',
+      'sleep12-12-2021end1000','sleep13-12-2021end1010',
+      'sleep14-12-2021end1200','sleep15-12-2021end1220'
+      ]
+    labelsAlt=[]
+
+    batch_size = 128
+    sleepWinSize=1 #sigma
+    samplingedCSIWinSize = 50 #delta
+    epoch=500
+    n_unit_lstm=200
+    n_unit_atten=400
+    downsample=2
+
+    #========== adjustable end
+
+    evaluate
+stagePredCounter [26, 89, 463, 117]
+stageTestCounter [50, 113, 509, 138]
+score 695 / 810
+score percent 85.80246913580247 /100
+        wake rem light deep
+wake   [0.52 0.06 0.38 0.04]
+rem    [0.   0.79 0.21 0.  ]
+light  [0.02 0.04 0.91 0.04]
+deep   [0.01 0.   0.14 0.85]
+
+    #========== adjustable
+    labels=[
+      'sleep29-11-2021end1020',
+      'sleep30-11-2021end1020',
+      'sleep08-12-2021end1000','sleep11-12-2021end0930',
+      'sleep12-12-2021end1000','sleep13-12-2021end1010',
+      'sleep14-12-2021end1200','sleep15-12-2021end1220',
+      'sleep16-12-2021end1210'
+      ]
+    labelsAlt=[]
+
+    batch_size = 128
+    sleepWinSize=1 #sigma
+    samplingedCSIWinSize = 50 #delta
+    epoch=500
+    n_unit_lstm=200
+    n_unit_atten=400
+    downsample=2
+
+    #========== adjustable end
+
+    evaluate
+stagePredCounter [25, 127, 513, 148]
+stageTestCounter [55, 158, 548, 171]
+score 813 / 932
+score percent 87.23175965665236 /100
+        wake rem light deep
+wake   [0.45 0.09 0.42 0.04]
+rem    [0.01 0.8  0.18 0.01]
+light  [0.01 0.02 0.94 0.03]
+deep   [0.01 0.   0.12 0.87]
+evaluate
+stagePredCounter [24, 123, 521, 153]
+stageTestCounter [55, 158, 548, 171]
+score 821 / 932
+score percent 88.0901287553648 /100
+        wake rem light deep
+wake   [0.44 0.13 0.4  0.04]
+rem    [0.03 0.78 0.19 0.  ]
+light  [0.01 0.02 0.95 0.03]
+deep   [0.   0.   0.11 0.89]
