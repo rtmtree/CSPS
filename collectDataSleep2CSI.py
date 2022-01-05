@@ -93,19 +93,21 @@ def imageIdx2csiIndicesPrecise(durationSec,imageIdx,tsList,vidLength,lastsec):
 
 path='drive/MyDrive/Project/'
 # path=''
-labels=['sleep18-12-2021end1106','sleep20-12-2021end1123']
-CSIendTime=['2021-12-19T11:06','2021-12-21T11:23']
-# labels=['sleep30-11-2021end1020']
-# CSIendTime=['2021-12-01T10:20:00.000']
+Sleeplabels=['sleep26-12-2021start0334']
+CSIlabels=['sleep26-12-2021start0334']
+syncFromStart = True
+CSIendTime=['2021-12-25T12:12']
+CSIstartTime=['2021-12-26T03:34']
+
 sleepIndxs = [0]
 # timestampColName = 'local_timestamp'
 timestampColName = 'real_timestamp'
 timeperoid = 30
 decimalShiftTs = 0
 
-for fileIdx in range(len(labels)):
+for fileIdx in range(len(CSIlabels)):
     # Organize sleep log file
-    sleepFilePath = path+'raw_data/'+labels[fileIdx]+'.json'
+    sleepFilePath = path+'raw_data/'+Sleeplabels[fileIdx]+'.json'
     print("read sleep file",sleepFilePath)
     f = open(sleepFilePath)
     data = json.load(f)
@@ -131,7 +133,7 @@ for fileIdx in range(len(labels)):
     print('Sleep time Length',vidLength)
   
     # Organize CSI log file
-    filePath = path+'raw_data/'+labels[fileIdx]+'.csv'
+    filePath = path+'raw_data/'+CSIlabels[fileIdx]+'.csv'
     print("read CSI file",filePath)
     colsName = ["type","role","mac","rssi","rate","sig_mode","mcs","bandwidth","smoothing","not_sounding","aggregation","stbc","fec_coding","sgi","noise_floor","ampdu_cnt","channel","secondary_channel","local_timestamp","ant","sig_len","rx_state","real_time_set","real_timestamp","len","CSI_DATA"]
     curFile = pd.read_csv(filePath,names=colsName) 
@@ -152,16 +154,25 @@ for fileIdx in range(len(labels)):
 
     #find diffEpoch to sync time
     tsList=(list(x/(10**decimalShiftTs) for x in curFile[timestampColName]))
-    #get last ts of real world ts CSI log
-    csiRealLastTs=CSIendTime[fileIdx]+':00.000'
-    print('last real world date/time in CSI is',csiRealLastTs)
-    utc_time = datetime.strptime(csiRealLastTs, "%Y-%m-%dT%H:%M:%S.%f")
-    realLastTs = (utc_time - datetime(1970, 1, 1)).total_seconds()
-    print('last real world timestamp in CSI is',realLastTs)
-    #get last ts of CSI log
-    csiLastTs=tsList[-1]
-    print('last self timestamp in CSI is',csiLastTs)
-    diffEpoch = realLastTs - csiLastTs
+    if syncFromStart :
+        #get first ts of real world ts CSI log
+        csiRealFirstTs=CSIstartTime[fileIdx]+':00.000'
+        print('first real world date/time in CSI is',csiRealFirstTs)
+        utc_time = datetime.strptime(csiRealFirstTs, "%Y-%m-%dT%H:%M:%S.%f")
+        realFirstTs = (utc_time - datetime(1970, 1, 1)).total_seconds()
+        print('last real world timestamp in CSI is',realFirstTs)
+        diffEpoch = realFirstTs
+    else:
+        #get last ts of real world ts CSI log
+        csiRealLastTs=CSIendTime[fileIdx]+':00.000'
+        print('last real world date/time in CSI is',csiRealLastTs)
+        utc_time = datetime.strptime(csiRealLastTs, "%Y-%m-%dT%H:%M:%S.%f")
+        realLastTs = (utc_time - datetime(1970, 1, 1)).total_seconds()
+        print('last real world timestamp in CSI is',realLastTs)
+        #get last ts of CSI log
+        csiLastTs=tsList[-1]
+        print('last self timestamp in CSI is',csiLastTs)
+        diffEpoch = realLastTs - csiLastTs
     print("diffEpoch is",diffEpoch)
 
     #filter for usable CSI data
@@ -285,17 +296,17 @@ for fileIdx in range(len(labels)):
             updatefig(i)
             print("====",i,"/",collectLength,"====")
             
-        print('saving',labels[fileIdx])
+        print('saving',CSIlabels[fileIdx])
 
         csi_value=np.array(csi_value)
         ss_value=np.array(ss_value)
         print(csi_value.shape)
         print(ss_value.shape)
         if(True):
-          path='sample_data/'
-          # path='drive/MyDrive/Project/data'
-          pathSavedFileCSI = path+'CSI'+labels[fileIdx]+'.csv'
-          pathSavedFileSleep = path+'SS'+labels[fileIdx]+'.csv'
+          savePath='sample_data/'
+          # savePath='drive/MyDrive/Project/data'
+          pathSavedFileCSI = savePath+'CSI'+CSIlabels[fileIdx]+'.csv'
+          pathSavedFileSleep = savePath+'SS'+CSIlabels[fileIdx]+'.csv'
           # pathSavedFileCSI = 'CSI'+labels[fileIdx]+'.csv'
           # pathSavedFileSleep = 'SS'+labels[fileIdx]+'.csv'
           fmt = '%1.6f,'+('%d,'*383)+'%d'

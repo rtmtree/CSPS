@@ -6,6 +6,7 @@ Author: https://github.com/ludlows
 """
 import numpy as np 
 import random
+from numpy.core.numeric import True_
 import tensorflow as tf
 import glob
 import os
@@ -100,30 +101,43 @@ if __name__ == "__main__":
 
     #========== adjustable
     labels=[
-      'sleep29-11-2021end1020',
+      # 'sleep24-12-2021end1212'
+      # 'sleep24-12-2021end0954'
+      'sleep21-12-2021end1200',
+      'sleep20-12-2021end1123',
+      'sleep18-12-2021end1106'
+      , 
+      'sleep17-12-2021end1155',
+      # 'sleep29-11-2021end1020',
       'sleep30-11-2021end1020',
       'sleep08-12-2021end1000','sleep11-12-2021end0930',
-      'sleep12-12-2021end1000','sleep13-12-2021end1010'
+      'sleep12-12-2021end1000','sleep13-12-2021end1010',
+      'sleep14-12-2021end1200','sleep15-12-2021end1220',
+      'sleep16-12-2021end1210'
       ]
-    labelsAlt=[]
-
+    labelsAlt=[
+      # 'sleep24-12-2021end1212',
+      # 'sleep24-12-2021end0954'
+      'sleep29-11-2021end1020'
+      # 'sleep16-12-2021end1210'
+    ]
+    wakeIncluded = False
     batch_size = 128
     sleepWinSize=1 #sigma
-    samplingedCSIWinSize = 900 #delta
-    epoch=500
+    samplingedCSIWinSize = 600 #delta
+    epoch=300
     n_unit_lstm=200
     n_unit_atten=400
     downsample=2
 
     #========== adjustable end
+    minCSIthreshold= samplingedCSIWinSize
+    modelFileName='test_models/csi2sleepM_e'+str(epoch)+'spCSI_'+str(samplingedCSIWinSize)+('wakeIncluded' if wakeIncluded else 'wakeExcluded')+'.hdf5'
 
-    if realData:
+    if wakeIncluded:
         label_n = 4
-        minCSIthreshold= samplingedCSIWinSize
-        modelFileName='test_models/csi2sleepM_e'+str(epoch)+'spCSI_'+str(samplingedCSIWinSize)+'.hdf5'
     else:
-        label_n = 2
-        modelFileName="test.hdf5"
+        label_n = 3
 
     # preprocessing
     csiFilePaths=[]
@@ -140,7 +154,7 @@ if __name__ == "__main__":
     Y = []
     Xalt = []
     Yalt = []
-    if realData:#load file
+    if True:#load file
         for fileIndx in range(len(csiFilePaths)+len(csiFilePathsAlt)):
             if(fileIndx<len(csiFilePaths)):
                 csiFileName=csiFilePaths[fileIndx]
@@ -161,12 +175,40 @@ if __name__ == "__main__":
             csiStartIdx=0
             for i in range(0,dataLooper,dataStep):
 
-                # get pose in the time period
+                # get sleep stage in the time period
                 # sleepIndices,startTime,endTime=poseIndices_sec(i,sleepList,sec=30)
                 sleepIdx=i
                 print("index",i,"/",dataLooper)
                 print("sleepIdx",sleepIdx,'ts',sleepList[sleepIdx][0])
 
+                # sleep stage matrix formation
+                stage = False
+                if wakeIncluded :
+                    if(sleepList[sleepIdx][1] == 1):
+                        stage = [1,0,0,0]
+                    elif(sleepList[sleepIdx][1] == 2):
+                        stage = [0,1,0,0]
+                    elif(sleepList[sleepIdx][1] == 3):
+                        stage = [0,0,1,0]
+                    elif(sleepList[sleepIdx][1] == 4):
+                        stage = [0,0,0,1]
+                    if(stage==False):
+                        continue
+                    curSleeps = stage
+                else :
+                    if(sleepList[sleepIdx][1] == 1):
+                        continue
+                    elif(sleepList[sleepIdx][1] == 2):
+                        stage = [1,0,0]
+                    elif(sleepList[sleepIdx][1] == 3):
+                        stage = [0,1,0]
+                    elif(sleepList[sleepIdx][1] == 4):
+                        stage = [0,0,1]
+                    if(stage==False):
+                        continue
+                    curSleeps = stage
+
+                # get CSI indices in the time period
                 # way 1
                 # startTime=sleepList[sleepIdx][0]-timeLen
                 # endTime=sleepList[sleepIdx][0]
@@ -176,39 +218,27 @@ if __name__ == "__main__":
                 # way 2
                 csiIndices = sleepIdx2csiIndices_timestamp(sleepIdx, sleepList, csiStartIdx, csiList, timeLen=timeLen)
                 print("len csiIndices",len(csiIndices))
-                if (len(csiIndices)>0):
-                  csiStartIdx = csiIndices[-1]
-                  print("csiIndices",csiIndices[0],"-",csiIndices[-1])
+                if (len(csiIndices)==0):
+                  continue
 
-                  # check if there is csi more than minCSIthreshold
-                  if(len(csiIndices)<minCSIthreshold):
-                      print("too low csi number",len(csiIndices),minCSIthreshold)
-                      continue
-                  
-                  # sleep stage matrix formation
-                  print(len(csiIndices),"csis to 1 SS")
-                  stage = False
-                  if(sleepList[sleepIdx][1] == 1):
-                      stage = [1,0,0,0]
-                  elif(sleepList[sleepIdx][1] == 2):
-                      stage = [0,1,0,0]
-                  elif(sleepList[sleepIdx][1] == 3):
-                      stage = [0,0,1,0]
-                  elif(sleepList[sleepIdx][1] == 4):
-                      stage = [0,0,0,1]
-                  if(stage==False):
-                    continue
-                  curSleeps = stage
+                print(len(csiIndices),"csis to 1 SS")
+                csiStartIdx = csiIndices[-1]
+                print("csiIndices",csiIndices[0],"-",csiIndices[-1])
 
-                  # CSI matrix formation
-                  curCSIs,_=samplingCSISleep(csiList, csiIndices, sleepList, sleepIdx, samplingedCSIWinSize,timeLen=timeLen)
+                # check if there is csi more than minCSIthreshold
+                if(len(csiIndices)<minCSIthreshold):
+                  print("too low csi number",len(csiIndices),minCSIthreshold)
+                  continue
 
-                  if(isAlt==False):
-                      X.append(curCSIs)
-                      Y.append(curSleeps)
-                  else:
-                      Xalt.append(curCSIs)
-                      Yalt.append(curSleeps)
+                # CSI matrix formation
+                curCSIs,_=samplingCSISleep(csiList, csiIndices, sleepList, sleepIdx, samplingedCSIWinSize,timeLen=timeLen)
+
+                if(isAlt==False):
+                    X.append(curCSIs)
+                    Y.append(curSleeps)
+                else:
+                    Xalt.append(curCSIs)
+                    Yalt.append(curSleeps)
 
         X=np.array(X)
         Y=np.array(Y)
@@ -221,38 +251,18 @@ if __name__ == "__main__":
         print('shape Xalt',(Xalt.shape))
         print('shape Yalt',(Yalt.shape))
 
-
-    else:#load fake data
-        lenFake = 100
-        (X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=400)
-        print('shape X_train',(X_train.shape))
-        print(len(X_train[0][0:53]))
-        X = [[[X_train[i*j][k] if len(X_train[i*j])>52 else 0 for k in range(52)] for j in range(samplingedCSIWinSize)] for i in range(lenFake)]
-        Y = [ [1,0] if y_train[i]==0 else [0,1] for i in range(lenFake)]
-        Xalt = [[[X_test[i*j][k] if len(X_test[i*j])>52 else 0 for k in range(52)] for j in range(samplingedCSIWinSize)] for i in range(lenFake)]
-        Yalt = [ [1,0] if y_test[i]==0 else [0,1] for i in range(lenFake)]
-
-        print('len X',len(X))
-        print('len Y',len(Y))
-        X=np.array(X)
-        Y=np.array(Y)
-        Xalt=np.array(Xalt)
-        Yalt=np.array(Yalt)
-        print('shape X',(X.shape))
-        print('shape Y',(Y.shape))
-        
     if len(Xalt)==0:
-      x_train, x_test, y_train, y_test  = train_test_split(X, Y, test_size=0.15, random_state=3)
+      x_train, x_test, y_train, y_test  = train_test_split(X, Y, test_size=0.2, random_state=18)
     else:
+      np.random.seed(42) 
+      np.random.shuffle(X) 
+      np.random.seed(42) 
+      np.random.shuffle(Y) 
       x_train = X
       y_train = Y
+
       x_test = Xalt
       y_test = Yalt
-      # way 2
-      # np.random.seed(42) 
-      # np.random.shuffle(X) 
-      # np.random.seed(42) 
-      # np.random.shuffle(Y) 
 
     print('shape x_train',(x_train.shape))
     print('shape x_test',(x_test.shape))
@@ -302,20 +312,30 @@ if __name__ == "__main__":
           index_of_maximum_pred = np.where(y_pred[i] == maximum_pred)
           curTest=index_of_maximum_test[0][0]
           curPred=index_of_maximum_pred[0][0]
-
+          # print("curTest",curTest)
+          # print("curPred",curPred)
           if(curTest==curPred):
             matchCounter = matchCounter+1
-            stagePredCounter[curPred] = stagePredCounter[curPred] + 1
 
-          stageTestCounter[curTest] = stageTestCounter[curTest] + 1
-          if(curTest == 0):
-            wakePredCounter[curPred] = wakePredCounter[curPred] + 1
-          elif(curTest == 1):
-            remPredCounter[curPred] = remPredCounter[curPred] + 1
-          elif(curTest == 2):
-            lightPredCounter[curPred] = lightPredCounter[curPred] + 1
-          elif(curTest == 3):
-            deepPredCounter[curPred] = deepPredCounter[curPred] + 1
+          stagePredCounter[curPred] = stagePredCounter[curPred] + 1
+          stageTestCounter[curTest] = stageTestCounter[curTest] + 1 
+
+          if wakeIncluded:
+            if(curTest == 0):
+                wakePredCounter[curPred] = wakePredCounter[curPred] + 1
+            if(curTest == 1):
+                remPredCounter[curPred] = remPredCounter[curPred] + 1
+            elif(curTest == 2):
+                lightPredCounter[curPred] = lightPredCounter[curPred] + 1
+            elif(curTest == 3):
+                deepPredCounter[curPred] = deepPredCounter[curPred] + 1
+          else :
+            if(curTest == 0):
+                remPredCounter[curPred] = remPredCounter[curPred] + 1
+            elif(curTest == 1):
+                lightPredCounter[curPred] = lightPredCounter[curPred] + 1
+            elif(curTest == 2):
+                deepPredCounter[curPred] = deepPredCounter[curPred] + 1
           
         print("stagePredCounter",stagePredCounter)
         print("stageTestCounter",stageTestCounter)
