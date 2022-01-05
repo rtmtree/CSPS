@@ -26,7 +26,7 @@ from tensorflow.keras.layers import RepeatVector
 from tensorflow.keras.layers import TimeDistributed
 from tensorflow.keras.layers import Input, Embedding, Concatenate
 from modules.draw import Plotter3d, draw_poses
-from functions.csi_util import rawCSItoAmp, filterNullSC, csiIndices_sec, poseIndices_sec, samplingCSISleep, sleepIdx2csiIndices_timestamp
+from functions.csi_util import rawCSItoAmp, filterNullSC, csiIndices_sec, poseIndices_sec, samplingCSISleep, sleepIdx2csiIndices_timestamp, samplingRSSISleep
 from functions.pose_util import poseToPAM, PAMtoPose, rotate_poses, getPCK
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -164,6 +164,7 @@ def build_model(downsample=1, win_len=1000, n_unit_lstm=200, n_unit_atten=400, l
     """
     Returns the Tensorflow Model which uses AttenLayer
     """
+    # print("data_len",data_len)
     if downsample > 1:
         length = len(np.ones((win_len,))[::downsample])
         x_in = tf.keras.Input(shape=(length, data_len))
@@ -191,11 +192,11 @@ def load_model(hdf5path):
 path = 'drive/MyDrive/Project/'
 # path=''
 labels = [
-     'sleep30-11-2021end1020',
-      'sleep08-12-2021end1000','sleep11-12-2021end0930',
-      'sleep12-12-2021end1000','sleep13-12-2021end1010',
-      'sleep14-12-2021end1200','sleep15-12-2021end1220',
-      'sleep16-12-2021end1210',
+    #  'sleep30-11-2021end1020',
+    #   'sleep08-12-2021end1000','sleep11-12-2021end0930',
+    #   'sleep12-12-2021end1000','sleep13-12-2021end1010',
+    #   'sleep14-12-2021end1200','sleep15-12-2021end1220',
+    #   'sleep16-12-2021end1210',
     'sleep2022-01-04start0336',
     # 'sleep2022-01-03start0233',
     'sleep2022-01-02start0236',
@@ -206,7 +207,7 @@ labels = [
     'sleep2021-12-27start0334'
 ]
 labelsAlt = [
-  'sleep2022-01-03start0233'
+  # 'sleep2022-01-03start0233'
   #  'sleep2022-01-01start0247'
     # 'sleep2021-12-30start0315'
     # 'sleep2021-12-29start0515'
@@ -572,15 +573,16 @@ for fileIdx in range(len(CSIlabels)):
             csiStartIdx = csiIndices[-1]
             print("csiIndices", csiIndices[0], "-", csiIndices[-1])
 
-            if False:
+            if(useCSI):
                 # CSI matrix formation
                 curCSIs, _ = samplingCSISleep(
                     csi_value, csiIndices, ss_value, sleepIdx, samplingedCSIWinSize, timeLen=timeperoid)
-                validLenCounter[-1] = validLenCounter[-1]+1
             else:
                 #use RSSI
-                curCSIs = [csi_value[RSSIindex] for RSSIindex in csiIndices]
-
+                curCSIs, _ = samplingRSSISleep(
+                    csi_value, csiIndices, ss_value, sleepIdx, samplingedCSIWinSize, timeLen=timeperoid)
+                
+            validLenCounter[-1] = validLenCounter[-1]+1
             if(isTestLabels[fileIdx] == False):
                 X.append(curCSIs)
                 Y.append(curSleeps)
@@ -594,6 +596,10 @@ if (justCollect == False):
     Y = np.array(Y)
     Xalt = np.array(Xalt)
     Yalt = np.array(Yalt)
+    print('shape X', (X.shape))
+    print('shape Y', (Y.shape))
+    print('shape Xalt', (Xalt.shape))
+    print('shape Yalt', (Yalt.shape))
 
     if len(Xalt) == 0:
         x_train, x_test, y_train, y_test = train_test_split(

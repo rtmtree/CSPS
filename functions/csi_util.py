@@ -176,6 +176,66 @@ def samplingCSISleep(csiList,csiIndices,poseList,sleepIndex,newCSILen,timeLen=30
         simplingedCSIs.append( np.array(middleCSI)   )
     return simplingedCSIs,expectedTSs
 
+def samplingRSSISleep(csiList,csiIndices,poseList,sleepIndex,newCSILen,timeLen=30):
+    simplingedCSIs=[]
+    expectedTSs=[]
+    startTS = poseList[sleepIndex][0]- timeLen
+    for j in range(newCSILen):
+        if(j<newCSILen-1):
+            expectedTS=  startTS +  ( j * (poseList[sleepIndex][0] - startTS)/newCSILen  )
+        else:
+            expectedTS=poseList[sleepIndex][0]
+
+        expectedTSs.append(expectedTS)
+
+        csiIndicesExtended=[]
+        if(csiIndices[0]!=0 or j!=0):
+            csiIndicesExtended += [csiIndices[0]-1]
+        else:
+            simplingedCSIs.append( np.array(   csiList[csiIndices[0]][1:]  )  ) 
+            startIndex = 0
+            continue
+
+        csiIndicesExtended += csiIndices
+
+        if(csiIndices[-1]!=len(csiList)-1):
+            csiIndicesExtended += [csiIndices[-1]+1]
+        # else:
+        #     None
+        
+        if j==0:
+            startIndex = csiIndicesExtended[0]
+        for k in range(startIndex,csiIndicesExtended[-1]+1):
+            if(k>=len(csiList) or csiList[k][0]>expectedTS):
+                break
+            else:
+                startIndex=k
+        # if startIndex TS matched expected TS
+
+        if(csiList[startIndex][0]==expectedTS):
+            simplingedCSIs.append( np.array(    csiList[startIndex][1:]  )  ) 
+            continue
+        
+        if(startIndex== len(csiList)-1  ):
+            simplingedCSIs.append( np.array(   csiList[startIndex][1:]  )  ) 
+            continue
+
+        endIndex = startIndex+1
+        
+        startCSI= csiList[startIndex][1:]  
+        endCSI=  csiList[endIndex][1:]  
+        middleCSI=[]
+        offsetX=csiList[endIndex][0]-csiList[startIndex][0]
+        offsetXo=expectedTS -csiList[startIndex][0]
+        for k in range((1)):
+            offsetY=endCSI[k]-startCSI[k]
+            offsetYo= (offsetXo*offsetY) / offsetX
+
+            middleCSI.append((startCSI[k]+offsetYo))
+
+        simplingedCSIs.append( np.array(middleCSI)   )
+    return simplingedCSIs,expectedTSs
+
 def imageIdx2csiIndices_timestamp(poseIdx,poseList,csiList,skipframe=1):
     timeInPose=poseList[poseIdx][0]
     if (poseIdx>0):
@@ -194,11 +254,12 @@ def sleepIdx2csiIndices_timestamp(sleepIndex,sleepList,csiStartIdx,csiList,timeL
     timeInPose=sleepList[sleepIndex][0]
     prevTimeInPose=sleepList[sleepIndex][0]-timeLen
     csiIndices=[]
-    if(type(prevTimeInPose)==int and type(timeInPose)==int):
+    if(isinstance(prevTimeInPose,np.int64 ) and isinstance(timeInPose,np.int64)):
         for i in range(csiStartIdx,len(csiList)):
-            if(type(csiList[i][0])==int and prevTimeInPose <= csiList[i][0] and csiList[i][0] < timeInPose):
-                csiIndices.append(i)
-            if(csiList[i][0]>=timeInPose):
-                break
+            if(isinstance(csiList[i][0],np.float64)):
+                if(prevTimeInPose <= csiList[i][0] and csiList[i][0] < timeInPose):
+                    csiIndices.append(i)
+                elif(csiList[i][0]>=timeInPose):
+                    break
     
     return csiIndices
