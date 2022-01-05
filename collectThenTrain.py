@@ -160,15 +160,15 @@ class AttenLayer(tf.keras.layers.Layer):
         return config
 
 
-def build_model(downsample=1, win_len=1000, n_unit_lstm=200, n_unit_atten=400, label_n=2):
+def build_model(downsample=1, win_len=1000, n_unit_lstm=200, n_unit_atten=400, label_n=2, data_len=52):
     """
     Returns the Tensorflow Model which uses AttenLayer
     """
     if downsample > 1:
         length = len(np.ones((win_len,))[::downsample])
-        x_in = tf.keras.Input(shape=(length, 52))
+        x_in = tf.keras.Input(shape=(length, data_len))
     else:
-        x_in = tf.keras.Input(shape=(win_len, 52))
+        x_in = tf.keras.Input(shape=(win_len, data_len))
     x_tensor = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(
         units=n_unit_lstm, return_sequences=True))(x_in)
     x_tensor = AttenLayer(n_unit_atten)(x_tensor)
@@ -213,7 +213,7 @@ labelsAlt = [
     # 'sleep2021-12-27start0334'
     # 'sleep2021-12-29start0002'
 ]
-
+useCSI = False
 wakeIncluded = False
 batch_size = 128
 sleepWinSize = 1  # sigma
@@ -408,35 +408,39 @@ for fileIdx in range(len(CSIlabels)):
             return False
         ss_value.append([sleepTs]+[stage])
 
-        if(True):
-            # Setting the values for all axes.
-            # csiIndices,parsedTimeInVid=imageIdx2csiIndicesPrecise(duration_in_sec,imageIdx,tsList,vidLength,lastsec)
-            csiTsEnd = (sleepTs - diffEpoch)
-            csiTs = csiTsEnd-timeperoid
-            # parse to microsecond
-            csiTsEnd = (10**decimalShiftTs) * csiTsEnd
-            csiTs = (10**decimalShiftTs) * csiTs
+        
+        # Setting the values for all axes.
+        # csiIndices,parsedTimeInVid=imageIdx2csiIndicesPrecise(duration_in_sec,imageIdx,tsList,vidLength,lastsec)
+        csiTsEnd = (sleepTs - diffEpoch)
+        csiTs = csiTsEnd-timeperoid
+        # parse to microsecond
+        csiTsEnd = (10**decimalShiftTs) * csiTsEnd
+        csiTs = (10**decimalShiftTs) * csiTs
 
-            print("csiTs", csiTs)
-            print("csiTsEnd", csiTsEnd)
+        print("csiTs", csiTs)
+        print("csiTsEnd", csiTsEnd)
 
-            # dataInPeriod = curFile[(curFile[timestampColName]>=csiTs)]
-            # dataInPeriod = dataInPeriod[(dataInPeriod[timestampColName]<csiTsEnd)]
+        # dataInPeriod = curFile[(curFile[timestampColName]>=csiTs)]
+        # dataInPeriod = dataInPeriod[(dataInPeriod[timestampColName]<csiTsEnd)]
 
-            dataInPeriod = curFile[(curFile[timestampColName] >= csiTs) & (
-                curFile[timestampColName] < csiTsEnd)]
+        dataInPeriod = curFile[(curFile[timestampColName] >= csiTs) & (
+            curFile[timestampColName] < csiTsEnd)]
 
-            print("len csidataInPeriod", len(dataInPeriod.index))
-            tsInPeriod = list(
-                (x/(10**decimalShiftTs))+diffEpoch for x in dataInPeriod[timestampColName])
-            csiInPeriod = list(parseCSI(x)
-                               for x in dataInPeriod['CSI_DATA'])
-            if(len(csiInPeriod) > 0):
-                for k in range(len(csiInPeriod)):
+        print("len csidataInPeriod", len(dataInPeriod.index))
+        tsInPeriod = list(
+            (x/(10**decimalShiftTs))+diffEpoch for x in dataInPeriod[timestampColName])
+        if(useCSI):
+            csiInPeriod = list(parseCSI(x) for x in dataInPeriod['CSI_DATA'])
+        else:
+            csiInPeriod = list(x for x in dataInPeriod['rssi'])
+
+        if(len(csiInPeriod) > 0):
+            for k in range(len(csiInPeriod)):
+                curParseTs = tsInPeriod[k]
+                if(useCSI):
                     curParseCSI = (csiInPeriod[k])
-                    curParseTs = tsInPeriod[k]
                     if(k > 0 and curParseCSI == csiInPeriod[k-1] and curParseTs == tsInPeriod[k-1]):
-                        # print("duplicate CSI row found. SKIP")
+                        # print("duplicate row found. SKIP")
                         continue
                     # print("adding ",curParseCSI)
                     if(curParseCSI != False):
@@ -460,8 +464,12 @@ for fileIdx in range(len(CSIlabels)):
                         continue
                         # csi_value.append([curParseTs]+[0 for l in range(384)])
                         # print("added ",k,'as 0s')
-            # print("====",i,"====")
-            return False
+                else:#RSSI
+                    csi_value.append([curParseTs]+[csiInPeriod[k]])
+
+
+        # print("====",i,"====")
+        return False
 
     startFrom = 0
     collectLength = vidLength-startFrom
@@ -478,7 +486,7 @@ for fileIdx in range(len(CSIlabels)):
     ss_value = np.array(ss_value)
     print(csi_value.shape)
     print(ss_value.shape)
-    if(False):
+    if(useCSI):
         savePath = 'sample_data/'
         # savePath='drive/MyDrive/Project/data'
         pathSavedFileCSI = savePath+'CSI'+CSIlabels[fileIdx]+'.csv'
@@ -564,10 +572,14 @@ for fileIdx in range(len(CSIlabels)):
             csiStartIdx = csiIndices[-1]
             print("csiIndices", csiIndices[0], "-", csiIndices[-1])
 
-            # CSI matrix formation
-            curCSIs, _ = samplingCSISleep(
-                csi_value, csiIndices, ss_value, sleepIdx, samplingedCSIWinSize, timeLen=timeperoid)
-            validLenCounter[-1] = validLenCounter[-1]+1
+            if False:
+                # CSI matrix formation
+                curCSIs, _ = samplingCSISleep(
+                    csi_value, csiIndices, ss_value, sleepIdx, samplingedCSIWinSize, timeLen=timeperoid)
+                validLenCounter[-1] = validLenCounter[-1]+1
+            else:
+                #use RSSI
+                curCSIs = [csi_value[RSSIindex] for RSSIindex in csiIndices]
 
             if(isTestLabels[fileIdx] == False):
                 X.append(curCSIs)
@@ -602,9 +614,12 @@ if (justCollect == False):
     print('shape y_test', (y_test.shape))
 
     if runTrain:
-
-        model = build_model(downsample=downsample, win_len=samplingedCSIWinSize*2,
-                            n_unit_lstm=n_unit_lstm, n_unit_atten=n_unit_atten, label_n=label_n)
+        if(useCSI):
+            model = build_model(downsample=downsample, win_len=samplingedCSIWinSize*2,
+                                n_unit_lstm=n_unit_lstm, n_unit_atten=n_unit_atten, label_n=label_n,data_len=52)
+        else:
+            model = build_model(downsample=downsample, win_len=samplingedCSIWinSize*2,
+                                n_unit_lstm=n_unit_lstm, n_unit_atten=n_unit_atten, label_n=label_n,data_len=1)
         model.compile(
             optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),
             loss='categorical_crossentropy',

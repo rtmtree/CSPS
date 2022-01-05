@@ -194,10 +194,11 @@ def sleepIdx2csiIndices_timestamp(sleepIndex,sleepList,csiStartIdx,csiList,timeL
     timeInPose=sleepList[sleepIndex][0]
     prevTimeInPose=sleepList[sleepIndex][0]-timeLen
     csiIndices=[]
-    for i in range(csiStartIdx,len(csiList)):
-        if(prevTimeInPose <= csiList[i][0] < timeInPose):
-            csiIndices.append(i)
-        elif(csiList[i][0]>=timeInPose):
-            break
+    if(type(prevTimeInPose)==int and type(timeInPose)==int):
+        for i in range(csiStartIdx,len(csiList)):
+            if(type(csiList[i][0])==int and prevTimeInPose <= csiList[i][0] and csiList[i][0] < timeInPose):
+                csiIndices.append(i)
+            if(csiList[i][0]>=timeInPose):
+                break
     
     return csiIndices
