@@ -192,33 +192,33 @@ def load_model(hdf5path):
 path = 'drive/MyDrive/Project/'
 # path=''
 labels = [
-    #  'sleep30-11-2021end1020',
-    #   'sleep08-12-2021end1000','sleep11-12-2021end0930',
-    #   'sleep12-12-2021end1000','sleep13-12-2021end1010',
-    #   'sleep14-12-2021end1200','sleep15-12-2021end1220',
-    #   'sleep16-12-2021end1210',
+     'sleep30-11-2021end1020',
+      'sleep08-12-2021end1000','sleep11-12-2021end0930',
+      'sleep12-12-2021end1000','sleep13-12-2021end1010',
+      'sleep14-12-2021end1200','sleep15-12-2021end1220',
+      'sleep16-12-2021end1210',
+    # 'sleep2022-01-06start0507',
+    'sleep2022-01-05start0208',
     'sleep2022-01-04start0336',
-    # 'sleep2022-01-03start0233',
+    'sleep2022-01-03start0233',
     'sleep2022-01-02start0236',
     'sleep2022-01-01start0247',
-    'sleep2021-12-30start0315',
+    # 'sleep2021-12-30start0315',
     'sleep2021-12-29start0515',
-    'sleep2021-12-29start0002',
     'sleep2021-12-27start0334'
 ]
 labelsAlt = [
   # 'sleep2022-01-03start0233'
   #  'sleep2022-01-01start0247'
-    # 'sleep2021-12-30start0315'
+    'sleep2021-12-30start0315'
     # 'sleep2021-12-29start0515'
     # 'sleep2021-12-27start0334'
-    # 'sleep2021-12-29start0002'
 ]
-useCSI = False
+useCSI = True
 wakeIncluded = False
 batch_size = 128
 sleepWinSize = 1  # sigma
-samplingedCSIWinSize = 900  # delta
+samplingedCSIWinSize = 120  # delta
 epoch = 300
 n_unit_lstm = 200
 n_unit_atten = 400
@@ -432,8 +432,9 @@ for fileIdx in range(len(CSIlabels)):
             (x/(10**decimalShiftTs))+diffEpoch for x in dataInPeriod[timestampColName])
         if(useCSI):
             csiInPeriod = list(parseCSI(x) for x in dataInPeriod['CSI_DATA'])
+            rssiInPeriod = list(float(x) for x in dataInPeriod['rssi'])
         else:
-            csiInPeriod = list(x for x in dataInPeriod['rssi'])
+            csiInPeriod = list(float(x) for x in dataInPeriod['rssi'])
 
         if(len(csiInPeriod) > 0):
             for k in range(len(csiInPeriod)):
@@ -466,7 +467,7 @@ for fileIdx in range(len(CSIlabels)):
                         # csi_value.append([curParseTs]+[0 for l in range(384)])
                         # print("added ",k,'as 0s')
                 else:#RSSI
-                    csi_value.append([curParseTs]+[csiInPeriod[k]])
+                    csi_value.append([curParseTs]+[csiInPeriod[k]]+[rssiInPeriod[k]])
 
 
         # print("====",i,"====")
@@ -487,7 +488,7 @@ for fileIdx in range(len(CSIlabels)):
     ss_value = np.array(ss_value)
     print(csi_value.shape)
     print(ss_value.shape)
-    if(useCSI):
+    if(False):
         savePath = 'sample_data/'
         # savePath='drive/MyDrive/Project/data'
         pathSavedFileCSI = savePath+'CSI'+CSIlabels[fileIdx]+'.csv'
@@ -622,7 +623,7 @@ if (justCollect == False):
     if runTrain:
         if(useCSI):
             model = build_model(downsample=downsample, win_len=samplingedCSIWinSize*2,
-                                n_unit_lstm=n_unit_lstm, n_unit_atten=n_unit_atten, label_n=label_n,data_len=52)
+                                n_unit_lstm=n_unit_lstm, n_unit_atten=n_unit_atten, label_n=label_n,data_len=53)
         else:
             model = build_model(downsample=downsample, win_len=samplingedCSIWinSize*2,
                                 n_unit_lstm=n_unit_lstm, n_unit_atten=n_unit_atten, label_n=label_n,data_len=1)
