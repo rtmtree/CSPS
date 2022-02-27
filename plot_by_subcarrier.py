@@ -19,7 +19,7 @@ from scipy.ndimage import gaussian_filter
 import re
 from scipy import pi
 from statistics import stdev
-
+from functions.csi_util import filterNullSC,rawCSItoAmp
 
 def getCentralFrequency(channel):
     cenFreqList = [2412, 2417, 2422, 2427, 2432, 2437,
@@ -108,11 +108,12 @@ def calculateI_FFT(n, amplitude_spect, phase_spect):
 
 
 # style.use('dark_background')
-my_filter_address = "98:F4:AB:7D:DD:1D"
-# my_filter_address="7C:9E:BD:D2:D8:9C"
+# my_filter_address = "98:F4:AB:7D:DD:1D"
+my_filter_address="7C:9E:BD:D2:D8:9D"
 # =================================================
 isRealtime = True
-filePaths = ['get_csi/active_sta/0158.csv']
+# filePaths = ['get_csi/esp32-csi-tool/active_sta/0358.csv']
+filePaths = ['get_csi/esp32-csi-tool/active_sta/xx.csv']
 # filePaths = ['active_sta/sleep18-11-2021.csv']
 # =================================================
 my_filter_length = 128
@@ -253,46 +254,19 @@ def animate(line):
             tsSTA.append(tsList[i])
             rssiSTA.append(rssiList[i])
     if(isinstance(valueSTA, float) == False and len(valueSTA) > 0):
-        data = valueSTA
-        # data[:] = data[:][0:subcarrierLengthX2]
-        amplitudesAll = []
+
+        amplitudesAll = [ filterNullSC( rawCSItoAmp( curAmp )) for curAmp in valueSTA]
         tsAll = tsSTA
-        # rssiAll = rssiSTA
-        # phasesAll = []
-        # complexesAll =[]
-        for i in range(len(data)):
-            amplitudes = []
-            # phases = []
-            # complexes =[]
-            for j in range(0, subcarrierLengthX2, 2):
-                amplitudes.append(
-                    sqrt(data[i][j] * 2 + data[i][j+1] * 2))
-                # phases.append(atan2(data[i][j], data[i][j]))
-                # complexes.append(complex(data[i][j+1],data[i][j]))
-            amplitudesAll.append(amplitudes)
-            # phasesAll.append(phases)
-            # complexesAll.append(complexes)
         # Ploting Start
         # new plot subcarrier:
-        for j in range(0, 64):
-            if (j not in nullSubcarrier):
-                textX = []
-                textY = []
-                for k in range(len(amplitudesAll)):
-                    # textX.append(startIndex+k)
-                    tsAll[k] = int(tsAll[k])
-                    if(isinstance(tsAll[k], int)):
-                        textX.append(tsAll[k])
-                        textY.append(amplitudesAll[k][j])
-                        # if(len(textX) > frameLength):
-                        #     textX.pop(0)
-                        # if(len(textY) > frameLength):
-                        #     textY.pop(0)
-                    else:
-                        print("catch ts type", tsAll[k])
-                # ax.plot(textX, gaussian_filter(
-                #     textY, sigma=1), label='CSI subcarrier')
-                ax.plot(textX, textY, label='CSI subcarrier')
+        for j in range(len(amplitudesAll[0])):
+            textX = []
+            textY = []
+            for k in range(len(amplitudesAll)):
+                tsAll[k] = int(tsAll[k])
+                textX.append(tsAll[k])
+                textY.append(amplitudesAll[k][j])
+            ax.plot(textX, textY, label='CSI subcarrier')
     plt.xlabel("Frame")
     plt.ylabel("Amplitude(dB)")
     ax.set_ylim([-10, +40])

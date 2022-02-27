@@ -1,5 +1,14 @@
 import numpy as np 
 from math import sqrt, atan2 ,isnan
+import re
+
+def parseCSI(csi):
+    try:
+        csi_string = re.findall(r"\[(.*)\]", csi)[0]
+        csi_raw = [int(x) for x in csi_string.split(" ") if x != '']
+        return csi_raw
+    except:
+        return False
 
 def rawCSItoAmp(data,length=128):
     amplitudes = []
@@ -132,7 +141,7 @@ def samplingCSISleep(csiList,csiIndices,poseList,sleepIndex,newCSILen,timeLen=30
         if(csiIndices[0]!=0 or j!=0):
             csiIndicesExtended += [csiIndices[0]-1]
         else:
-            simplingedCSIs.append( np.array(filterNullSC( rawCSItoAmp(   csiList[csiIndices[0]][1:]  )  ) +[csiList[csiIndices[0]][-1]]  )   )
+            simplingedCSIs.append( np.array(filterNullSC( rawCSItoAmp(   csiList[csiIndices[0]][1:]  )  )  )   )
             startIndex = 0
             continue
 
@@ -153,17 +162,17 @@ def samplingCSISleep(csiList,csiIndices,poseList,sleepIndex,newCSILen,timeLen=30
         # if startIndex TS matched expected TS
 
         if(csiList[startIndex][0]==expectedTS):
-            simplingedCSIs.append( np.array( filterNullSC( rawCSItoAmp(   csiList[startIndex][1:]  )  )  +[csiList[startIndex][-1]]       )   )
+            simplingedCSIs.append( np.array( filterNullSC( rawCSItoAmp(   csiList[startIndex][1:]  )  )    )   )
             continue
         
         if(startIndex== len(csiList)-1  ):
-            simplingedCSIs.append( np.array( filterNullSC( rawCSItoAmp(   csiList[startIndex][1:]  )  ) +[csiList[startIndex][-1]]    )   )
+            simplingedCSIs.append( np.array( filterNullSC( rawCSItoAmp(   csiList[startIndex][1:]  )  )   )   )
             continue
 
         endIndex = startIndex+1
         
-        startCSI=filterNullSC( rawCSItoAmp(   csiList[startIndex][1:]  )  ) +[csiList[startIndex][-1]]
-        endCSI=filterNullSC( rawCSItoAmp(   csiList[endIndex][1:]  )  ) +[csiList[endIndex][-1]]
+        startCSI=filterNullSC( rawCSItoAmp(   csiList[startIndex][1:]  )  ) 
+        endCSI=filterNullSC( rawCSItoAmp(   csiList[endIndex][1:]  )  ) 
         middleCSI=[]
         offsetX=csiList[endIndex][0]-csiList[startIndex][0]
         offsetXo=expectedTS -csiList[startIndex][0]
