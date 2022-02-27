@@ -112,10 +112,6 @@ def calculateI_FFT(n, amplitude_spect, phase_spect):
 my_filter_address="7C:9E:BD:D2:D8:9D"
 # =================================================
 isRealtime = True
-<<<<<<< HEAD
-# filePaths = ['get_csi/esp32-csi-tool/active_sta/0358.csv']
-=======
->>>>>>> 6b17d88 (change path of log csv)
 filePaths = ['get_csi/esp32-csi-tool/active_sta/xx.csv']
 # filePaths = ['active_sta/sleep18-11-2021.csv']
 # =================================================
