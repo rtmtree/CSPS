@@ -216,14 +216,14 @@ def samplingCSISleep(csiList, csiIndices, lastTS, newCSILen, timeLen=30):
         simplingedCSIs.append(np.array(filterNullSC(rawCSItoAmp(middleCSI))))
     return simplingedCSIs, expectedTSs
 
-def singleSamplingCSISleep(csiList, csiIndices, timestampList, digitTs, timeLen=60):
+def singleLinearInterpolation(csiList, csiIndices, timestampList, digitTs, timeLen=60):
     simplingedCSIs = []
     expectedTSs = []
     # startTS = timestampList[-1] - timeLen
     startTS = timestampList[0] 
     lastTS = timestampList[-1] 
-    print("startTS",startTS)
-    print("lastTS",lastTS)
+    # print("startTS",startTS)
+    # print("lastTS",lastTS)
     newCSILen = int( (lastTS - startTS)/(10**digitTs) * timeLen )
     for j in range(newCSILen):
         if(j < newCSILen-1):
@@ -231,23 +231,20 @@ def singleSamplingCSISleep(csiList, csiIndices, timestampList, digitTs, timeLen=
             expectedTS = startTS + (j * (lastTS-startTS)/newCSILen)
         else:
             expectedTS = lastTS
-        print(j,"/",newCSILen)
-        print("expectedTS",expectedTS)
+        
         expectedTSs.append(expectedTS)
         # print(expectedTS)
         csiIndicesExtended = []
         if(csiIndices[0] != 0 or j != 0):
             csiIndicesExtended = csiIndices
         else:
-            print(csiList[csiIndices[0]])
+            
             simplingedCSIs.append(csiList[csiIndices[0]])
             startIndex = 0
             continue
         if j == 0:
             startIndex = csiIndicesExtended[0]
         for k in range(startIndex, csiIndicesExtended[-1]+1):
-            # print("k=",k)
-            # print(timestampList[k])
             if(k >= len(csiList) or timestampList[k] > expectedTS):
                 break
             else:
@@ -256,18 +253,14 @@ def singleSamplingCSISleep(csiList, csiIndices, timestampList, digitTs, timeLen=
         # if startIndex TS matched expected TS
         if(timestampList[startIndex] == expectedTS):
             simplingedCSIs.append(csiList[startIndex])
-            print("this is the exact ts")
             continue
 
          # if startIndex is at the end of CSI data
         if(startIndex == len(csiList)-1):
             simplingedCSIs.append(csiList[startIndex])
-            print("this is the last ts")
             continue
 
         endIndex = startIndex+1
-        print("startIndex",startIndex)
-        print("endIndex",endIndex)
 
         startCSI = csiList[startIndex]
         endCSI = csiList[endIndex]

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.12.9)  16 DEC 2021 02:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.12.9)  26 APR 2022 16:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -631,71 +631,72 @@ Package microtype Info: Loading generic protrusion settings for font family
  [1
 
 {/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
-<ESP32CSI01.png, id=39, 578.16pt x 674.52pt>
+<ESP32CSI01.png, id=42, 578.16pt x 674.52pt>
 File: ESP32CSI01.png Graphic file (type png)
 <use ESP32CSI01.png>
-Package pdftex.def Info: ESP32CSI01.png  used on input line 293.
+Package pdftex.def Info: ESP32CSI01.png  used on input line 294.
 (pdftex.def)             Requested size: 289.07928pt x 337.25917pt.
-<ESP32CSI03.png, id=41, 892.33376pt x 1027.84pt>
+<ESP32CSI03.png, id=44, 892.33376pt x 1027.84pt>
 File: ESP32CSI03.png Graphic file (type png)
 <use ESP32CSI03.png>
-Package pdftex.def Info: ESP32CSI03.png  used on input line 310.
+Package pdftex.def Info: ESP32CSI03.png  used on input line 311.
 (pdftex.def)             Requested size: 446.16579pt x 513.91875pt.
- [3 <./ESP32CSI01.png>]
-<TRAINSTEP08.png, id=68, 763.85374pt x 919.435pt>
+<TRAINSTEP08.png, id=54, 763.85374pt x 919.435pt>
 File: TRAINSTEP08.png Graphic file (type png)
 <use TRAINSTEP08.png>
-Package pdftex.def Info: TRAINSTEP08.png  used on input line 329.
+Package pdftex.def Info: TRAINSTEP08.png  used on input line 330.
 (pdftex.def)             Requested size: 152.76804pt x 183.88374pt.
-<TESTSTEP08.png, id=69, 502.87875pt x 1145.27875pt>
+<TESTSTEP08.png, id=55, 502.87875pt x 1145.27875pt>
 File: TESTSTEP08.png Graphic file (type png)
 <use TESTSTEP08.png>
-Package pdftex.def Info: TESTSTEP08.png  used on input line 334.
+Package pdftex.def Info: TESTSTEP08.png  used on input line 335.
 (pdftex.def)             Requested size: 100.57396pt x 229.05168pt.
- [4 <./ESP32CSI03.png>]
-<CSIResampling03.png, id=87, 1392.20125pt x 1039.885pt>
+ [3 <./ESP32CSI01.png>] [4 <./ESP32CSI03.png> <./TRAINSTEP08.png>] [5 <./TESTST
+EP08.png>]
+<CSIResampling03.png, id=88, 1392.20125pt x 1039.885pt>
 File: CSIResampling03.png Graphic file (type png)
 <use CSIResampling03.png>
-Package pdftex.def Info: CSIResampling03.png  used on input line 358.
+Package pdftex.def Info: CSIResampling03.png  used on input line 359.
 (pdftex.def)             Requested size: 696.09892pt x 519.94122pt.
 
+[6 <./CSIResampling03.png>]
 
-Package hyperref Warning: Suppressing empty link on input line 387.
+Package hyperref Warning: Suppressing empty link on input line 388.
 
-[5 <./TRAINSTEP08.png>] [6 <./TESTSTEP08.png> <./CSIResampling03.png>] [7]
-<VIS05.png, id=132, 642.4pt x 481.8pt>
+[7]
+<VIS05.png, id=131, 642.4pt x 481.8pt>
 File: VIS05.png Graphic file (type png)
 <use VIS05.png>
-Package pdftex.def Info: VIS05.png  used on input line 486.
+Package pdftex.def Info: VIS05.png  used on input line 487.
 (pdftex.def)             Requested size: 128.47772pt x 96.35829pt.
-<VIS06.png, id=133, 642.4pt x 481.8pt>
+<VIS06.png, id=132, 642.4pt x 481.8pt>
 File: VIS06.png Graphic file (type png)
 <use VIS06.png>
-Package pdftex.def Info: VIS06.png  used on input line 491.
+Package pdftex.def Info: VIS06.png  used on input line 492.
 (pdftex.def)             Requested size: 128.47772pt x 96.35829pt.
-<VIS07.png, id=134, 643.40375pt x 482.80376pt>
+<VIS07.png, id=133, 643.40375pt x 482.80376pt>
 File: VIS07.png Graphic file (type png)
 <use VIS07.png>
-Package pdftex.def Info: VIS07.png  used on input line 496.
+Package pdftex.def Info: VIS07.png  used on input line 497.
 (pdftex.def)             Requested size: 128.67847pt x 96.55904pt.
-<VIS08.png, id=135, 642.4pt x 481.8pt>
+<VIS08.png, id=134, 642.4pt x 481.8pt>
 File: VIS08.png Graphic file (type png)
 <use VIS08.png>
-Package pdftex.def Info: VIS08.png  used on input line 501.
+Package pdftex.def Info: VIS08.png  used on input line 502.
 (pdftex.def)             Requested size: 128.47772pt x 96.35829pt.
-
-[8 <./VIS05.png>] [9 <./VIS06.png> <./VIS07.png> <./VIS08.png>]
-<SETUP01.jpg, id=177, 963.6pt x 1712.3975pt>
+ [8 <./VIS05.png>] [9 <./VIS06.png> <./VIS07.png> <./VIS08.png>] [10]
+<SETUP01.jpg, id=181, 963.6pt x 1712.3975pt>
 File: SETUP01.jpg Graphic file (type jpg)
 <use SETUP01.jpg>
-Package pdftex.def Info: SETUP01.jpg  used on input line 592.
+Package pdftex.def Info: SETUP01.jpg  used on input line 593.
 (pdftex.def)             Requested size: 192.71658pt x 342.47343pt.
-<SETUP03.jpg, id=178, 1112.155pt x 1483.5425pt>
+<SETUP03.jpg, id=182, 1112.155pt x 1483.5425pt>
 File: SETUP03.jpg Graphic file (type jpg)
 <use SETUP03.jpg>
-Package pdftex.def Info: SETUP03.jpg  used on input line 598.
+Package pdftex.def Info: SETUP03.jpg  used on input line 599.
 (pdftex.def)             Requested size: 222.42706pt x 296.70325pt.
- [10] [11 <./SETUP01.jpg> <./SETUP03.jpg>] [12]
+
+[11 <./SETUP01.jpg> <./SETUP03.jpg>] [12]
 (/usr/local/texlive/2021/texmf-dist/tex/latex/ucs/data/uni-32.def
 File: uni-32.def 2013/05/13 UCS: Unicode data U+2000..U+20FF
 ) [13]
@@ -707,11 +708,11 @@ Package rerunfilecheck Info: File `plos_wifi2sleep_journal.out' has not changed
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 14731 strings out of 478994
- 222402 string characters out of 5858184
- 590476 words of memory out of 5000000
- 31787 multiletter control sequences out of 15000+600000
- 413786 words of font info for 100 fonts, out of 8000000 for 9000
+ 14721 strings out of 478994
+ 222266 string characters out of 5858184
+ 587477 words of memory out of 5000000
+ 31782 multiletter control sequences out of 15000+600000
+ 412946 words of font info for 96 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  80i,18n,88p,1088b,480s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
@@ -729,12 +730,11 @@ e/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/
 2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2
 021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/202
 1/texmf-dist/fonts/type1/public/marvosym/marvosym.pfb></usr/local/texlive/2021/
-texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2021/te
-xmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on plos_wifi2sleep_journal.pdf (14 pages, 1180302 bytes).
+texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb>
+Output written on plos_wifi2sleep_journal.pdf (14 pages, 1173119 bytes).
 PDF statistics:
- 315 PDF objects out of 1000 (max. 8388607)
- 260 compressed objects within 3 object streams
+ 311 PDF objects out of 1000 (max. 8388607)
+ 257 compressed objects within 3 object streams
  98 named destinations out of 1000 (max. 500000)
- 26680 words of extra memory for PDF output out of 29859 (max. 10000000)
+ 24632 words of extra memory for PDF output out of 24883 (max. 10000000)
 

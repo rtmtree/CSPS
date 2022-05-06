@@ -5,6 +5,7 @@ preprocess/
 raw_data/
 test_models/
 get_csi/
+get_groundtruth/
 __pycache__/
 models/
 human-pose-estimation-3d.pth
