@@ -40,28 +40,30 @@ tsParserGT = (10**3)
 # xx3 breath slowly 450-550
 # xx3 hold breath 550-610
 # [8, 25]
-# xx4 breath normally 300-400
-# xx4 breath quickly 400-500 ***
-# xx4 hold breath 500-600
-# xx4 breath slowly 600-700
+# xx4 breath normally 300-400 345
+# xx4 breath quickly 400-500 410
+# xx4 hold breath 500-600 510
+# xx4 breath slowly 600-700 610
 
 fileCode = 'xx4'
+#sec
+startFrom = 345
+isFreeze = True
+endAt= 1000
 CSIBPMPlotPeriod = [20,40]
 # 0 = raw
 # 1 = hampel
 # 2 = gaussian
 # 3 = linear inter
 # 4 = butter_lowpass
-plotOrder=[2,3,3,4]
+plotOrder=[2,3,4]
 frameLength = 5000
-#sec
-startFrom = 345
-isFreeze = True
-endAt= 1000
+
+
 
 isRealtime = False
-isWithGroundTruth = False
-isCountBPM = False
+isWithGroundTruth = True
+isCountBPM = True
 
 # CSI filtering parameter part======================
 # gaussian_filter
@@ -77,7 +79,8 @@ BLPF_order = 2       # sin wave can be approx represented as quadratic
 BLPF_cutoffFreq = 30
 # PRESSURE filtering parameter part======================
 GT_GF_sigma = 1
-
+GT_HF_sigma = -100
+GT_HF_winsize = 1
 # =================================================
 
 # sync part
@@ -300,37 +303,42 @@ def animate(line):
         # print("firstTsCSI + 30",(firstTsCSI + (secondToCountBreath*tsParser)))
         # create GroundTruth within the period same as CSI for ploting
         print("bf len gtPSList",len(gtPSList))
-
-
-        filGtPSList,filGtTSList = singleLinearInterpolation(gtPSList,np.arange(len(gtPSList)),gtTSList,6,4)
-        
+         
         # print("af len gtPSList",len(gtPSList))
         # print("expTS 0",gtTSList[0]-syncTime)
         # print("expTS last",gtTSList[len(gtTSList)-1]-syncTime)
-
-        
-        for i in range(0, len(filGtTSList)):
-            if(filGtTSList[i]>=firstTsCSI and filGtTSList[i]<=lastTsCSIforBPM):
-                psGTBPM.append(filGtPSList[i])
+        for i in range(0, len(gtTSList)):
+            if(gtTSList[i]>=firstTsCSI and gtTSList[i]<=lastTsCSI):
+                valueGTPlot.append(gtPSList[i])
                 # parse back
-                tsGTBPM.append(float(filGtTSList[i]/tsParser))
-            if(filGtTSList[i]>=firstTsCSI and filGtTSList[i]<=lastTsCSI):
-                valueGTPlot.append(filGtPSList[i])
-                # parse back
-                tsGTPlot.append(float(filGtTSList[i]/tsParser))
-            elif(filGtTSList[i]>lastTsCSI and filGtTSList[i]>lastTsCSIforBPM):
+                tsGTPlot.append(float(gtTSList[i]/tsParser))
+            elif(gtTSList[i]>lastTsCSI):
                 break
 
+        print(len(valueGTPlot))
+        # ax1.plot(tsGTPlot, valueGTPlot, label='Ground Truth')
+        filGtPSList = hampel_filter(valueGTPlot, GT_HF_winsize,GT_HF_sigma)
+        # ax2.plot(tsGTPlot, filGtPSList, label='Ground Truth')
+        filGtPSList = gaussian_filter(filGtPSList,sigma=GT_GF_sigma)
+        # ax3.plot(tsGTPlot, filGtPSList, label='Ground Truth')
+        filGtPSList,filGtTSList = singleLinearInterpolation(filGtPSList,np.arange(len(filGtPSList)),tsGTPlot,0,4)
+        ax4.plot(filGtTSList, filGtPSList, label='Ground Truth')
+
+        # ax1.set_ylim([95, 105])
+        # ax1.set_ylabel("Pressure(kPa)")
+        # ax2.set_ylim([95, 105])
+        # ax2.set_ylabel("Pressure(kPa)")
         # ax3.set_ylim([95, 105])
         # ax3.set_ylabel("Pressure(kPa)")
         ax4.set_ylim([95, 105])
         ax4.set_ylabel("Pressure(kPa)")
 
-        if(len(tsGTPlot)>0):
-            # ax3.plot(tsGTPlot, valueGTPlot, label='Ground Truth')
-            valueGTPlot = gaussian_filter(valueGTPlot,sigma=GT_GF_sigma)
-            ax4.plot(tsGTPlot, valueGTPlot, label='Ground Truth')
-        
+        for i in range(0, len(filGtTSList)):
+            if(filGtTSList[i]<=(lastTsCSIforBPM/tsParser)):
+                psGTBPM.append(filGtPSList[i])
+                tsGTBPM.append(filGtTSList[i])
+            elif(filGtTSList[i]>(lastTsCSIforBPM/tsParser)):
+                break
         if isCountBPM:
             if(len(psGTBPM)==0):
                 print("BELT!!! can't calculate BPM")
@@ -346,6 +354,7 @@ def animate(line):
                     if(psGTBPM[i-1]<meanGTPS and psGTBPM[i]>meanGTPS):
                         peaksGTTS.append(tsGTBPM[i])
                         peaksGTPS.append(psGTBPM[i])
+                        
                 ax4.axhline(y=meanGTPS, color='r', linestyle='-')
                 ax4.plot(peaksGTTS, peaksGTPS,'x')
                 BPM = len(peaksGTTS)*(fs/secondToCountBreath)
@@ -387,13 +396,13 @@ def animate(line):
                 #Gaussian Filter
                 gaussFil = gaussian_filter(hameFil, sigma=GF_sigma)
                 graphList.append([textX,gaussFil])
-                # ax1.plot(textX,gaussFil , label='CSI subcarrier after Gaussian Filtering')
+                ax1.plot(textX,gaussFil , label='CSI subcarrier after Gaussian Filtering')
 
 
                 # Linear Interpolation
                 linIntCSI,linIntTS = singleLinearInterpolation(gaussFil,np.arange(len(hameFil)),textX,LI_digi,LI_timelen)
                 graphList.append([linIntTS,linIntCSI])
-                # ax1.plot(linIntTS, linIntCSI , label='CSI subcarrier Linear Interpolation')  
+                ax2.plot(linIntTS, linIntCSI , label='CSI subcarrier Linear Interpolation')  
 
                 #Butterworth Filter' low pass
                 BLPF_T = len(linIntCSI)
@@ -401,12 +410,12 @@ def animate(line):
                 BLPF_cutoff = BLPF_cutoffFreq / BLPF_sec  
                 BBFilter =  butter_lowpass_filter_fft(linIntCSI,BLPF_cutoff,LI_timelen,BLPF_order)
                 graphList.append([linIntTS,BBFilter])
-                # ax3.plot(linIntTS, BBFilter , label='CSI subcarrier Moving Average Filter')  
+                ax3.plot(linIntTS, BBFilter , label='CSI subcarrier Moving Average Filter')  
 
-                ax1.plot(graphList[plotOrder[0]][0],graphList[plotOrder[0]][1])
-                ax2.plot(graphList[plotOrder[1]][0],graphList[plotOrder[1]][1])
-                ax3.plot(graphList[plotOrder[2]][0],graphList[plotOrder[2]][1])
-                ax4.plot(graphList[plotOrder[3]][0],graphList[plotOrder[3]][1])
+                # ax1.plot(graphList[plotOrder[0]][0],graphList[plotOrder[0]][1])
+                # ax2.plot(graphList[plotOrder[1]][0],graphList[plotOrder[1]][1])
+                # ax3.plot(graphList[plotOrder[2]][0],graphList[plotOrder[2]][1])
+                # ax4.plot(graphList[plotOrder[3]][0],graphList[plotOrder[3]][1])
 
                 # find peak_frequency
                 if False:
@@ -485,21 +494,15 @@ def animate(line):
             ax2.plot(textX, gaussian_filter(
                 SDY, sigma=15), label='CSI subcarrier')
         # ax2.plot(textX, gaussian_filter(textY, sigma=10), label='CSI subcarrier')
-    # ax0.set_ylabel("Amplitude(dB)")
-    # ax1.set_ylabel("Amplitude(dB) 1 SC"+"("+str(subcarrierIndex)+"th)")
-    # ax2.set_ylabel("Amp 1 SC HampelF")
     ax1.set_ylabel("Amplitude(dB)")
     ax2.set_ylabel("Amplitude(dB)")
     ax3.set_ylabel("Amplitude(dB)")
-    ax4.set_ylabel("Amplitude(dB)")
     ax4.set_xlabel("Frame(sec)")
 
     # ax0.set_ylim([-10, +40])
     ax1.set_ylim([-10, +40])
     ax2.set_ylim([-10, +40])
-    ax3.set_ylim([-10, +40])
-    ax4.set_ylim([-10, +40])
-    # ax3.set_ylim(CSIBPMPlotPeriod)
+    ax3.set_ylim(CSIBPMPlotPeriod)
     
     
     # ax0.xaxis.set_ticks(np.arange(int(min(tsAll)/1)*1, int(max(tsAll)/1)*1, 1*secPerGap ) )

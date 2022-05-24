@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.12.9)  24 MAY 2022 22:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.12.9)  25 MAY 2022 02:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -663,12 +663,12 @@ File: ESP32CSI03.png Graphic file (type png)
 Package pdftex.def Info: ESP32CSI03.png  used on input line 336.
 (pdftex.def)             Requested size: 446.16579pt x 513.91875pt.
  [4 <./VERNIERBELT.jpg> <./SETUP05.jpg>] [5 <./SETUP03.jpg> <./ESP32CSI03.png>]
-<STEP09.png, id=85, 739.76375pt x 1082.0425pt>
-File: STEP09.png Graphic file (type png)
-<use STEP09.png>
-Package pdftex.def Info: STEP09.png  used on input line 352.
-(pdftex.def)             Requested size: 147.95012pt x 216.40466pt.
- [6 <./STEP09.png>]
+<STEP11.png, id=85, 732.7375pt x 1082.0425pt>
+File: STEP11.png Graphic file (type png)
+<use STEP11.png>
+Package pdftex.def Info: STEP11.png  used on input line 352.
+(pdftex.def)             Requested size: 146.5449pt x 216.40466pt.
+ [6 <./STEP11.png>]
 <FILPD_R2H.png, id=101, 530.98375pt x 387.4475pt>
 File: FILPD_R2H.png Graphic file (type png)
 <use FILPD_R2H.png>
@@ -690,53 +690,52 @@ File: FILPD_L2B.png Graphic file (type png)
 <use FILPD_L2B.png>
 Package pdftex.def Info: FILPD_L2B.png  used on input line 432.
 (pdftex.def)             Requested size: 476.07423pt x 346.89279pt.
-<FILGT_R2G.png, id=126, 527.9725pt x 390.45876pt>
-File: FILGT_R2G.png Graphic file (type png)
-<use FILGT_R2G.png>
-Package pdftex.def Info: FILGT_R2G.png  used on input line 446.
-(pdftex.def)             Requested size: 475.17085pt x 351.40962pt.
  [8 <./FILPD_H2G.png>] [9 <./FILPD_G2L.png> <./FILPD_L2B.png>]
-<PD2GT_NORMAL01.png, id=148, 527.9725pt x 388.45125pt>
-File: PD2GT_NORMAL01.png Graphic file (type png)
-<use PD2GT_NORMAL01.png>
-Package pdftex.def Info: PD2GT_NORMAL01.png  used on input line 460.
-(pdftex.def)             Requested size: 475.17085pt x 349.60287pt.
-<PD2GT_FAST01.png, id=149, 523.9575pt x 388.45125pt>
-File: PD2GT_FAST01.png Graphic file (type png)
-<use PD2GT_FAST01.png>
-Package pdftex.def Info: PD2GT_FAST01.png  used on input line 465.
-(pdftex.def)             Requested size: 471.55739pt x 349.60287pt.
-<PD2GT_HOLD01.png, id=150, 524.96124pt x 387.4475pt>
-File: PD2GT_HOLD01.png Graphic file (type png)
-<use PD2GT_HOLD01.png>
-Package pdftex.def Info: PD2GT_HOLD01.png  used on input line 470.
+<FILGT_R2H2G2L.png, id=144, 525.965pt x 748.7975pt>
+File: FILGT_R2H2G2L.png Graphic file (type png)
+<use FILGT_R2H2G2L.png>
+Package pdftex.def Info: FILGT_R2H2G2L.png  used on input line 446.
+(pdftex.def)             Requested size: 473.3641pt x 673.91153pt.
+<PD2GT_NORMAL02.png, id=149, 524.96124pt x 387.4475pt>
+File: PD2GT_NORMAL02.png Graphic file (type png)
+<use PD2GT_NORMAL02.png>
+Package pdftex.def Info: PD2GT_NORMAL02.png  used on input line 460.
 (pdftex.def)             Requested size: 472.46075pt x 348.69952pt.
-<PD2GT_SLOW01.png, id=151, 526.96875pt x 387.4475pt>
-File: PD2GT_SLOW01.png Graphic file (type png)
-<use PD2GT_SLOW01.png>
-Package pdftex.def Info: PD2GT_SLOW01.png  used on input line 475.
-(pdftex.def)             Requested size: 474.26749pt x 348.69952pt.
- [10 <./FILGT_R2G.png>]
-[11 <./PD2GT_NORMAL01.png> <./PD2GT_FAST01.png>] [12 <./PD2GT_HOLD01.png> <./PD
-2GT_SLOW01.png>] [13] [14]
+<PD2GT_FAST02.png, id=150, 523.9575pt x 388.45125pt>
+File: PD2GT_FAST02.png Graphic file (type png)
+<use PD2GT_FAST02.png>
+Package pdftex.def Info: PD2GT_FAST02.png  used on input line 465.
+(pdftex.def)             Requested size: 471.55739pt x 349.60287pt.
+<PD2GT_HOLD02.png, id=151, 525.965pt x 387.4475pt>
+File: PD2GT_HOLD02.png Graphic file (type png)
+<use PD2GT_HOLD02.png>
+Package pdftex.def Info: PD2GT_HOLD02.png  used on input line 470.
+(pdftex.def)             Requested size: 473.3641pt x 348.69952pt.
+<PD2GT_SLOW02.png, id=152, 522.95375pt x 388.45125pt>
+File: PD2GT_SLOW02.png Graphic file (type png)
+<use PD2GT_SLOW02.png>
+Package pdftex.def Info: PD2GT_SLOW02.png  used on input line 475.
+(pdftex.def)             Requested size: 470.65402pt x 349.60287pt.
+ [10] [11 <./FILGT_R2H2G2L.png>] [12 <./PD2GT_NORMAL02.png> <./PD2GT_FAST02.png
+>] [13 <./PD2GT_HOLD02.png> <./PD2GT_SLOW02.png>] [14]
 (/usr/local/texlive/2021/texmf-dist/tex/latex/ucs/data/uni-32.def
 File: uni-32.def 2013/05/13 UCS: Unicode data U+2000..U+20FF
 ) [15]
-
+[16] 
 AED: lastpage setting LastPage
-[16] (./plos_wifi2bpmsleep_journal.aux)
+[17] (./plos_wifi2bpmsleep_journal.aux)
 Package rerunfilecheck Info: File `plos_wifi2bpmsleep_journal.out' has not chan
 ged.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 14756 strings out of 478994
- 222927 string characters out of 5858184
- 588391 words of memory out of 5000000
+ 14759 strings out of 478994
+ 222980 string characters out of 5858184
+ 593554 words of memory out of 5000000
  31808 multiletter control sequences out of 15000+600000
- 413108 words of font info for 99 fonts, out of 8000000 for 9000
+ 413168 words of font info for 100 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 80i,18n,88p,1091b,481s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 80i,18n,88p,1091b,479s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 }</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb>
 </usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><
@@ -752,10 +751,10 @@ e/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/
 2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2
 021/texmf-dist/fonts/type1/public/marvosym/marvosym.pfb></usr/local/texlive/202
 1/texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb>
-Output written on plos_wifi2bpmsleep_journal.pdf (16 pages, 1108523 bytes).
+Output written on plos_wifi2bpmsleep_journal.pdf (17 pages, 1272488 bytes).
 PDF statistics:
- 320 PDF objects out of 1000 (max. 8388607)
- 257 compressed objects within 3 object streams
- 96 named destinations out of 1000 (max. 500000)
+ 327 PDF objects out of 1000 (max. 8388607)
+ 263 compressed objects within 3 object streams
+ 97 named destinations out of 1000 (max. 500000)
  24657 words of extra memory for PDF output out of 24883 (max. 10000000)
 

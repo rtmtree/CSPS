@@ -349,7 +349,7 @@
 	
 
 	\begin{figure}[htbp]
-		\centerline{\includegraphics[width=90mm,scale=0.2]{STEP09.png}}
+		\centerline{\includegraphics[width=90mm,scale=0.2]{STEP11.png}}
 		\caption{All the mapping rule.}
 		\label{fig:MAPINGSTEP}
 	\end{figure}
@@ -370,11 +370,11 @@
 	
 	The CSI amplitude parsed from raw CSI of ESP32 is originally noiseful and contain many outliers, a value which is significantly far from beside data. The CSI sequence is ideally a continuous data, so outliers are considered as noises.  Hampel Filtering is a filtering process to remove obvious outliers. An example of the result is shown in  Fig.~\ref{fig:HAMPEL} where the top is an input that is having many outliers and the bottom is an output that is having lower outliers.
 	
-		Parameters of the process are window size and $\sigma$ which are redefined as $\gamma$ and $\sigma$ respectively in this paper.
+		Parameters of the process are window size and $\sigma$ which are redefined as $\alpha$ and $\beta$ respectively in this paper.
 		
 		\begin{figure}[htbp]
-		\centerline{\includegraphics[width=100mm,scale=0.9]{FILPD_R2H.png}}
-		\caption{An example of applying Hampel filtering when $\gamma=1$ and $\sigma=-100$.}
+		\centerline{\includegraphics[width=120mm,scale=0.9]{FILPD_R2H.png}}
+		\caption{An example of applying Hampel filtering when $\alpha=1$ and $\beta=-100$.}
 		\label{fig:HAMPEL}
 	\end{figure}
 
@@ -383,12 +383,12 @@
 	 The CSI after applying Hampel filtering is more clear but, still lag smoothness ostensibly. To smoothen the CSI, we used Gaussian filtering as (ref Activity Class).
 	An example of the result is shown in  Fig.~\ref{fig:GAUSSIAN} where the top is an input that is very rough and the bottom is an output that is smoother.
 	
-	A parameter of the process is $\sigma$ which is redefined as $\delta$ in this paper.
+	A parameter of the process is $\sigma$ which is redefined as $\gamma$ in this paper.
 	
 	
 	\begin{figure}[htbp]
 		\centerline{\includegraphics[width=120mm,scale=0.9]{FILPD_H2G.png}}
-		\caption{An example of applying Gaussian filtering when $\delta=5$.}
+		\caption{An example of applying Gaussian filtering when $\gamma=5$.}
 		\label{fig:GAUSSIAN}
 	\end{figure}
 
@@ -424,28 +424,28 @@ To recreate a CSI data at rate 60Hz, we calculate each with 2 data at the closet
 			 
 			 So, we applied Butterworth low pass filtering that can remove the wave with frequency higher than a certain threshold. By using the  frequency slightly higher than common human respiratory rate, we can obtain only the wave of a human breathing as shown in Fig.~\ref{fig:BPL} where the top is an input that is containing high frequency wave and the bottom is an output without frequency wave higher than common human respiratory rate.
 			 
-			 Parameters of the process are the order of Butterworth filtering and cutoff frequency which are redefined as $\zeta$ and $\omega$ respectively in this paper.
+			 Parameters of the process are the order of Butterworth filtering and cutoff frequency which are redefined as $\delta$ and $\epsilon$ respectively in this paper.
 			
 			
 			
 			\begin{figure}[htbp]
 			\centerline{\includegraphics[width=120mm,scale=0.9]{FILPD_L2B.png}}
-			\caption{An example of applying Butterworth low pass filtering when $\zeta=2$ and $\omega=30$.}
+			\caption{An example of applying Butterworth low pass filtering when $\delta=2$ and $\epsilon=30$.}
 			\label{fig:BPL}
 				\end{figure}
 	\subsection*{Ground Truth (Respiratory Belt)}
 		
-		The Respiratory Belt log pressure data with a unit of kilopascal. As mentioned in \nameref{HUMANSLEEPRR}, The belt is set to log RR at resolution of 4 Hz. By connecting the belt to a microprocessor as shown in Fig.~\ref{fig:VERNIERBELT}, we can set log resolution at any rate. However, based on our experiment, normal human RR can be determined at resolution of 4 Hz as shown in Fig.~\ref{fig:FILGT_R2G} (top).
+		The Respiratory Belt logs pressure data with a unit of kilopascal. As mentioned in \nameref{HUMANSLEEPRR}, The belt is set to log RR at resolution of 4 Hz. By connecting the belt to a microprocessor as shown in Fig.~\ref{fig:VERNIERBELT}, we can set log resolution at any rate. However, based on our experiment, normal human RR can be determined at resolution of 4 Hz as shown in Fig.~\ref{fig:FILGT_R2H2G2L} (top).
 		
-		As it can be simply seen that the raw data from the belt is clear but not precise, so we apply more Gaussian Filtering on it. The result are shown in Fig.~\ref{fig:FILGT_R2G} (bottom).
+		As it can be simply seen that the raw data from the belt is clear but not precise, so we still need more filtering on it. 3 filterings, as shown in Fig.~\ref{fig:MAPINGSTEP} (right), are applied. For more precision, we applied more Linear Interpolation to ensure the resolution is exactly 4 Hz, The result are shown in Fig.~\ref{fig:FILGT_R2H2G2L}
 		
-		A parameter of the process is $\sigma$ which is redefined as $\alpha$ in this paper.
+		Parameters of the Hampel Filtering process is window size and $\sigma$ which is redefined as $\zeta$ and $\eta$ in this paper. A parameter of the Gaussian Filtering process is $\sigma$ which is redefined as $\theta$ in this paper.
 		
 		
 		\begin{figure}[htbp]
-			\centerline{\includegraphics[width=120mm,scale=0.9]{FILGT_R2G.png}}
-			\caption{An example of pressure logged from Vernier Respiratory Belt for normal human taking breath. Without filtering (top) and with Gaussian Filtering (bottom) when  $\alpha=1$.}
-			\label{fig:FILGT_R2G}
+			\centerline{\includegraphics[width=120mm,scale=0.9]{FILGT_R2H2G2L.png}}
+			\caption{An example of pressure logged from Vernier Respiratory Belt for normal human taking breath. Without filtering (top), with Hampel Filtering (2nd top) when  $\zeta=1$ and $\eta=-100$, with Gaussian Filtering (3rd top) when  $\theta=1$ and with Linear Interpolation (bottom) with 4 Hz.}
+			\label{fig:FILGT_R2H2G2L}
 		\end{figure}
 		
 	\subsection*{Testing}
@@ -454,26 +454,26 @@ To recreate a CSI data at rate 60Hz, we calculate each with 2 data at the closet
 		
 		The philosophy we used to extract RR from both data of CSI from ESP32 and pressure from the ground truth is ``First to hit the mean'' as (ref) have proven its reliability.
 		
-		The examples of applying the technique with different breathing pattern are shown in Fig.~\ref{fig:RREXT_NORMAL}, Fig.~\ref{fig:RREXT_FAST}, Fig.~\ref{fig:RREXT_HOLD} and  Fig.~\ref{fig:RREXT_SLOW} where the orange Xs are counted as a breath.
+		The examples of applying the technique with different breathing pattern are shown in Fig.~\ref{fig:RREXT_NORMAL}, Fig.~\ref{fig:RREXT_FAST}, Fig.~\ref{fig:RREXT_HOLD} and  Fig.~\ref{fig:RREXT_SLOW} where each orange X are counted as a breath.
 		
 		\begin{figure}[htbp]
-			\centerline{\includegraphics[width=120mm,scale=0.9]{PD2GT_NORMAL01.png}}
-			\caption{An example of Respiratory Rate Extraction from prediction and ground truth for normal-rate breathing (prediction BPM = 15, ground truth BPM = 19).}
+			\centerline{\includegraphics[width=120mm,scale=0.9]{PD2GT_NORMAL02.png}}
+			\caption{An example of Respiratory Rate Extraction from prediction (top) and ground truth (bottom) for normal-rate breathing (prediction BPM = 15, ground truth BPM = 16).}
 			\label{fig:RREXT_NORMAL}
 		\end{figure}
 	\begin{figure}[htbp]
-		\centerline{\includegraphics[width=120mm,scale=0.9]{PD2GT_FAST01.png}}
-		\caption{An example of Respiratory Rate Extraction from prediction and ground truth for fast-rate breathing (prediction BPM = 36, ground truth BPM = 41).}
+		\centerline{\includegraphics[width=120mm,scale=0.9]{PD2GT_FAST02.png}}
+		\caption{An example of Respiratory Rate Extraction from prediction (top) and ground truth (bottom) for fast-rate breathing (prediction BPM = 36, ground truth BPM = 38).}
 		\label{fig:RREXT_FAST}
 	\end{figure}
 \begin{figure}[htbp]
-	\centerline{\includegraphics[width=120mm,scale=0.9]{PD2GT_HOLD01.png}}
-	\caption{An example of Respiratory Rate Extraction from prediction and ground truth for holding-rate breathing (prediction BPM = 16, ground truth BPM = 15).}
+	\centerline{\includegraphics[width=120mm,scale=0.9]{PD2GT_HOLD02.png}}
+	\caption{An example of Respiratory Rate Extraction from prediction (top) and ground truth (bottom) for holding-rate breathing (prediction BPM = 16, ground truth BPM = 15).}
 	\label{fig:RREXT_HOLD}
 \end{figure}
 \begin{figure}[htbp]
-	\centerline{\includegraphics[width=120mm,scale=0.9]{PD2GT_SLOW01.png}}
-	\caption{An example of Respiratory Rate Extraction from prediction and ground truth for slow-rate breathing (prediction BPM = 6, ground truth BPM = 10).}
+	\centerline{\includegraphics[width=120mm,scale=0.9]{PD2GT_SLOW02.png}}
+	\caption{An example of Respiratory Rate Extraction from prediction (top) and ground truth (bottom) for slow-rate breathing (prediction BPM = 6, ground truth BPM = 5).}
 	\label{fig:RREXT_SLOW}
 \end{figure}
 	

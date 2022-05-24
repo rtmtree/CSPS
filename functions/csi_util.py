@@ -223,6 +223,8 @@ def singleLinearInterpolation(csiList, csiIndices, timestampList, digitTs, timeL
     simplingedCSIs = []
     expectedTSs = []
     # startTS = timestampList[-1] - timeLen
+    if(len(timestampList)==0):
+        return simplingedCSIs,expectedTSs
     startTS = timestampList[0] 
     lastTS = timestampList[-1] 
     # print("startTS",startTS)
