@@ -2,15 +2,18 @@ import numpy as np
 from math import sqrt, atan2, isnan
 import re
 from scipy.ndimage import gaussian_filter
+import pandas as pd
+from scipy.signal import butter, lfilter,filtfilt,find_peaks
+from hampel import hampel
 
 
-def parseCSI(csi):
-    try:
-        csi_string = re.findall(r"\[(.*)\]", csi)[0]
-        csi_raw = [int(x) for x in csi_string.split(" ") if x != '']
-        return csi_raw
-    except:
-        return False
+# def parseCSI(csi):
+#     try:
+#         csi_string = re.findall(r"\[(.*)\]", csi)[0]
+#         csi_raw = [int(x) for x in csi_string.split(" ") if x != '']
+#         return csi_raw
+#     except:
+#         return False
 
 
 def rawCSItoAmp(data, length=128):
@@ -272,6 +275,7 @@ def singleLinearInterpolation(csiList, csiIndices, timestampList, digitTs, timeL
         middleCSI = (startCSI)
         simplingedCSIs.append(middleCSI)
     return simplingedCSIs, expectedTSs
+
 def moving_average(x, w):
     return np.convolve(np.array(x), np.ones(w), 'valid') / w
 
@@ -366,3 +370,124 @@ def sleepIdx2csiIndices_timestamp( lastTs, csiStartIdx, csiList, timeLen=30):
                 if(prevTimeInPose <= csiList[i][0] and csiList[i][0] < timeInPose):
                     csiIndices.append(i)
     return csiIndices
+
+def hampel_filter(raw_signal,win_size=3,sigma=3) :
+    copy_signal = np.copy(np. asarray(raw_signal))
+    n = len(raw_signal)
+    for i in range((win_size), (n-win_size)):
+        dataslice = copy_signal[i- win_size:i+ win_size]
+        median_abs_dev = med_abs_dev(dataslice)
+        median = np.median(dataslice)
+        if copy_signal[i] > median + (sigma * median_abs_dev):
+            # print("filter",copy_signal[i],"=>",median)
+            copy_signal[i] = median
+    return copy_signal
+def med_abs_dev(datapoints):
+    med = np.median(datapoints)
+    return np.median(np.abs (datapoints- med))
+
+def movingaverage(interval, window_size):
+    window = np.ones(int(window_size))/float(window_size)
+    return np.convolve(interval, window, 'same')
+
+def hampel_filter_forloop(input_series, window_size, n_sigmas=3):
+    
+    n = len(input_series)
+    new_series = input_series.copy()
+    k = 1.4826 # scale factor for Gaussian distribution
+    
+    indices = []
+    
+    # possibly use np.nanmedian 
+    for i in range((window_size),(n - window_size)):
+        x0 = np.median(input_series[(i - window_size):(i + window_size)])
+        S0 = k * np.median(np.abs(input_series[(i - window_size):(i + window_size)] - x0))
+        if (np.abs(input_series[i] - x0) > n_sigmas * S0):
+            new_series[i] = x0
+            indices.append(i)
+    
+    return new_series, indices
+def hampel_filter_v(data, half_win_length, threshold):
+    padded_data = np.concatenate(
+        [[np.nan]*half_win_length, data, [np.nan]*half_win_length])
+    windows = np.ma.array(
+        np.lib.stride_tricks.sliding_window_view(padded_data, 2*50+1))
+    windows[np.isnan(windows)] = np.ma.masked
+    median = np.ma.median(windows, axis=1)
+    mad = np.ma.median(np.abs(windows-np.atleast_2d(median).T), axis=1)
+    bad = np.abs(data-median) > (mad*threshold)
+    return np.where(bad)[0]
+
+def butter_lowpass_filter(data, cutoff, fs, order,nyq):
+    normal_cutoff = cutoff / nyq
+    # Get the filter coefficients 
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    y = filtfilt(b, a, data)
+    return y
+def butter_lowpass_filter_fft(data, cutoff, fs, order):
+        nyq = 0.5 * fs # Nyquist Frequency
+        normal_cutoff = cutoff / nyq
+        # Get the filter coefficients 
+        b, a = butter(order, normal_cutoff, btype='low', analog=False)
+        y = filtfilt(b, a,data)
+        return y
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    return butter(order, [lowcut, highcut], fs=fs, btype='band')
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
+def getCentralFrequency(channel):
+    cenFreqList = [2412, 2417, 2422, 2427, 2432, 2437,
+                   2442, 2447, 24452, 2457, 2462, 2467, 2472]
+    return cenFreqList[channel-1]
+
+
+def getFrequencyRange(cenFreq, bandwidth, subcarrierLength):
+    startFreq = cenFreq - (bandwidth/2)
+    Xaxis = []
+    for i in range(subcarrierLength):
+        Xaxis.append(startFreq+(i*(bandwidth/subcarrierLength)))
+    return Xaxis
+
+
+def parseCSI(csi):
+    csi_string = re.findall(r"\[(.*)\]", csi)[0]
+    csi_raw = [int(x) for x in csi_string.split(" ") if x != '']
+    return csi_raw
+
+
+def findAVGCSI(fileAVG):
+    print("read STABLE file", fileAVG)
+    curFileSTA = pd.read_csv(fileAVG)
+    # curFileSTA = curFileSTA[(curFileSTA['mac'] == my_filter_address)]
+    # curFileSTA = curFileSTA[(curFileSTA['len'] == my_filter_length)]
+    curFileSTA = curFileSTA[(curFileSTA['stbc'] == 0)]
+    curFileSTA = curFileSTA[(curFileSTA['rx_state'] == 0)]
+    curFileSTA = curFileSTA[(curFileSTA['sig_mode'] == 1)]
+    curFileSTA = curFileSTA[(curFileSTA['bandwidth'] == 1)]
+    curFileSTA = curFileSTA[(curFileSTA['secondary_channel'] == 1)]
+    print("read STABLE file done")
+    print("len file", len(curFileSTA.index))
+    tail = int((int(len(curFileSTA.index)/2))+(PacketLength/2))
+    head = PacketLength
+    print(tail)
+    print(head)
+    curCSISTA = curFileSTA['CSI_DATA'].tail(tail).head(head)
+    csiSTAList = list(x for x in curCSISTA)
+
+    parseCSIList = [parseCSI(csiSTAList[i]) for i in range(len(csiSTAList)-1)]
+    AVGCSI = []
+    for i in range(0, subcarrierLengthX2, 2):
+        sumCSICol = 0
+        for j in range(len(parseCSIList)):
+            # raw
+            # sumCSICol=sumCSICol+parseCSIList[j][i]
+            # amplitude
+            sumCSICol = sumCSICol + \
+                (sqrt(parseCSIList[j][i] * 2 + parseCSIList[j][i+1] * 2))
+        AVGCSI.append(sumCSICol/len(parseCSIList))
+    return AVGCSI
+    # return []
