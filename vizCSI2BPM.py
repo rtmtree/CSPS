@@ -333,10 +333,7 @@ def animate(line):
         lastTsCSIforBPM = (firstTsCSI) + (secondToCountBreath*tsParser)
 
         if(isWithGroundTruth):
-            print("read file groundtruth", filePathsGT[0])
             curFileGT = pd.read_csv(filePathsGT[0])
-            print("read file groundtruth done")
-            print("len groundtruth file", len(curFileGT.index))
             tailGT = len(curFileGT.index)
             curPSGT = curFileGT['pressure'].tail(tailGT)
             curTSGT = curFileGT[timestampColName].tail(tailGT)
@@ -346,11 +343,7 @@ def animate(line):
             # crop out one probably invalid row
             gtPSList = gtPSList[0:len(gtPSList)-1]
             gtTSList = gtTSList[0:len(gtTSList)-1]
-
-            print("last Timestamp of groundtruth", tsSTA[len(
-                tsSTA)-1], "last Timestamp of GT", gtTSList[len(gtTSList)-1])
             syncTime = tsSTA[len(tsSTA)-1]-gtTSList[len(gtTSList)-1]
-            print("syncTime is", syncTime)
             gtTSList = [x+syncTime for x in gtTSList]
         # except:
         #     print("catch animate RT")
@@ -377,52 +370,43 @@ def animate(line):
         tsAP = []
         rssiSTA = []
 
-        if False:
-            # crop with frame len
-            print("last ts", tsList[line+frameLength-1])
-            # print("frameLength", frameLength)
-            for i in range(line, line+frameLength):
+        minTs = (line*tsParser)
+        maxTs = minTs + timeLength
+        print("batch minTs", minTs, "maxTs", maxTs)
+        # crop with timestamp
+
+        # CSI part
+
+        # parse STA
+        valueSTA = []
+        tsSTA = []
+        for i in range(0, len(csiList)):
+            if(tsList[i] > minTs and tsList[i] <= maxTs):
                 valueSTA.append(parseCSI(csiList[i]))
                 tsSTA.append(tsList[i])
-                rssiSTA.append(rssiList[i])
-        else:
-            minTs = (line*tsParser)
-            maxTs = minTs + timeLength
-            print("batch minTs", minTs, "maxTs", maxTs)
-            # crop with timestamp
+            elif(tsList[i] > maxTs):
+                break
 
-            # CSI part
+        print("CSI valueSTA len", len(valueSTA))
+        print("CSI last ts", tsSTA[-1])
 
-            # parse STA
-            valueSTA = []
-            tsSTA = []
-            for i in range(0, len(csiList)):
-                if(tsList[i] > minTs and tsList[i] <= maxTs):
-                    valueSTA.append(parseCSI(csiList[i]))
-                    tsSTA.append(tsList[i])
-                elif(tsList[i] > maxTs):
-                    break
+        # parse AP
+        valueAP = []
+        tsAP = []
+        for i in range(0, len(csiAPList)):
+            if(tsAPList[i] > minTs and tsAPList[i] <= maxTs):
+                valueAP.append(parseCSI(csiAPList[i]))
+                tsAP.append(tsAPList[i])
+            elif(tsAPList[i] > maxTs):
+                break
 
-            print("CSI valueSTA len", len(valueSTA))
-            print("CSI last ts", tsSTA[-1])
-
-            # parse AP
-            valueAP = []
-            tsAP = []
-            for i in range(0, len(csiAPList)):
-                if(tsAPList[i] > minTs and tsAPList[i] <= maxTs):
-                    valueAP.append(parseCSI(csiAPList[i]))
-                    tsAP.append(tsAPList[i])
-                elif(tsAPList[i] > maxTs):
-                    break
-
-            print("CSI valueAP len", len(valueAP))
-            print("CSI last ts", tsAP[-1])
+        print("CSI valueAP len", len(valueAP))
+        print("CSI last ts", tsAP[-1])
 
 
-            firstTsCSI = tsSTA[0]
-            lastTsCSI = tsSTA[len(tsSTA)-1]
-            lastTsCSIforBPM = (firstTsCSI) + (secondToCountBreath*tsParser)
+        firstTsCSI = tsSTA[0]
+        lastTsCSI = tsSTA[len(tsSTA)-1]
+        lastTsCSIforBPM = (firstTsCSI) + (secondToCountBreath*tsParser)
 
     if(isWithGroundTruth):
         valueGTPlot = []
@@ -431,43 +415,26 @@ def animate(line):
         tsGTBPM = []
         print("firstTsCSI", firstTsCSI, "lastTsCSI",
               lastTsCSI, "lastTsCSIforBPM", lastTsCSIforBPM)
-        # print("30",(secondToCountBreath*tsParser))
-        # print("firstTsCSI + 30",(firstTsCSI + (secondToCountBreath*tsParser)))
-        # create GroundTruth within the period same as CSI for ploting
-        print("bf len gtPSList", len(gtPSList))
 
-        # print("af len gtPSList",len(gtPSList))
-        # print("expTS 0",gtTSList[0]-syncTime)
-        # print("expTS last",gtTSList[len(gtTSList)-1]-syncTime)
+        # create GroundTruth within the period same as CSI for ploting
         for i in range(0, len(gtTSList)):
-            if(gtTSList[i] >= firstTsCSI and gtTSList[i] <= lastTsCSI):
+            if(gtTSList[i] > firstTsCSI and gtTSList[i] <= lastTsCSI):
                 valueGTPlot.append(gtPSList[i])
                 # parse back
                 tsGTPlot.append(float(gtTSList[i]/tsParser))
             elif(gtTSList[i] > lastTsCSI):
                 break
 
-        print(len(valueGTPlot))
         if(isFilterGT):
-            # ax1.plot(tsGTPlot, valueGTPlot, label='Ground Truth')
             filGtPSList = hampel_filter(
                 valueGTPlot, GT_HF_winsize, GT_HF_sigma)
-            # ax2.plot(tsGTPlot, filGtPSList, label='Ground Truth')
             filGtPSList = gaussian_filter(filGtPSList, sigma=GT_GF_sigma)
-            # ax3.plot(tsGTPlot, filGtPSList, label='Ground Truth')
         else:
             filGtPSList = valueGTPlot
         filGtPSList, filGtTSList = singleLinearInterpolation(
             filGtPSList, np.arange(len(filGtPSList)), tsGTPlot, 0, 4)
 
         ax4.plot(filGtTSList, filGtPSList, label='Ground Truth')
-
-        # ax1.set_ylim([95, 105])
-        # ax1.set_ylabel("Pressure(kPa)")
-        # ax2.set_ylim([95, 105])
-        # ax2.set_ylabel("Pressure(kPa)")
-        # ax3.set_ylim([95, 105])
-        # ax3.set_ylabel("Pressure(kPa)")
         ax4.set_ylim([95, 105])
         ax4.set_ylabel("Pressure(kPa)")
 
@@ -514,13 +481,6 @@ def animate(line):
             curSCTSAP = tsAllAP
             curSCCSISTA = [amplitudesAll[k][j] for k in range(len(amplitudesAll))]
             curSCCSIAP = [amplitudesAllAP[k][j] for k in range(len(amplitudesAllAP))]
-            if False:  # if sum needed
-                for k in range(len(amplitudesAll)):
-                    curSCTS.append(tsAll[k])
-                    curSCCSI.append(amplitudesAll[k][j])
-                    sumY[k] += amplitudesAll[k][j]
-
-            # if True:
             if(j in subcarrierIndex):
                 graphList = []
                 graphListAP = []
@@ -648,18 +608,6 @@ def animate(line):
                         ax3.plot(peaksPDTS, peaksPDPS, 'x')
                         if showBPMOnPlot:
                             ax3.title.set_text('BPM=====>'+str(BPM))
-        if False:
-            for j in range(len(sumY)):
-                sumY[j] = sumY[j]/len(amplitudesAll[0])
-            SDY = [0 for j in range(len(amplitudesAll))]
-            for k in range(len(amplitudesAll)):
-                for j in range(len(amplitudesAll[0])):  # 52/64
-                    SDY[k] += (amplitudesAll[k][j] - sumY[j])**2
-                SDY[k] = SDY[k]/(len(amplitudesAll[0])-1)
-            ax2.plot(textX, gaussian_filter(
-                SDY, sigma=15), label='CSI subcarrier')
-        # ax2.plot(textX, gaussian_filter(textY, sigma=10), label='CSI subcarrier')
-        # ax0.xaxis.set_ticks(np.arange(int(min(tsAll)/1)*1, int(max(tsAll)/1)*1, 1*secPerGap ) )
         ax1.xaxis.set_ticks(np.arange(int(min(tsAllSTA)/1)*1,
                             int(max(tsAllSTA)/1)*1, 1*secPerGap))
         ax2.xaxis.set_ticks(np.arange(int(min(tsAllSTA)/1)*1,
@@ -673,7 +621,6 @@ def animate(line):
     ax3.set_ylabel("Amplitude(dB)")
     ax4.set_xlabel("Frame(sec)")
 
-    # ax0.set_ylim([-10, +40])
     ax1.set_ylim([-10, +40])
     ax2.set_ylim([-10, +40])
     # ax3.set_ylim(CSIBPMPlotPeriod)
