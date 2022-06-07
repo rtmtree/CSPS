@@ -349,7 +349,7 @@
 	
 
 	\begin{figure}[htbp]
-		\centerline{\includegraphics[width=90mm,scale=0.2]{STEP11.png}}
+		\centerline{\includegraphics[width=90mm,scale=0.2]{STEP12.png}}
 		\caption{All the mapping rule.}
 		\label{fig:MAPINGSTEP}
 	\end{figure}
@@ -361,7 +361,7 @@
 	However, original CSI data is complex number so, we can either convert it into phase or amplitude. As mentioned in \nameref{CSI}, the CSI is originally in form $h=y/x=v+wi$ so, they are parsed. For amplitude,  $\sqrt{ v^2+w^2 }$ and $\arctantwo(v, 2 )$ for phase.
 	In this paper, we use amplitude.
 	\begin{equation}
-	amp =  {  \sqrt{ v_{sc}^2+w_{sc}^2 } , sc \in [1, 52]}
+	\text{Amplitude} =  {  \sqrt{ v_{sc}^2+w_{sc}^2 } , sc \in [1, 52]}
 	\label{eq:CSIampParser}
 \end{equation}	
 	There are 52 subcarrier in ESP32 (ref). We simply pick one.
@@ -433,24 +433,9 @@ To recreate a CSI data at rate 60Hz, we calculate each with 2 data at the closet
 			\caption{An example of applying Butterworth low pass filtering when $\delta=2$ and $\epsilon=30$.}
 			\label{fig:BPL}
 				\end{figure}
-	\subsection*{Ground Truth (Respiratory Belt)}
+
 		
-		The Respiratory Belt logs pressure data with a unit of kilopascal. As mentioned in \nameref{HUMANSLEEPRR}, The belt is set to log RR at resolution of 4 Hz. By connecting the belt to a microprocessor as shown in Fig.~\ref{fig:VERNIERBELT}, we can set log resolution at any rate. However, based on our experiment, normal human RR can be determined at resolution of 4 Hz as shown in Fig.~\ref{fig:FILGT_R2H2G2L} (top).
-		
-		As it can be simply seen that the raw data from the belt is clear but not precise, so we still need more filtering on it. 3 filterings, as shown in Fig.~\ref{fig:MAPINGSTEP} (right), are applied. For more precision, we applied more Linear Interpolation to ensure the resolution is exactly 4 Hz, The result are shown in Fig.~\ref{fig:FILGT_R2H2G2L}
-		
-		Parameters of the Hampel Filtering process is window size and $\sigma$ which is redefined as $\zeta$ and $\eta$ in this paper. A parameter of the Gaussian Filtering process is $\sigma$ which is redefined as $\theta$ in this paper.
-		
-		
-		\begin{figure}[htbp]
-			\centerline{\includegraphics[width=120mm,scale=0.9]{FILGT_R2H2G2L.png}}
-			\caption{An example of pressure logged from Vernier Respiratory Belt for normal human taking breath. Without filtering (top), with Hampel Filtering (2nd top) when  $\zeta=1$ and $\eta=-100$, with Gaussian Filtering (3rd top) when  $\theta=1$ and with Linear Interpolation (bottom) with 4 Hz.}
-			\label{fig:FILGT_R2H2G2L}
-		\end{figure}
-		
-	\subsection*{Testing}
-	
-	\subsubsection*{Respiratory Rate Extraction}
+	\subsection*{Respiratory Rate Extraction}
 		
 		The philosophy we used to extract RR from both data of CSI from ESP32 and pressure from the ground truth is ``First to hit the mean'' as (ref) have proven its reliability.
 		
@@ -476,12 +461,29 @@ To recreate a CSI data at rate 60Hz, we calculate each with 2 data at the closet
 	\caption{An example of Respiratory Rate Extraction from prediction (top) and ground truth (bottom) for slow-rate breathing (prediction BPM = 6, ground truth BPM = 5).}
 	\label{fig:RREXT_SLOW}
 \end{figure}
+
+As you can see in Fig.~\ref{fig:RREXT_HOLD}, the straight behavior of the algorithm recognized the low pressure fluctuation as a breath which is incorrect. So, we need a further correction to distinguish if the state of the graph is a breath holding.
 	
 	
 
-	
+		\subsubsection*{Breath missing Detection}
+		
+		A parameter to check if the Amplitude is too low to be a breath.
 
+		\subsection*{Ground Truth (Respiratory Belt)}
 	
+	The Respiratory Belt logs pressure data with a unit of kilopascal. As mentioned in \nameref{HUMANSLEEPRR}, The belt is set to log RR at resolution of 4 Hz. By connecting the belt to a microprocessor as shown in Fig.~\ref{fig:VERNIERBELT}, we can set log resolution at any rate. However, based on our experiment, normal human RR can be determined at resolution of 4 Hz as shown in Fig.~\ref{fig:FILGT_R2H2G2L} (top).
+	
+	As it can be simply seen that the raw data from the belt is clear but not precise, so we still need more filtering on it. 3 filterings, as shown in Fig.~\ref{fig:MAPINGSTEP} (right), are applied. For more precision, we applied more Linear Interpolation to ensure the resolution is exactly 4 Hz, The result are shown in Fig.~\ref{fig:FILGT_R2H2G2L}
+	
+	Parameters of the Hampel Filtering process is window size and $\sigma$ which is redefined as $\zeta$ and $\eta$ in this paper. A parameter of the Gaussian Filtering process is $\sigma$ which is redefined as $\theta$ in this paper.
+	
+	
+	\begin{figure}[htbp]
+		\centerline{\includegraphics[width=120mm,scale=0.9]{FILGT_R2H2G2L.png}}
+		\caption{An example of pressure logged from Vernier Respiratory Belt for normal human taking breath. Without filtering (top), with Hampel Filtering (2nd top) when  $\zeta=1$ and $\eta=-100$, with Gaussian Filtering (3rd top) when  $\theta=1$ and with Linear Interpolation (bottom) with 4 Hz.}
+		\label{fig:FILGT_R2H2G2L}
+	\end{figure}
 
 	
 	% Results and Discussion can be combined.
@@ -498,79 +500,54 @@ To recreate a CSI data at rate 60Hz, we calculate each with 2 data at the closet
 	
 	An evaluation is achieved   by the algorithm written in Python 3.8. The code is available on Github$\footnote[1]{https://github.com/rtmtree/CSPS}$.
 	
-	As parameters stated in the previous sections, we demostrated the prediction by the followings.
+	For error metrics, Mean Absolute Difference (MAD) is a decent indicator to tell how much RR from the ESP32 is different to RR from the belt. With windows of 60 s, MAD is computed by the following equation.
 	
-	MAD
-	
-	
-	Table~\ref{table:resultSigma1}, Table~\ref{table:resultSigma2}, Table~\ref{table:resultSigma3} and  Table~\ref{table:resultSigma4} show the estimation performance of 4 Sleep Stages when $\delta=15$, $\delta=30$, $\delta=50$ and $\delta=200$ respectively.
-	\begin{table}[!ht]
-		\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
-			\centering
-			\caption{
-				{\bf Table of evaluation result when $\delta=15$.}}
-			\begin{tabular}{l|llllll}
-				\backslashbox{Truth}{Predicted} &Wake & REM &Light &Deep \\[1pt]
-				\hline
-				Wake &0.19 & 0.06 & 0.72 & 0.03 \\[1pt]
-				REM &0.03 & 0.83 & 0.14 & 0.00 \\[1pt]
-				Light &0.01 & 0.05 & 0.91 & 0.03 \\[1pt]
-				Deep &0.00 & 0.01 & 0.16 & 0.83 \\[1pt]
-			\end{tabular}
-			\label{table:resultSigma1}
-		\end{adjustwidth}
-	\end{table}
+	\begin{equation}
+		MAD =  \frac{\sum_{i=1}^{n}   \lvert N^{gt}_i - N^{pd}_ i \rvert  }{n} ,
+		\label{eq:MAD}
+	\end{equation}
+
+where $n$ is a total number of dataset, $N^{gt}_i$ is RR obtained from the belt at index $i$ and $N^{pd}_i$ is RR obtained from the ESP32 at index $i$.
+
+	Table~\ref{table:result1}, Table~\ref{table:result2}, Table~\ref{table:result3} and  Table~\ref{table:result4} show the MAD of 4 breathing pattern with different parameter fine-tunings.
 	
 	\begin{table}[!ht]
 		\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
 			\centering
 			\caption{
-				{\bf Table of evaluation result when $\delta=30$.}}
+				{\bf Table of evaluation result when $\alpha=1$.}}
 			\begin{tabular}{l|llllll}
-				\backslashbox{Truth}{Predicted} &Wake & REM &Light &Deep \\[1pt]
+				\backslashbox{Breathing}{Result} &MAD  \\[1pt]
 				\hline
-				Wake &0.28 & 0.16 & 0.50 & 0.06 \\[1pt]
-				REM &0.00 & 0.82 & 0.18 & 0.00 \\[1pt]
-				Light &0.01 & 0.04 & 0.92 & 0.03 \\[1pt]
-				Deep &0.01 & 0.00 & 0.20 & 0.79 \\[1pt]
+				Normal &2.0 \\[1pt]
+				Fast &6.03 \\[1pt]
+				Hold &1.97  \\[1pt]
+				Slow &0.39 \\[1pt]
 			\end{tabular}
-			\label{table:resultSigma2}
+			\label{table:result1}
 		\end{adjustwidth}
 	\end{table}
-	
+
+
+	\iffalse
 	\begin{table}[!ht]
 		\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
 			\centering
 			\caption{
-				{\bf Table of evaluation result when $\delta=50$.}}
+				{\bf Table of evaluation result when $\alpha=1$.}}
 			\begin{tabular}{l|llllll}
-				\backslashbox{Truth}{Predicted} &Wake & REM &Light &Deep \\[1pt]
+				\backslashbox{Breathing}{Predicted} &Wake & REM &Light &Deep \\[1pt]
 				\hline
-				Wake &0.34 &0.06 &0.5 & 0.09 \\[1pt]
-				REM &0.00 & 0.83 & 0.17 & 0.00 \\[1pt]
-				Light & 0.01 & 0.03 & 0.92 & 0.04 \\[1pt]
-				Deep &0.01 & 0.00 & 0.15 & 0.85 \\[1pt]
+				Normal &0.19 & 0.06 & 0.72 & 0.03 \\[1pt]
+				Fast &0.03 & 0.83 & 0.14 & 0.00 \\[1pt]
+				Hold &0.01 & 0.05 & 0.91 & 0.03 \\[1pt]
+				Slow &0.00 & 0.01 & 0.16 & 0.83 \\[1pt]
 			\end{tabular}
-			\label{table:resultSigma3}
+			\label{table:result0}
 		\end{adjustwidth}
 	\end{table}
-	
-	\begin{table}[!ht]
-		\begin{adjustwidth}{-2.25in}{0in} % Comment out/remove adjustwidth environment if table fits in text column.
-			\centering
-			\caption{
-				{\bf Table of evaluation result when $\delta=200$.}}
-			\begin{tabular}{l|llllll}
-				\backslashbox{Truth}{Predicted} &Wake & REM &Light &Deep \\[1pt]
-				\hline
-				Wake &0.19 & 0.06 & 0.66 & 0.09 \\[1pt]
-				REM &0.03 & 0.76 & 0.21 & 0.00 \\[1pt]
-				Light &0.01 & 0.04 & 0.91 & 0.04 \\[1pt]
-				Deep &0.01 & 0.00 & 0.17 & 0.82 \\[1pt]
-			\end{tabular}
-			\label{table:resultSigma4}
-		\end{adjustwidth}
-	\end{table}
+
+\fi
 	
 	\section*{Discussion}
 	

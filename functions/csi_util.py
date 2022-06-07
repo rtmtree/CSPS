@@ -6,6 +6,35 @@ import pandas as pd
 from scipy.signal import butter, lfilter,filtfilt,find_peaks
 from hampel import hampel
 
+def CSIfilterer(filePath,my_filter_address,my_filter_length,Channel,timestampColName,tsParser,tail=False):
+    print("read file csi", filePath)
+    curFileSTA = pd.read_csv(filePath)
+    curFileSTA = curFileSTA[(curFileSTA['mac'] == my_filter_address)]
+    curFileSTA = curFileSTA[(curFileSTA['len'] == my_filter_length)]
+    curFileSTA = curFileSTA[(curFileSTA['stbc'] == 0)]
+    curFileSTA = curFileSTA[(curFileSTA['rx_state'] == 0)]
+    curFileSTA = curFileSTA[(curFileSTA['sig_mode'] == 1)]
+    curFileSTA = curFileSTA[(curFileSTA['bandwidth'] == 1)]
+    curFileSTA = curFileSTA[(curFileSTA['secondary_channel'] == 1)]
+    curFileSTA = curFileSTA[(curFileSTA['channel'] == Channel)]
+    print("read file csi done")
+    print("len csi file", len(curFileSTA.index))
+
+    if(tail==False):
+        tail = len(curFileSTA.index)
+
+    curCSISTA = curFileSTA['CSI_DATA'].tail(tail)
+    curRSSISTA = curFileSTA['rssi'].tail(tail)
+    curTSSTA = curFileSTA[timestampColName].tail(tail)
+    # for check rssi
+    # curRSSI = curFileSTA['rssi'].tail(2)
+    # RTrssiList = list((x) for x in curRSSI)
+    # print("curRSSI is ",RTrssiList[0])
+            
+    csiList = list(x for x in curCSISTA)
+    rssiList = list(x for x in curRSSISTA)
+    tsList = list(x*tsParser for x in curTSSTA)
+    return csiList,rssiList,tsList
 
 # def parseCSI(csi):
 #     try:
